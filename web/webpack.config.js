@@ -64,9 +64,13 @@ module.exports = {
       loader: 'json',
     }, {
       test: /\.jsx?$/,
-      loaders: ['react-hot', 'babel?stage=1'],
+      loaders: ['react-hot','babel?stage=1'],
       include: [config.paths.src],
       exclude: [/node_modules/]
-    }, ]
+    }, 
+    {
+      test:/\.(eot|otf|svg|ttf|woff|woff2|png|jpg|gif)\w*/,
+      loader: 'file',
+    }]
   }
 };
