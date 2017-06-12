@@ -19,7 +19,7 @@ import {
 // import GroupMasterLinkView from './GroupMasterLinkView';
 // import HelpView from './HelpView';
 // const isIOS = Platform.OS == "ios"
-var width = 600;//Dimensions.get('window').width;
+var width = 0;//Dimensions.get('window').width;
 var account = Object();
 //var Global = require('../common/globals');
 
@@ -32,19 +32,40 @@ export default class MineView extends Component {
         };
     }
 
+    onViewLayout(layoutEvent) {
+    console.log('received view layout event\n', layoutEvent.nativeEvent);
+    width = layoutEvent.nativeEvent.layout.width;
+    this.state.layoutWidth = true;
+    this.setState({layoutWidth:true});
+  }
+
     componentWillMount(){
         var me = this
-       
+
     }
 
     render() {
+        if (!this.state.layoutWidth) {
+
+            return (<View style={{flex:1}} onLayout={this.onViewLayout.bind(this)}></View>);
+        }
+
+        console.log('received view layout event width\n', width);
         return (
             <View style={styles.container}>
-                <View style={styles.headView}>
-                <Image style={[styles.headView,{position: 'absolute', left: 0, right: 0,}]}
-                       source={require('../images/me_bj.jpg')}
-                 />
-               
+                <View style={[styles.headView,]}>
+                  <View style={{alignSelf:'stretch',}}>
+                  {/* <Image style={{position: 'absolute', left: 0, right: 0,resizeMode:'contain'}}
+                         source={require('../images/me_bj.jpg')}
+                   /> */}
+                   <View style={{height:180,position: 'absolute', left: 0, right: 0}}>
+                   <Image style={{height:180,resizeMode:'contain'}}
+                          source={require('../images/me_bj.jpg')}
+                    />
+                  </View>
+
+                  </View>
+
                   <View style={styles.centerLayout}>
                       <Text style={styles.defaultText}>{this.state.account.nickname}Lisa团长高优良品购</Text>
                   </View>
@@ -98,8 +119,8 @@ export default class MineView extends Component {
 
               <TouchableOpacity underlayColor="#ffffff" style={[styles.itemLayout,{marginTop:10}]}  >
 
-                  <View style={{flexDirection:'row',justifyContent:'flex-start',alignItems:'center',backgroundColor:'#ffffff',height:45,paddingLeft:10,paddingRight:10}}>
-                    <Image style={[styles.iconSize,{marginRight:15}]}
+                  <View style={{alignSelf:'stretch',flexDirection:'row',justifyContent:'flex-start',alignItems:'center',backgroundColor:'#ffffff',height:45,paddingLeft:10,paddingRight:10}}>
+                    <Image style={[{marginRight:15,width:30,height:30}]}
                       source={require('../images/address_icon@2x.png')} />
                     <Text  style={{fontSize: 16,flex:20,
                      textAlign: 'left',
@@ -110,8 +131,8 @@ export default class MineView extends Component {
               </TouchableOpacity>
               <View style={styles.itemLine}/>
               <TouchableOpacity underlayColor="#ffffff" style={[styles.itemLayout]}  >
-              <View style={{flexDirection:'row',justifyContent:'flex-start',alignItems:'center',backgroundColor:'#ffffff',height:45,paddingLeft:10,paddingRight:10}}>
-                <Image style={[styles.iconSize,{marginRight:15}]}
+              <View style={{alignSelf:'stretch',flexDirection:'row',justifyContent:'flex-start',alignItems:'center',backgroundColor:'#ffffff',height:45,paddingLeft:10,paddingRight:10}}>
+                <Image style={[{marginRight:15,width:30,height:30}]}
                   source={require('../images/help_icon@2x.png')} />
                 <Text  style={{fontSize: 16,flex:20,
                  textAlign: 'left',
@@ -122,8 +143,8 @@ export default class MineView extends Component {
               </TouchableOpacity>
                <View style={styles.itemLine}/>
               <TouchableOpacity underlayColor="#ffffff" style={[styles.itemLayout]}  >
-              <View style={{flexDirection:'row',justifyContent:'flex-start',alignItems:'center',backgroundColor:'#ffffff',height:45,paddingLeft:10,paddingRight:10}}>
-                <Image style={[styles.iconSize,{marginRight:15}]}
+              <View style={{alignSelf:'stretch',flexDirection:'row',justifyContent:'flex-start',alignItems:'center',backgroundColor:'#ffffff',height:45,paddingLeft:10,paddingRight:10}}>
+                <Image style={[{marginRight:15,width:30,height:30}]}
                   source={require('../images/setting_icon@2x.png')} />
                 <Text  style={{fontSize: 16,flex:20,
                  textAlign: 'left',
@@ -155,7 +176,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'flex-start',
-        alignItems: 'center',
         backgroundColor: '#f2f2f2',
     },
     centerLayout:{
@@ -165,22 +185,23 @@ const styles = StyleSheet.create({
     itemLayout:{
         backgroundColor:'#ffffff',
         justifyContent:'center',
-        width:width,
         height:50,
         alignItems:'center',
     },
+    iconSize:{
+
+        height:20,
+        width:20
+    },
     topView: {
         height: 120,
-        width: width,
     },
     headView: {
         height: 180,
-        width: width,
         backgroundColor: '#ffffff',
     },
     toolsView:
     {
-        height: width / 1.5 + 30,
         //   backgroundColor: 'red',
     },
     list:
@@ -219,6 +240,7 @@ const styles = StyleSheet.create({
            height: 80,
            // 容器需要添加direction才能变成让子元素flex
            flexDirection: 'row',
+           alignItems: 'center',
        },
        cell: {
            backgroundColor: '#ffffff',
@@ -234,7 +256,6 @@ const styles = StyleSheet.create({
        },
        itemLine:{
            marginLeft:10,
-           width: width,
            height: 0.5,
            backgroundColor: '#d5d5d5',
        },
@@ -244,8 +265,7 @@ const styles = StyleSheet.create({
            color: '#4f4f4f',
        },
        labelInfo: {
-           fontSize: 18,
-           textAlign: 'center',
-           color: '#fbab3b',
+           width: 40,
+           height: 40,
        },
 });
