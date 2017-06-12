@@ -1,4 +1,4 @@
-MineView.jsimport React, { Component } from 'react';
+import React, { Component } from 'react';
 import {
     StyleSheet,
     Text,
@@ -8,26 +8,31 @@ import {
     Platform,
     TouchableNativeFeedback,
     ScrollView,
-    TouchableHighlight,
 } from 'react-native';
-import Banner from 'react-native-banner';
-import Dimensions from 'Dimensions';
+//import Banner from 'react-native-banner';
 import NavBar from '../common/NavBar'
-import px2dp from '../common/util'
-import ProductCatagoryListViewTab from './ProductCatagoryListViewTab'
-import ProductDetail from './ProductDetail'
+// import ProductCatagoryListViewTab from './ProductCatagoryListViewTab'
+// import ProductDetail from './ProductDetail'
 
-
-const isIOS = Platform.OS == "ios"
-var width = Dimensions.get('window').width;
-
-import LoginView from '../Login/LoginView'
 
 
 export default class HomeView extends Component {
     constructor(props) {
         super(props)
+        this.state={
+            scrollContainerStyle:{
+                height:1000,alignSelf:'stretch',
+            },
+            toolsView: {
+                flexDirection: "row",
+                flexWrap: "wrap",
+                justifyContent: 'center',
+                alignItems: 'center',
+                screenWidth:600,
+            },
 
+
+        }
     }
 
     onAnnounceNow() {
@@ -37,23 +42,40 @@ export default class HomeView extends Component {
         // })
     }
 
+    onViewLayout(layoutEvent) {
+    var height = layoutEvent.nativeEvent.layout.height;
+    if (height<=0) {
+        return
+    }
+    this.state.scrollContainerStyle.height = height - 100;
+    this.state.toolsView.screenWidth = layoutEvent.nativeEvent.layout.width
+    this.setState({scrollContainerStyle:this.state.scrollContainerStyle,toolsView:this.state.toolsView});
+  }
 
     render() {
+        console.log('received view layout layoutHeight\n', this.state.scrollContainerStyle.height);
         return (
-            <View style={styles.container}>
+            <View style={styles.container}  onLayout={this.onViewLayout.bind(this)}>
                 <NavBar title="爱邻购" />
+                <View
+                style={this.state.scrollContainerStyle}>
                 <ScrollView
-                keyboardDismissMode='on-drag'
-                keyboardShouldPersistTaps={false}
-                style={styles.mainStyle}>
+
+                automaticallyAdjustContentInsets={false}
+                scrollEventThrottle={200}>
                 {this.renderTopView()}
+
                 {this.renderProductCategoryView()}
 
-
                 </ScrollView>
+                </View>
+
+
+
             </View>
         )
     }
+
 
 
      bannerClickListener(index) {
@@ -89,15 +111,25 @@ export default class HomeView extends Component {
         ];
 
         return (
-            <Banner
+            <View style={styles.topView}>
+            <Image
                 style={styles.topView}
-                banners={this.banners}
-                defaultIndex={this.defaultIndex}
-                onMomentumScrollEnd={this.bannerOnMomentumScrollEnd.bind(this)}
-                intent={this.bannerClickListener.bind(this)}
+                source={{uri:'http://img1.3lian.com/2015/a1/53/d/200.jpg'}}
             />
+            </View>
 
         )
+
+        // return (
+        //     <Banner
+        //         style={styles.topView}
+        //         banners={this.banners}
+        //         defaultIndex={this.defaultIndex}
+        //         onMomentumScrollEnd={this.bannerOnMomentumScrollEnd.bind(this)}
+        //         intent={this.bannerClickListener.bind(this)}
+        //     />
+        //
+        // )
     }
 
     onItemClick(prouduct){
@@ -163,9 +195,9 @@ export default class HomeView extends Component {
              }
          ]
 
-          categoryDataAry.push({id:'meat',name:'品质水果','image': require('../images/fruit_type.png'),prouductItems:toolsData,countdown:'48:38:29'},);
-          categoryDataAry.push({id:'meat',name:'绿色生鲜','image': require('../images/fresh_type.png'),prouductItems:toolsData,countdown:'48:38:29'},);
-          categoryDataAry.push({id:'meat',name:'有机蔬菜','image': require('../images/vegetable_type.png'),prouductItems:toolsData,countdown:'48:38:29'},);
+          categoryDataAry.push({id:'meat',name:'品质水果','image': require('../images/fruit_type@2x.png'),prouductItems:toolsData,countdown:'48:38:29'},);
+          categoryDataAry.push({id:'meat',name:'绿色生鲜','image': require('../images/fresh_type@2x.png'),prouductItems:toolsData,countdown:'48:38:29'},);
+          categoryDataAry.push({id:'meat',name:'有机蔬菜','image': require('../images/vegetable_type@2x.png'),prouductItems:toolsData,countdown:'48:38:29'},);
 
             for (var i = 0; i<categoryDataAry.length; i++) {
                 displayCategoryAry.push(
@@ -173,7 +205,7 @@ export default class HomeView extends Component {
                         {this.renderItemSpaceLine(i)}
                         <View style={{margin:5}}>
                         <View style = {styles.brandLabelContainer}>
-                            <Image style={{resizeMode:'contain', marginRight:5,alignItems:'center',
+                            <Image style={{resizeMode:'contain', marginRight:5,alignItems:'center',width:30,height:30,
                   justifyContent:'center'}} source={categoryDataAry[i].image}/>
                             <Text style={{fontSize:16,color:'#1b1b1b'}}>
                                 {categoryDataAry[i].name}
@@ -211,28 +243,28 @@ export default class HomeView extends Component {
     }
 
     renderCategorysView(prouductItems) {
+        var width = this.state.toolsView.screenWidth;
+        console.log('received view layout width\n', width);
         const w = width / 3 - 9, h = w
 
         let renderSwipeView = (types, n) => {
             return (
-                <View style={styles.toolsView}>
+                <View style={this.state.toolsView}>
                     {
                         types.map((item, i) => {
                             let render = (
                                 <View style={[{ width: w, height: h ,marginTop:5,marginRight:5,marginBottom:0 }, styles.toolsItem]}>
 
-                                    <Image style={{resizeMode:'contain', alignItems:'center',width: w-2, height: h,
+                                    <Image style={{resizeMode:'cover', alignItems:'center',width: w-2, height: h,
                                     justifyContent:'center',margin:2,
                                     flex:1}} source={item.image}/>
                                      {this.renderMoreInfo(item,w,h)}
                                 </View>
                             )
                             return (
-                                isIOS ? (
-                                    <TouchableHighlight style={{ width: w, height: h }} key={i} onPress={() => { this.onItemClick(item) }}>{render}</TouchableHighlight>
-                                ) : (
-                                        <TouchableNativeFeedback style={{ width: w, height: h }} key={i} onPress={() => { this.onItemClick(item) }}>{render}</TouchableNativeFeedback>
-                                    )
+
+                                    <TouchableOpacity style={{ width: w, height: h }} key={i} onPress={() => { this.onItemClick(item) }}>{render}</TouchableOpacity>
+
                             )
                         })
                     }
@@ -255,7 +287,6 @@ const styles = StyleSheet.create({
     },
     topView: {
         height: 150,
-        width: width,
     },
     list:
     {
@@ -266,10 +297,11 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginBottom:20,
         height: 32,
-        width: width - 220,
         borderColor: '#e31515',
         borderWidth:1,
         borderRadius: 5,
+        paddingLeft:5,
+        paddingRight:5,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent:'center',
@@ -286,12 +318,7 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         alignItems: 'center',
     },
-    toolsView: {
-        flexDirection: "row",
-        flexWrap: "wrap",
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
+
     toolsItem: {
         justifyContent: "center",
         alignItems: "center",

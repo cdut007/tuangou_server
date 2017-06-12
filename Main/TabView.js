@@ -10,14 +10,14 @@ import {
 } from 'react-native';
 
 
-// import HomeView from './HomeView';
+ import HomeView from './HomeView';
 // import GroupBuyCar from './GroupBuyCar';
 import MineView from './MineView';
 
 
 export default class TabView extends Component
 {
-   
+
      constructor(props)
     {
         super(props)
@@ -29,7 +29,7 @@ export default class TabView extends Component
 
     componentWillMount(){
         var me = this;
-   
+
     }
 
 
@@ -39,8 +39,8 @@ export default class TabView extends Component
     render()
     {
         return (
-            <TabBarIOS 
-            tintColor="#ea6b10" 
+            <TabBarIOS
+            tintColor="#ea6b10"
             >
                 <TabBarIOS.Item
                     selected={this.state.selectedTab === 'tab1'}
@@ -73,8 +73,14 @@ export default class TabView extends Component
     }
 
     rendContent(tab){
-        //return(<View></View>);
-       return (<MineView {...this.props}/>)
+       if (tab == 'tab1') {
+           return (<HomeView {...this.props}/>)
+       }else if(tab == 'tab2'){
+
+       } {
+          return (<MineView {...this.props}/>)
+       }
+
     }
 }
 
