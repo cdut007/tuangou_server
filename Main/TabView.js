@@ -47,7 +47,6 @@ export default class TabView extends Component
                     title="爱邻购"
                     icon={require('../images/home_icon@2x.png')}
                     selectedIcon={require('../images/home_icon_click@2x.png')}
-                    badgeText=""
                     onPress={() => this.setState({ selectedTab: 'tab1' })}>
                     {this.rendContent('tab1')}
                 </TabBarIOS.Item>

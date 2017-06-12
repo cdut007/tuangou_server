@@ -202,6 +202,7 @@ const styles = StyleSheet.create({
     topView: {
         height: 120,
     },
+
     headView: {
         height: 180,
         backgroundColor: '#ffffff',

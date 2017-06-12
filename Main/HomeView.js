@@ -10,10 +10,10 @@ import {
     ScrollView,
 } from 'react-native';
 //import Banner from 'react-native-banner';
-import NavBar from '../common/NavBar'
+ import NavBar from '../common/NavBar';
 // import ProductCatagoryListViewTab from './ProductCatagoryListViewTab'
 // import ProductDetail from './ProductDetail'
-
+ import CircleImage from '../common/CircleImage';
 
 
 export default class HomeView extends Component {
@@ -91,46 +91,40 @@ export default class HomeView extends Component {
 
     renderTopView() {
 
-        this.banners = [
-            {
-                title: '水果',
-                image: 'http://img.zcool.cn/community/01115757bd9a5a0000018c1b170128.jpg',
-            },
-            {
-                title: '蔬菜',
-                image: 'http://img1.3lian.com/2015/a1/53/d/200.jpg',
-            },
-            {
-                title: '肉类',
-                image: 'http://img1.3lian.com/2015/a1/53/d/198.jpg',
-            },
-            {
-                // title: 'no title',
-                image: 'http://image.tianjimedia.com/uploadImages/2012/235/9J92Z5E5R868.jpg',
-            },
-        ];
 
         return (
-            <View style={styles.topView}>
-            <Image
-                style={styles.topView}
-                source={{uri:'http://img1.3lian.com/2015/a1/53/d/200.jpg'}}
-            />
+            <View style={[styles.headView,]}>
+              <View style={{alignSelf:'stretch',}}>
+
+               <View style={{height:180,position: 'absolute', left: 0, right: 0}}>
+               <Image style={{height:180,resizeMode:'contain'}}
+                      source={require('../images/me_bj.jpg')}
+                />
+              </View>
+
+              </View>
+
+
+                <View>
+                <CircleImage
+                  imageStyle={styles.logo}
+                  src={this._displayIcon() }
+                  />
+                </View>
+
+              <View style={styles.centerLayout}>
+                  <Text style={styles.defaultText}>Lisa团长高优良品购</Text>
+              </View>
             </View>
 
         )
 
-        // return (
-        //     <Banner
-        //         style={styles.topView}
-        //         banners={this.banners}
-        //         defaultIndex={this.defaultIndex}
-        //         onMomentumScrollEnd={this.bannerOnMomentumScrollEnd.bind(this)}
-        //         intent={this.bannerClickListener.bind(this)}
-        //     />
-        //
-        // )
+
     }
+
+    _displayIcon() {
+        return require('../images/default_head@2x.png');
+        }
 
     onItemClick(prouduct){
          if (prouduct.tag != 'scan_more') {
@@ -325,4 +319,25 @@ const styles = StyleSheet.create({
         borderColor: '#e6e6e6',
         borderWidth:1,
     },
+    logo: {
+        width: 80,
+        height: 80,
+        marginTop: 30,
+        alignSelf: 'center',
+    },
+    centerLayout:{
+          justifyContent:'center',
+          alignItems:'center',
+        },
+    headView: {
+            height: 180,
+            backgroundColor: '#ffffff',
+        },
+        defaultText:{
+                marginTop:10,
+                color: '#ffffff',
+                fontSize:16,
+                justifyContent: "center",
+                alignItems: 'center',
+        },
 });
