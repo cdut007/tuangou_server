@@ -61,13 +61,13 @@ renderImage(){
     }{
 
     }
-       return require('../images/default_head.png');
+       return require('../images/default_head@2x.png');
 },
   render(){
 
       if (this.props.contactName!=null) {
 
-        if (Platform.OS === 'ios')
+        if (Platform.OS === 'web')
         {
 
           return(
@@ -82,7 +82,7 @@ renderImage(){
         }
       }else {
         //var url = this.getIconUrl(this.props.src);
-        if (Platform.OS === 'ios')
+        if (Platform.OS === 'web')
         {
           return(
             <Image source={this.props.src} style ={[this.props.imageStyle]}/>

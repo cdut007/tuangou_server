@@ -12,7 +12,7 @@ import {
 // import Dimensions from 'Dimensions';
 // import NavBar from '../common/NavBar';
 // import HttpRequest from '../HttpRequest/HttpRequest'
-// import CircleImage from '../common/CircleImage';
+  import CircleImage from '../common/CircleImage';
 // import SettingView from './SettingView';
 // import GroupOrderListView from './GroupOrderListView';
 // import AddressView from './AddressView';
@@ -55,9 +55,7 @@ export default class MineView extends Component {
             <View style={styles.container}>
                 <View style={[styles.headView,]}>
                   <View style={{alignSelf:'stretch',}}>
-                  {/* <Image style={{position: 'absolute', left: 0, right: 0,resizeMode:'contain'}}
-                         source={require('../images/me_bj.jpg')}
-                   /> */}
+
                    <View style={{height:180,position: 'absolute', left: 0, right: 0}}>
                    <Image style={{height:180,resizeMode:'contain'}}
                           source={require('../images/me_bj.jpg')}
@@ -65,6 +63,14 @@ export default class MineView extends Component {
                   </View>
 
                   </View>
+
+
+                    <View>
+                    <CircleImage
+                      imageStyle={styles.logo}
+                      src={this._displayIcon() }
+                      />
+                    </View>
 
                   <View style={styles.centerLayout}>
                       <Text style={styles.defaultText}>{this.state.account.nickname}Lisa团长高优良品购</Text>
