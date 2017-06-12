@@ -18,9 +18,6 @@ import {
   Platform,
   Image
 } from 'react-native'
-//import Dimensions from 'Dimensions';
-import px2dp from './util'
-var width = 600//Dimensions.get('window').width;
 
 export default class NavBar extends Component{
     static propTypes:{
@@ -42,13 +39,13 @@ export default class NavBar extends Component{
               if(Platform.OS === 'android'){
               return (
                 <TouchableNativeFeedback onPress={onPress} style={styles.btn}>
-                  <Image source={name} style={{width: px2dp(26), height: px2dp(26),resizeMode:'contain'}}/>
+                  <Image source={name} style={{width: 26, height: 26,resizeMode:'contain'}}/>
                 </TouchableNativeFeedback>
               )
             }else{
               return (
                 <TouchableOpacity onPress={onPress} style={styles.btn}>
-                  <Image source={name} style={{width: px2dp(26), height: px2dp(26),resizeMode:'contain'}}/>
+                  <Image source={name} style={{width: 26, height: 26,resizeMode:'contain'}}/>
                 </TouchableOpacity>
               )
             }
@@ -100,14 +97,14 @@ export default class NavBar extends Component{
     }
     render(){
         return(
-            <View>
+            <View style={{alignSelf: 'stretch',}}>
 
             <View style={[styles.topbar, this.props.style]}>
                 {this.renderBtn("left")}
                 <Animated.Text numberOfLines={1} style={[styles.title, this.props.titleStyle]}>{this.props.title}</Animated.Text>
                 {this.renderBtn("right")}
             </View>
-            <View style={{height:0.5,width:width,backgroundColor:'#d6d6d6'}}>
+            <View style={{height:0.5,alignSelf:'stretch',backgroundColor:'#d6d6d6'}}>
             </View>
             </View>
 
@@ -124,7 +121,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingTop: (Platform.OS === 'ios') ? 20 : 0,
-        paddingHorizontal: px2dp(10)
+        paddingHorizontal: 10
     },
     btn: {
       width: 40,

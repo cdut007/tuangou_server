@@ -11,8 +11,8 @@ import {
 
 
  import HomeView from './HomeView';
-// import GroupBuyCar from './GroupBuyCar';
-import MineView from './MineView';
+ import GroupBuyCar from './GroupBuyCar';
+ import MineView from './MineView';
 
 
 export default class TabView extends Component
@@ -75,7 +75,7 @@ export default class TabView extends Component
        if (tab == 'tab1') {
            return (<HomeView {...this.props}/>)
        }else if(tab == 'tab2'){
-
+           return (<GroupBuyCar {...this.props}/>)
        } {
           return (<MineView {...this.props}/>)
        }

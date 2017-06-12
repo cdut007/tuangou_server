@@ -6,12 +6,10 @@ import {
     TouchableHighlight
  } from 'react-native';
 
-import Dimensions from 'Dimensions'
-var width = Dimensions.get('window').width;
 
  export default class CommitButton extends Component
  {
-     static propTypes =
+     static propTypes:
      {
         title: PropTypes.string,
         onPress: PropTypes.func,
