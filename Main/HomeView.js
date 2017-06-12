@@ -12,7 +12,7 @@ import {
 //import Banner from 'react-native-banner';
  import NavBar from '../common/NavBar';
 // import ProductCatagoryListViewTab from './ProductCatagoryListViewTab'
-// import ProductDetail from './ProductDetail'
+ import ProductDetail from './ProductDetail'
  import CircleImage from '../common/CircleImage';
 
 
