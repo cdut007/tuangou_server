@@ -9,6 +9,7 @@ import {
     TouchableNativeFeedback,
     ScrollView,
     TouchableHighlight,
+    SegmentedControlIOS,
 } from 'react-native';
 
 import SettingView from './SettingView';
@@ -35,6 +36,8 @@ export default class GroupOrderListView extends Component {
                 height:1000,
                 alignSelf:'stretch',
             },
+             values: ['进行中', '已完成',],
+             selectedIndex:0,
 
         }
     }
@@ -56,14 +59,43 @@ export default class GroupOrderListView extends Component {
                   })
       }
 
+      _onChange(event) {
+        this.setState({
+          selectedIndex: event.nativeEvent.selectedSegmentIndex,
+        });
+      }
+
+      _onValueChange(value) {
+        this.setState({
+          value: value,
+        });
+      }
+
     render() {
+
         return (
             <View style={styles.container} onLayout={this.onViewLayout.bind(this)}>
                 <NavBar title='我的拼团'
                 rightIcon={require('../images/setting_icon@2x.png')}
                 rightPress={this.onSettingPress.bind(this)}/>
-                {this.renderGroupOrderListView()}
+                <SegmentedControlIOS
+                    values={this.state.values}
+                    tintColor='#ea6b10'
+                    selectedIndex={this.state.selectedIndex}
+                    onChange={this._onChange.bind(this)}
+                    style={{alignSelf:'stretch',margin:20}}
+                    onValueChange={this._onValueChange.bind(this)} />
+                   {this.renderOderStatusList(this.state.selectedIndex)}
 
+            </View>
+        )
+    }
+
+
+    renderOderStatusList(label){
+        return (
+            <View style={{alignSelf:'stretch',flex:1}}>
+            {this.renderGroupOrderListView()}
             </View>
         )
     }
