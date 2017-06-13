@@ -12,7 +12,7 @@ import {
 
  import HomeView from './HomeView';
  import GroupBuyCar from './GroupBuyCar';
- import MineView from './MineView';
+ import GroupOrderListView from './GroupOrderListView';
 
 
 export default class TabView extends Component
@@ -60,7 +60,7 @@ export default class TabView extends Component
                 </TabBarIOS.Item>
                 <TabBarIOS.Item
                     selected={this.state.selectedTab === 'tab3'}
-                    title="团长"
+                    title="我的"
                     icon={require('../images/me_icon@2x.png')}
                     selectedIcon={require('../images/me_icon_click@2x.png')}
                     onPress={() => this.setState({ selectedTab: 'tab3' })}>
@@ -77,7 +77,7 @@ export default class TabView extends Component
        }else if(tab == 'tab2'){
            return (<GroupBuyCar {...this.props}/>)
        } {
-          return (<MineView {...this.props}/>)
+          return (<GroupOrderListView {...this.props}/>)
        }
 
     }

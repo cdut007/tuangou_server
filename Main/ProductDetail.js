@@ -133,7 +133,7 @@ export default class ProductDetail extends Component {
         //     return <Loading loadingtext='正在加载商品...'/>
         // }
         //var htmlContent = goods.description||"";
-        console.log('received view ScrollView layout layoutHeight\n',this.state.toolsView.screenHeight);
+        console.log('received view ScrollView layout screenWidth\n',this.state.toolsView.screenWidth);
         return (
             <View style={styles.container}>
             <ScrollView
