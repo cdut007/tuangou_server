@@ -8,7 +8,6 @@ import {
     Platform,
     TouchableNativeFeedback,
     ScrollView,
-    TouchableHighlight,
 } from 'react-native';
 
 
@@ -23,6 +22,15 @@ export default class GroupOrderDetailView extends Component {
         this.state={
             goods:{description:''},
             title:title,
+            mainStyle:{
+                flex: 1,
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+                backgroundColor: '#ffffff',
+                screenWidth:600,
+                height:1000,
+                alignSelf:'stretch',
+            },
 
         }
     }
@@ -32,9 +40,18 @@ export default class GroupOrderDetailView extends Component {
      this.props.navigator.pop()
     }
 
+    onViewLayout(layoutEvent) {
+    var height = layoutEvent.nativeEvent.layout.height;
+    if (height<=0) {
+        return
+    }
+    this.state.mainStyle.height = height;
+    this.state.mainStyle.screenWidth = layoutEvent.nativeEvent.layout.width
+    this.setState({mainStyle:this.state.mainStyle});
+  }
     render() {
         return (
-            <View style={styles.container}>
+            <View style={styles.container } onLayout={this.onViewLayout.bind(this)}>
                 <NavBar title={this.state.title}
                 leftIcon={require('../images/back@2x.png')}
                 leftPress={this.clickBack.bind(this)}/>
@@ -52,7 +69,7 @@ export default class GroupOrderDetailView extends Component {
         return(<ScrollView
             keyboardDismissMode='on-drag'
             keyboardShouldPersistTaps={false}
-            style={[styles.mainStyle,{height:height-220}]}>
+            style={[this.state.mainStyle]}>
             {this.renderProductCategoryView()}
             </ScrollView>)
     }
@@ -132,7 +149,7 @@ export default class GroupOrderDetailView extends Component {
 
     renderCategorysView(prouductItems) {
         const w = width , h = 110
-
+        var width = this.state.mainStyle.screenWidth;
         let renderSwipeView = (types, n) => {
             return (
                 <View style={styles.toolsView}>
@@ -145,7 +162,7 @@ export default class GroupOrderDetailView extends Component {
                             )
                             return (
 
-                                    <TouchableHighlight style={{ width: w, height: h }} key={i} onPress={() => { this.onItemClick(prouductItems) }}>{render}</TouchableHighlight>
+                                    <TouchableOpacity style={{ width: w, height: h }} key={i} onPress={() => { this.onItemClick(prouductItems) }}>{render}</TouchableOpacity>
 
                             )
                         })
