@@ -14,7 +14,7 @@ import {
 // import ProductCatagoryListViewTab from './ProductCatagoryListViewTab'
  import ProductDetail from './ProductDetail'
  import CircleImage from '../common/CircleImage';
-
+ import HttpRequest from '../common/HttpRequest/HttpRequest'
 
 export default class HomeView extends Component {
     constructor(props) {
@@ -31,15 +31,40 @@ export default class HomeView extends Component {
                 screenWidth:600,
             },
 
-
+            goodsList:[],
         }
     }
 
-    onAnnounceNow() {
-        // this.props.navigator.push({
-        //     component: NotifyNowView,
-        //
-        // })
+    componentWillMount(){
+    this.fetchProductList();
+    }
+
+    onProudctListSuccess(response){
+        this.state.goodsList = response.data;
+        this.setState({goodsList:this.state.goodsList});
+    }
+
+    fetchProductList(){
+        var paramBody ={ }
+        HttpRequest.get('/home_page_list', paramBody, this.onProudctListSuccess.bind(this),
+            (e) => {
+
+                try {
+                    var errorInfo = JSON.parse(e);
+                    console.log(errorInfo.description)
+                    if (errorInfo != null && errorInfo.description) {
+                        console.log(errorInfo.description)
+                    } else {
+                        console.log(e)
+                    }
+                }
+                catch(err)
+                {
+                    console.log(err)
+                }
+
+                console.log(' error:' + e)
+            })
     }
 
     onViewLayout(layoutEvent) {
@@ -152,46 +177,37 @@ export default class HomeView extends Component {
     }
 
     renderProductCategoryView() {
-         var categoryDataAry = [];
-         var displayCategoryAry = [];
 
-         var toolsData = [
-             {
-                 'index': 0,
-                 'title': '稍后通知',
-                 'image': {uri:'http://img1.juimg.com/141110/330464-1411100SS535.jpg'}
-             },
-             {
-                 'index': 1,
-                 'title': '通知成功',
-                 'image': {uri:'http://www.lyqixuantang.com/upload/image/20151202/1449045717253254.jpg'}
-             },
-             {
-                 'index': 2,
-                 'title': '再次通知',
-                 'image': {uri:'http://images.meishij.net/p/20120905/d3c961321d94bcfa08b33fc99b754874.jpg'}
-             },
-             {
-                 'index': 3,
-                 'title': '拍照寄存',
-                 'image': {uri:'http://img.shelive.net/201608/ba70006454058984a1a.jpg'}
-             },
-             {
-                 'index': 4,
-                 'title': '发送失败',
-                 'image': {uri:'http://photocdn.sohu.com/20151019/mp36482548_1445239748270_2_th_fv23.jpeg'}
-             },
-             {
-                 'index': 5,
-                 'title': '更多精选',
-                 'image': {uri:'http://image82.360doc.com/DownloadImg/2015/02/2022/50345829_1.jpg'},
-                 'tag': 'scan_more'
-             }
-         ]
+        var categoryDataAry = [];
+        var displayCategoryAry = [];
 
-          categoryDataAry.push({id:'meat',name:'品质水果','image': require('../images/fruit_type@2x.png'),prouductItems:toolsData,countdown:'48:38:29'},);
-          categoryDataAry.push({id:'meat',name:'绿色生鲜','image': require('../images/fresh_type@2x.png'),prouductItems:toolsData,countdown:'48:38:29'},);
-          categoryDataAry.push({id:'meat',name:'有机蔬菜','image': require('../images/vegetable_type@2x.png'),prouductItems:toolsData,countdown:'48:38:29'},);
+           for (var i = 0; i < this.state.goodsList.length; i++) {
+               var goods = this.state.goodsList[i].goods
+               var classify = this.state.goodsList[i].classify
+               var goodsMaxLengh = goods.length > 6 ? 6: goods.length;
+               var toolsData = [];
+               for (var i = 0; i < goodsMaxLengh; i++) {
+                   var product = goods[i]
+                   if (i == goodsMaxLengh -1 ) {
+                       toolsData.push({
+                           'index': product.goods_id,
+                           'image': {uri:product.image},
+                            'title':'申请拼团',
+                           'tag': 'scan_more'
+                       });
+                   }else{
+                       toolsData.push({
+                           'index': product.goods_id,
+                           'image': {uri:product.image},
+                       });
+                   }
+               }
+               console.log(goodsMaxLengh+ ' toolsData max length === '+toolsData.length+";type name"+ classify.name);
+
+               categoryDataAry.push({id:classify.id,name:classify.name,image:{uri:classify.icon} ,prouductItems:toolsData,countdown:'48:38:29'},);
+
+           }
+
 
             for (var i = 0; i<categoryDataAry.length; i++) {
                 displayCategoryAry.push(
@@ -207,7 +223,7 @@ export default class HomeView extends Component {
                             </View>
                         {this.renderCategorysView(categoryDataAry[i].prouductItems)}
                         <View style = {{flex:1,justifyContent:'flex-end',alignItems: 'flex-end',marginRight:5}}>
-                        <View onPress={this.onAnnounceNow.bind(this)}
+                        <View
                             style={styles.countdownContainer}>
                             <Text style={styles.countdownText} >
                                 截团倒计时{categoryDataAry[i].countdown}
@@ -218,9 +234,11 @@ export default class HomeView extends Component {
                         </View>
             );
             }
-            displayCategoryAry.push(<View style={{color:'#686868',backgroundColor:'#f2f2f2',height:54,flex:1,justifyContent:'center',alignItems:'center'}}>
-                <Text style={{fontSize:12,color:'#686868',backgroundColor:'#f2f2f2',textAlign:'center',justifyContent:'center',alignItems:'center'}}>拉不动了...</Text>
-            </View>);
+            if (categoryDataAry.length>3) {
+                displayCategoryAry.push(<View style={{color:'#686868',backgroundColor:'#f2f2f2',height:54,flex:1,justifyContent:'center',alignItems:'center'}}>
+                    <Text style={{fontSize:12,color:'#686868',backgroundColor:'#f2f2f2',textAlign:'center',justifyContent:'center',alignItems:'center'}}>拉不动了...</Text>
+                </View>);
+            }
             return displayCategoryAry;
     }
 
