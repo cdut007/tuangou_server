@@ -40,6 +40,7 @@ export default class HomeView extends Component {
     }
 
     onProudctListSuccess(response){
+        console.log(' onProudctListSuccess:' + JSON.stringify(response))
         this.state.goodsList = response.data;
         this.setState({goodsList:this.state.goodsList});
     }
