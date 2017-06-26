@@ -189,6 +189,16 @@ export default class GroupBuyCar extends Component {
             return displayCategoryAry;
     }
 
+
+    onNumberAdd(item) {
+
+    }
+
+    onNumberMinus(item) {
+
+    }
+
+
     renderItemInfo(item,w,h){
         if (item.tag!='total_count') {
             return(<View style={{resizeMode:'contain', alignItems:'center',width: w, height: h,
@@ -213,7 +223,21 @@ export default class GroupBuyCar extends Component {
                 <Text style={{marginLeft:30,alignItems:'center',justifyContent:'center',fontSize: 12, color: "#757575",}}>每个约350g</Text>
                 <View style={{alignItems:'center',flexDirection:'row',marginLeft:30,paddingBottom:10,position:'absolute',left:0,right:0,bottom:0}}>
                 <Text style={{alignItems:'center',justifyContent:'center',fontSize: 16, color: "#fb7210",}}>S$ 8.00</Text>
-                <Text style={{alignItems:'center',textAlign:'right',flex:9,justifyContent:'center',fontSize: 12, color: "#757575",}}>库存 230</Text>
+                <View style={{alignItems:'flex-end',textAlign:'right',flex:6,justifyContent:'flex-end',fontSize: 12, color: "#757575",}}>
+
+                        <View style={{ height: 30, borderWidth: 0.5, borderColor: 'b3b3b3', borderRadius: 2, flexDirection: 'row', alignItems: 'center' }}>
+                        <TouchableOpacity onPress={this.onNumberAdd.bind(this, item)}
+                            style={{ width: 30, height: 30, alignItems: 'center', justifyContent: 'center' }}>
+                            <Text style={{ color: '#b3b3b3', }}>-</Text>
+                        </TouchableOpacity>
+                        <Text style={{ color: '#757575', alignItems: 'center', justifyContent: 'center',flex: 1, textAlign: 'center' }}>22</Text>
+                        <TouchableOpacity onPress={this.onNumberMinus.bind(this, item)}
+                            style={{ width: 30, height: 30, alignItems: 'center', justifyContent: 'center' }}>
+                            <Text style={{ color: '#b3b3b3' }}>+</Text>
+                        </TouchableOpacity>
+                        </View>
+
+                </View>
                 </View>
                 </View>
 
