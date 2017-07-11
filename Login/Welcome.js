@@ -61,11 +61,11 @@ export default class Welcome extends Component
     onUserInfoSucc(response){
         Global.wxUserInfo = response.data.user_profile;
 
-                AsyncStorage.setItem('k_login_info', JSON.stringify(Global.wxUserInfo), (error, result) => {
-                    if (error) {
-                        console.log('save k_login_info faild.')
-                    }
-                })
+                AsyncStorage.setItem('k_login_info', JSON.stringify(Global.wxUserInfo)).then(function(){
+                    console.log('save k_login_info succ.')
+                }.bind(this)).catch(function(error){
+                    console.log('save k_login_info faild.' + error.message)
+                }.bind(this));
 
         this.props.navigator.resetTo({
                     component: TabView,

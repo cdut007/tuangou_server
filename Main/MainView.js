@@ -38,6 +38,20 @@ export default class MainView extends Component {
     getHasLogin()
     {
         var me = this
+
+        AsyncStorage.getItem('k_login_info').then(function(result){
+              if (result !== null){
+                  Global.wxUserInfo = JSON.parse(result)
+                  console.log('get k_wx_user_info:' + result)
+              } else {
+                   console.log('get k_login_info null:')
+                me.setState({hasLogin: false})
+              }
+            }.bind(this)).catch(function(error){
+                 console.log('get k_wx_user_info:error' +  error.message)
+                //this._appendMessage('AsyncStorage error: ' + error.message);
+            }.bind(this));
+
         AsyncStorage.getItem('k_http_token').then(function(result){
               if (result !== null){
                   me.setState({hasLogin: true})
@@ -54,18 +68,7 @@ export default class MainView extends Component {
 
 
 
-        AsyncStorage.getItem('k_login_info').then(function(result){
-              if (result !== null){
-                  Global.wxUserInfo = JSON.parse(result)
-                  console.log('get k_wx_user_info:' + result)
-              } else {
-                   console.log('get k_login_info null:')
-                me.setState({hasLogin: false})
-              }
-            }.bind(this)).catch(function(error){
-                 console.log('get k_wx_user_info:error' +  error.message)
-                //this._appendMessage('AsyncStorage error: ' + error.message);
-            }.bind(this));
+
 
 
 

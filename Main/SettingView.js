@@ -31,6 +31,11 @@ export default class SettingView extends Component {
 
         //logout here
         Global.UserInfo = null;
+        AsyncStorage.removeItem('k_http_token').then((value) => {
+
+        }
+        ).done();
+
             AsyncStorage.removeItem('k_login_info').then((value) => {
 
             }
