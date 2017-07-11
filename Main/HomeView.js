@@ -117,6 +117,10 @@ export default class HomeView extends Component {
      }
 
     renderTopView() {
+        var nickname = 'unkonwn'
+        if (Global.wxUserInfo && Global.wxUserInfo.nickname != null) {
+            nickname = Global.wxUserInfo.nickname
+        }
 
 
         return (
@@ -140,7 +144,7 @@ export default class HomeView extends Component {
                 </View>
 
               <View style={styles.centerLayout}>
-                  <Text style={styles.defaultText}>{Global.wxUserInfo.nickname}</Text>
+                  <Text style={styles.defaultText}>{nickname}</Text>
               </View>
             </View>
 
@@ -150,7 +154,7 @@ export default class HomeView extends Component {
     }
 
     _displayIcon() {
-    if (Global.wxUserInfo.headimgurl != null) {
+    if (Global.wxUserInfo && Global.wxUserInfo.headimgurl != null) {
             return {uri: Global.wxUserInfo.headimgurl};
         } else {
                 return require('../images/default_head@2x.png');

@@ -10,19 +10,17 @@ get(apiName, body,successCallback, failCallback)
     if(!httpToken)
     {
         httpToken = Global.token;
-        AsyncStorage.getItem('k_http_token',function(errs,result)
-        {
-            if (!errs)
-            {
-                alert('http token=='+httpToken)
-                httpToken = result
-                console.log('httpToken = '+httpToken)
-            }
-            else
-            {
+        AsyncStorage.getItem('k_http_token').then(function(result){
+              if (result !== null){
+                 httpToken = result
+                 console.log('httpToken = '+httpToken)
+              } else {
                 console.log('get http token error:' + errs)
-            }
-        });
+              }
+            }.bind(this)).catch(function(error){
+                //this._appendMessage('AsyncStorage error: ' + error.message);
+            }.bind(this));
+
 
 
 
@@ -73,7 +71,7 @@ get(apiName, body,successCallback, failCallback)
       if (httpToken && httpToken.length) {
           req.setRequestHeader("Authorization", httpToken);
       }
-      
+
       req.send()
 
     // fetch(url, {
@@ -106,18 +104,16 @@ post(apiName, body,successCallback, failCallback)
     {
         httpToken = Global.token;
 
-        AsyncStorage.getItem('k_http_token',function(errs,result)
-        {
-            if (!errs)
-            {
-                httpToken = result
-                console.log('httpToken = '+httpToken)
-            }
-            else
-            {
+        AsyncStorage.getItem('k_http_token').then(function(result){
+              if (result !== null){
+                 httpToken = result
+                 console.log('httpToken = '+httpToken)
+              } else {
                 console.log('get http token error:' + errs)
-            }
-        });
+              }
+            }.bind(this)).catch(function(error){
+                //this._appendMessage('AsyncStorage error: ' + error.message);
+            }.bind(this));
     }
 
     var url = apiAddr + apiName

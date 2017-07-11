@@ -34,8 +34,10 @@ export default class Welcome extends Component
                 this.getUserInfoByCode(code)
            }
 
-        //    Global.token = 'dsdssds';  for test
-        //            this.getUserInfo();
+            //     var response = new Object();
+            //     response.data = new Object();
+            //     response.data.token = 'sasdadas';
+            //    this.onUserSuccess(response);
       }
 
     }
@@ -44,11 +46,11 @@ export default class Welcome extends Component
         console.log(' onUserSuccess:' + JSON.stringify(response))
         Global.token = response.data.token;
 
-                AsyncStorage.setItem('k_http_token', Global.token, (error, result) => {
-                    if (error) {
-                        console.log('save k_http_token faild.')
-                    }
-                })
+                AsyncStorage.setItem('k_http_token', Global.token).then(function(){
+                    console.log('save k_http_token succ.')
+                }.bind(this)).catch(function(error){
+                    console.log('save k_http_token faild.' + error.message)
+    }.bind(this));
 
         this.getUserInfo();
 
