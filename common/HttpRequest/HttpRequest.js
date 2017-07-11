@@ -1,20 +1,20 @@
 import { AsyncStorage } from 'react-native';
 
-const apiAddr = 'http://47.88.139.113:3000/api/v1'
-var httpToken = ''
+const apiAddr = 'http://www.ailinkgo.com:3000/api/v1'
+var httpToken = null
 var Global = require('../globals');
 var fetch = require('ReactJsonp');
 module.exports = {
 get(apiName, body,successCallback, failCallback)
 {
-    if(httpToken && !httpToken.length)
+    if(!httpToken)
     {
         httpToken = Global.token;
-
         AsyncStorage.getItem('k_http_token',function(errs,result)
         {
             if (!errs)
             {
+                alert('http token=='+httpToken)
                 httpToken = result
                 console.log('httpToken = '+httpToken)
             }
@@ -45,22 +45,35 @@ get(apiName, body,successCallback, failCallback)
     console.log('Get requesr:' + url)
 
     const req = new XMLHttpRequest()
-      req.onload = function () {
-          var response = JSON.parse(req.response);
-        console.log('result:' + req.response)
 
-            if (response.message =='success') {
-                successCallback(response);
-            }else{
-                failCallback(responseText)
-            }
+
+      req.onload = function () {
+        try{
+
+            var response = JSON.parse(req.response);
+          console.log('result:' + req.response)
+
+              if (response.message =='Success' || response.message =='success' ) {
+                  successCallback(response);
+              }else{
+                  failCallback(req.response)
+              }
+        }catch(error){
+            failCallback(error)
+        }
       }
+
       req.ontimeout = function(e) {  console.log('result ontimeout') };
       req.onerror = function(e) {  console.log('result onerror'+e)
-      failCallback(responseText)
-  };
+      failCallback(e)
+        };
       req.timeout = 5000;
       req.open('GET', url,true)
+
+      if (httpToken && httpToken.length) {
+          req.setRequestHeader("Authorization", httpToken);
+      }
+      
       req.send()
 
     // fetch(url, {

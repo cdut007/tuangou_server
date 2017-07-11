@@ -15,6 +15,7 @@ import {
  import ProductDetail from './ProductDetail'
  import CircleImage from '../common/CircleImage';
  import HttpRequest from '../common/HttpRequest/HttpRequest'
+ var Global = require('../common/globals');
 
 export default class HomeView extends Component {
     constructor(props) {
@@ -139,7 +140,7 @@ export default class HomeView extends Component {
                 </View>
 
               <View style={styles.centerLayout}>
-                  <Text style={styles.defaultText}>Lisa团长高优良品购</Text>
+                  <Text style={styles.defaultText}>{Global.wxUserInfo.nickname}</Text>
               </View>
             </View>
 
@@ -149,7 +150,11 @@ export default class HomeView extends Component {
     }
 
     _displayIcon() {
-        return require('../images/default_head@2x.png');
+    if (Global.wxUserInfo.headimgurl != null) {
+            return {uri: Global.wxUserInfo.headimgurl};
+        } else {
+                return require('../images/default_head@2x.png');
+            }
         }
 
     onItemClick(prouduct){

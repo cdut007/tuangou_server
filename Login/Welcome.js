@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-//import HttpRequest from '../HttpRequest/HttpRequest'
+import HttpRequest from '../common/HttpRequest/HttpRequest'
 import {
     StyleSheet,
     View,
@@ -10,10 +10,11 @@ import {
 } from 'react-native';
 import TabView from '../Main/TabView';
 //import Dimensions from '../utils/Dimensions';
-//import * as WeChat from 'react-native-wechat';
-
+import Linking from '../common/Linking';
 var width = 600;//Dimensions.get('window').width;
 var index;
+var Global = require('../common/globals');
+
 export default class Welcome extends Component
 {
     constructor(props)
@@ -22,7 +23,119 @@ export default class Welcome extends Component
         index = this.props.index;
     }
 
+    componentWillMount(){
+     var url = window.location.href;
+      var pos = url.indexOf("?");
+      if (pos!= -1) {
+          var str = url.substr(pos+1);
+          var code = this.getQueryString('code',str);
+           console.log('url code='+code);
+           if (code) {
+                this.getUserInfoByCode(code)
+           }
 
+        //    Global.token = 'dsdssds';  for test
+        //            this.getUserInfo();
+      }
+
+    }
+
+    onUserSuccess(response){
+        console.log(' onUserSuccess:' + JSON.stringify(response))
+        Global.token = response.data.token;
+
+                AsyncStorage.setItem('k_http_token', Global.token, (error, result) => {
+                    if (error) {
+                        console.log('save k_http_token faild.')
+                    }
+                })
+
+        this.getUserInfo();
+
+
+
+    }
+
+    onUserInfoSucc(response){
+        Global.wxUserInfo = response.data.user_profile;
+
+                AsyncStorage.setItem('k_login_info', JSON.stringify(Global.wxUserInfo), (error, result) => {
+                    if (error) {
+                        console.log('save k_login_info faild.')
+                    }
+                })
+
+        this.props.navigator.resetTo({
+                    component: TabView,
+                    name: 'MainPage'
+                })
+    }
+
+    getUserInfo(){
+         var paramBody ={ }
+
+         HttpRequest.get('/user', paramBody, this.onUserInfoSucc.bind(this),
+             (e) => {
+
+                 try {
+                      alert('qqewwww'+e)
+                     var errorInfo = JSON.parse(e);
+                     console.log(errorInfo.description)
+                     if (errorInfo != null && errorInfo.description) {
+                         console.log(errorInfo.description)
+                     } else {
+                         console.log(e)
+                     }
+                 }
+                 catch(err)
+                 {
+                     alert('qqewwww111'+err)
+                     console.log(err)
+                 }
+
+                 console.log(' error:' + e)
+             })
+    }
+
+    getUserInfoByCode(code){
+         var paramBody ={code:code}
+
+         HttpRequest.get('/web_user', paramBody, this.onUserSuccess.bind(this),
+             (e) => {
+                 try {
+                         alert('ewwww'+e)
+                     var errorInfo = JSON.parse(e);
+                     console.log(errorInfo.description)
+                     if (errorInfo != null && errorInfo.description) {
+                         console.log(errorInfo.description)
+                     } else {
+                         console.log(e)
+                     }
+                 }
+                 catch(err)
+                 { alert('ewwww111'+err)
+                     console.log(err)
+                 }
+
+                 console.log(' error:' + e)
+             })
+    }
+
+
+
+    getQueryString(name,url) {
+    if (!url) {
+            return null
+        }
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i"); // 匹配目标参数
+    var result = url.match(reg);  // 对querystring匹配目标参数
+     console.log('url result='+url);
+    if (result != null) {
+        return decodeURIComponent(result[2]);
+    } else {
+        return null;
+    }
+}
 
     onLoginPress()
     {
@@ -30,19 +143,22 @@ export default class Welcome extends Component
         //     console.log('log result='+res);
         // })
 
-        this.props.navigator.resetTo({
-            component: TabView,
-            name: 'MainPage'
-        })
+         console.log('log pathnames='+window.location.href);
+
+        var url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx9747b8e0e756d85f&redirect_uri=http%3A%2F%2Fwww.ailinkgo.com&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect';
+        Linking.canOpenURL(url).then(supported => {
+             return Linking.openURL(url);
+           });
     }
 
     onRegiserPress()
     {
-       
+
     }
 
     render()
     {
+
         return (
             <View style = {styles.rootcontainer}>
            <Image style={{resizeMode:'contain', alignItems:'center',
@@ -57,7 +173,6 @@ export default class Welcome extends Component
             flex:1}} >
             用 心 为 您 精 挑 细 选
             </Text>
-
 
             <TouchableOpacity onPress={this.onLoginPress.bind(this)}
                 style={styles.loginButton}>

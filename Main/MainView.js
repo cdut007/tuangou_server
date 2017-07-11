@@ -16,7 +16,7 @@ import {
 import WelcomeView from '../Login/Welcome'
 //import * as WeChat from 'react-native-wechat';
 
-//var Global = require('../common/globals');
+var Global = require('../common/globals');
 
 export default class MainView extends Component {
 
@@ -43,7 +43,7 @@ export default class MainView extends Component {
             if (!errs && result && result.length)
             {
                 me.setState({hasLogin: true})
-              //  Global.token = result;
+                Global.token = result;
             }
             else
             {
@@ -56,8 +56,8 @@ export default class MainView extends Component {
         {
             if (!errs && result && result.length)
             {
-                Global.id = JSON.parse(result).id;
-                console.log('local user id:' + Global.id)
+                Global.wxUserInfo = JSON.parse(result)
+                console.log('get k_wx_user_info:' + result)
             }
             else
             {
