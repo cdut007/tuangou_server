@@ -36,7 +36,7 @@ export default class GroupOrderListView extends Component {
                 height:1000,
                 alignSelf:'stretch',
             },
-             values: ['进行中', '已完成',],
+             values: ['拼团中', '已完成',],
              selectedIndex:0,
 
         }

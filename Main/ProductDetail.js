@@ -8,14 +8,15 @@ import {
     TouchableNativeFeedback,
     ScrollView,
     TouchableOpacity,
+    AsyncStorage,
 } from 'react-native';
 
-
-
+var hasGotGbDetail = false
+import HttpRequest from '../common/HttpRequest/HttpRequest'
 import NavBar from '../common/NavBar'
 import CommitButton from '../common/CommitButton'
 import GroupBuyCar from './GroupBuyCar'
-
+var Global = require('../common/globals');
 
 
 export default class ProductDetail extends Component {
@@ -30,8 +31,10 @@ export default class ProductDetail extends Component {
                 screenWidth:600,
                 screenHeight:1000,
             },
-            goods:{description:'',image:'http://images.meishij.net/p/20120905/d3c961321d94bcfa08b33fc99b754874.jpg'}
-        }
+            goods: { goods: { images: [{ image: '' }] } },//defualt image later
+            gbDetail: { classify: { name: '', icon: '' }, group_buy_goods: [] }
+
+            }
     }
 
 
@@ -40,55 +43,70 @@ export default class ProductDetail extends Component {
     }
 
 
-    renderProductView() {
-         var categoryDataAry = [];
-         var displayCategoryAry = [];
-
-          categoryDataAry.push({id:'meat',name:'品质水果',prouductItems:toolsData,countdown:'201123232'},);
-
-            for (var i = 0; i<categoryDataAry.length; i++) {
-                displayCategoryAry.push(
-                        <View style={{margin:5}}>
-                        <View style = {styles.brandLabelContainer}>
-                            {/* <Image style={{resizeMode:'contain', alignItems:'center',
-                  justifyContent:'center'}} source={require('../images/login_wechat.png')}/> */}
-                            <Text style={{fontSize:16,color:'#1b1b1b'}}>
-                                {categoryDataAry[i].name}
-                            </Text>
-                            </View>
-                        {this.renderCategorysView(categoryDataAry[i].prouductItems)}
-                        <View style = {{flex:1,justifyContent:'flex-end',alignItems: 'flex-end',marginRight:5}}>
-
-                        </View>
-                        </View>
-            );
-            }
-            return displayCategoryAry;
-    }
 
 
 
 
     componentDidMount() {
-        // var prouduct = this.props.prouduct;
-        // this.setState({
-        //   goods: prouduct,
-        // });
-        this._fetchGoods(12);
+        var prouduct = this.props.prouduct;
+        hasGotGbDetail = false
+
+    this.setState({
+        goods: { goods: { images: [{ image: prouduct.image.uri }] } }
+    });
+        this._fetchGoods(prouduct.index);
     }
+
+    onGroupBuyDetailSuccess(response) {
+         hasGotGbDetail = true
+         this.setState({
+             gbDetail: response.data
+         })
+     }
+
+    onProudctDetailSuccess(response) {
+      this.setState({ goods: response.data })
+
+      var paramBody = {group_buy: response.data.group_buy}
+      HttpRequest.get('/group_buy_detail' ,paramBody, this.onGroupBuyDetailSuccess.bind(this),
+          (e) => {
+              try {
+                  var errorInfo = JSON.parse(e);
+                  console.log(errorInfo.description)
+                  if (errorInfo != null && errorInfo.description) {
+                      console.log(errorInfo.description)
+                  } else {
+                      console.log(e)
+                  }
+              }
+              catch (err) {
+                  console.log(err)
+              }
+
+              console.log(' error:' + e)
+          })
+  }
 
     _fetchGoods(spec_id) {
 
-    var thiz = this;
-    // Util.post(API.GOODSDETAIL,{'spec_id':spec_id},function (ret){
-    //   if(ret.code==0){
-    //     thiz.setState({
-    //       goods: ret.data,
-    //     });
-    //   }else{
-    //     alert(ret.msg);
-    //   }
-    // });
+        var paramBody = {}
+                HttpRequest.get('/goods_detail/' + spec_id, paramBody, this.onProudctDetailSuccess.bind(this),
+                    (e) => {
+                        try {
+                            var errorInfo = JSON.parse(e);
+                            console.log(errorInfo.description)
+                            if (errorInfo != null && errorInfo.description) {
+                                console.log(errorInfo.description)
+                            } else {
+                                console.log(e)
+                            }
+                        }
+                        catch (err) {
+                            console.log(err)
+                        }
+
+                        console.log(' error:' + e)
+                    })
     }
 
     clickBack() {
@@ -118,6 +136,23 @@ export default class ProductDetail extends Component {
     }
 
     startGroupBuy(){
+
+
+        if(!hasGotGbDetail)
+       {
+           return
+       }
+
+       AsyncStorage.setItem('k_cur_gbdetail', JSON.stringify(this.state.gbDetail)).then(function(){
+                   console.log('save k_cur_gbdetail succ.')
+               }.bind(this)).catch(function(error){
+                 console.log('save k_cur_gbdetail faild.')
+        }.bind(this));
+
+
+       Global.gbDetail = this.state.gbDetail
+
+
         this.props.navigator.push({
            component: GroupBuyCar,
             props: {
@@ -128,8 +163,8 @@ export default class ProductDetail extends Component {
 
     renderProductDetailView() {
         var goods = this.state.goods;
-        var goodsRecommendItems=[{image:{uri:'http://img.shelive.net/201608/ba70006454058984a1a.jpg'}},{image:{uri:'http://img.shelive.net/201608/ba70006454058984a1a.jpg'}},{image:{uri:'http://img.shelive.net/201608/ba70006454058984a1a.jpg'}}]
-        // if(!goods){
+        var goodsRecommendItems= this.state.gbDetail.group_buy_goods;
+            // if(!goods){
         //     return <Loading loadingtext='正在加载商品...'/>
         // }
         //var htmlContent = goods.description||"";
@@ -146,17 +181,17 @@ export default class ProductDetail extends Component {
                 <View style={{alignSelf:'stretch'}}>
                     <Image
                         style={{height:375}}
-                        source={{uri: goods.image}}
+                        source={{uri: goods.goods.images[0].image}}
                         />
-                    <Text style={{flex:1,color:'#1c1c1c',fontSize:18,margin:10}}>山东烟台大樱桃新鲜水果 露天车厘子美早红灯黑珍珠，纯天然绿色无污染</Text>
+                    <Text style={{flex:1,color:'#1c1c1c',fontSize:18,margin:10}}>{goods.goods.name}</Text>
                     <View style={{alignItems:'center',flexDirection:'row',
                     justifyContent:'flex-start',margin:10,
                     flex:1}}>
-                    <Text style={{alignItems:'center', textAlign: 'left', justifyContent:'flex-start',numberOfLines:1,color:'#e31515',fontSize:20,}}>S$ 20</Text>
+                    <Text style={{alignItems:'center', textAlign: 'left', justifyContent:'flex-start',numberOfLines:1,color:'#e31515',fontSize:20,}}>S$ {goods.price}</Text>
                     <Text style={{alignItems:'center',marginLeft:10,flex:7,
-                    justifyContent:'center',numberOfLines:1,color:'#757575',fontSize:12}}>3斤装／件</Text>
+                    justifyContent:'center',numberOfLines:1,color:'#757575',fontSize:12}}>{goods.brief_dec}</Text>
                     <Text style={{alignItems:'center',marginLeft:10,flex:2,
-                    justifyContent:'flex-end',numberOfLines:1,color:'#757575',fontSize:12}}>库存 230</Text>
+                    justifyContent:'flex-end',numberOfLines:1,color:'#757575',fontSize:12}}>库存 {goods.stock}</Text>
                     </View>
 
 
@@ -166,24 +201,23 @@ export default class ProductDetail extends Component {
                         alignItems: 'center',
                         margin:10,
                     }}>
-                        <Image style={{resizeMode:'contain', marginRight:5,alignItems:'center',
-              justifyContent:'center'}} source={require('../images/fruit_type@2x.png')}/>
+                        <Image style={{resizeMode:'contain', marginRight:5,alignItems:'center',width:32,height:32,
+              justifyContent:'center'}} source={{ uri: this.state.gbDetail.classify.icon }}/>
                         <Text style={{fontSize:16,color:'#1b1b1b'}}>
-                            品质水果
+                            {this.state.gbDetail.classify.name}
                         </Text>
                         </View>
-                        {this.renderCategorysView(goodsRecommendItems)}
+                        {/* {this.renderCategorysView(goodsRecommendItems)} */}
                         <View style={{backgroundColor:'#f2f2f2',height:10,flex:1,}}>
                         </View>
 
-                        <Text style={{fontSize:18,color:'#757575',textAlign:'center',marginTop:20}}>
+                        <Text style={{fontSize:18,color:'#757575',textAlign:'left',marginTop:20}}>
                             商品详情
                         </Text>
 
                         <Text style={{fontSize:16,color:'#1b1b1b',textAlign:'left',margin:10}}>
-                            山东烟台大樱桃新鲜水果 露天车厘子美早红灯黑珍珠，纯天然绿色无污染.山东烟台大樱桃新鲜水果 露天车厘子美早红灯黑珍珠，纯天然绿色无污染
-                            山东烟台大樱桃新鲜水果 露天车厘子美早红灯黑珍珠，纯天然绿色无污染.山东烟台大樱桃新鲜水果 露天车厘子美早红灯黑珍珠，纯天然绿色无污染
-                        </Text>
+                                {this.state.gbDetail.classify.desc}
+                                </Text>
 
                     {/* <HTMLView
                         value={htmlContent}
@@ -192,7 +226,7 @@ export default class ProductDetail extends Component {
                 </View>
             </ScrollView>
 
-            <View style={{position: 'absolute', left: 0, right: 0, bottom: 0}}><CommitButton title={'申请拼团'} onPress = {this.startGroupBuy.bind(this)}></CommitButton></View>
+            <View style={{position: 'absolute', left: 0, right: 0, bottom: 0}}><CommitButton title={'开始拼团'} onPress = {this.startGroupBuy.bind(this)}></CommitButton></View>
             </View>
         );
     }
@@ -211,7 +245,10 @@ export default class ProductDetail extends Component {
 
                                     <Image style={{resizeMode:'contain', alignItems:'center',width: w-2, height: h,
                                     justifyContent:'center',margin:2,
-                                    flex:1}} source={item.image}/>
+                                    flex:1}} source={{uri: item.goods.images[0].image}}/>
+                                    <Text style={{ fontSize: 12, color: '#1b1b1b', textAlign: 'center', numberOfLines: 2, margin: 10 }}>{item.goods.name}</Text>
+                                    <Text style={{ textAlign: 'center', numberOfLines: 1, color: '#e31515', fontSize: 12}}>S$ {item.price}</Text>
+
                                 </View>
                             )
                             return (

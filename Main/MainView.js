@@ -33,6 +33,31 @@ export default class MainView extends Component {
 
     componentDidMount(){
        // WeChat.registerApp('your wechat appid')
+       var url = window.location.href;
+        var pos = url.indexOf("?");
+        if (pos!= -1) {
+            var str = url.substr(pos+1);
+            var agent_code = this.getQueryString('agent_code',str);
+             console.log('url agent_code='+agent_code);
+             agent_code = 'oANa5v4DA46AKU8iyA303UJBLYmo';//for test.
+             if (agent_code) {
+                 Global.agent_code = agent_code;
+             }
+        }
+    }
+
+    getQueryString(name,url) {
+    if (!url) {
+            return null
+        }
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i"); // 匹配目标参数
+    var result = url.match(reg);  // 对querystring匹配目标参数
+     console.log('url result='+url);
+    if (result != null) {
+        return decodeURIComponent(result[2]);
+    } else {
+        return null;
+    }
     }
 
     getHasLogin()
@@ -82,7 +107,7 @@ export default class MainView extends Component {
             return(<View/>)
         }
 
-        if (this.state.hasLogin)
+        if (!this.state.hasLogin)
         {
 
             return (

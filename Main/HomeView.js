@@ -47,8 +47,8 @@ export default class HomeView extends Component {
     }
 
     fetchProductList(){
-        var paramBody ={ }
-        HttpRequest.get('/home_page_list', paramBody, this.onProudctListSuccess.bind(this),
+        var paramBody ={agent_code:Global.agent_code }
+        HttpRequest.get('/agent_home_page_list', paramBody, this.onProudctListSuccess.bind(this),
             (e) => {
 
                 try {
@@ -83,7 +83,7 @@ export default class HomeView extends Component {
         console.log('received view layout layoutHeight\n', this.state.scrollContainerStyle.height);
         return (
             <View style={styles.container}  onLayout={this.onViewLayout.bind(this)}>
-                <NavBar title="爱邻购" />
+                {/* <NavBar title="爱邻购" /> */}
                 <View
                 style={this.state.scrollContainerStyle}>
                 <ScrollView
@@ -202,7 +202,7 @@ export default class HomeView extends Component {
                        toolsData.push({
                            'index': product.goods_id,
                            'image': {uri:product.image},
-                            'title':'申请拼团',
+                            'title':'更多精选',
                            'tag': 'scan_more'
                        });
                    }else{
@@ -233,12 +233,12 @@ export default class HomeView extends Component {
                             </View>
                         {this.renderCategorysView(categoryDataAry[i].prouductItems)}
                         <View style = {{flex:1,justifyContent:'flex-end',alignItems: 'flex-end',marginRight:5}}>
-                        <View
+                        {/* <View
                             style={styles.countdownContainer}>
                             <Text style={styles.countdownText} >
                                 截团倒计时{categoryDataAry[i].countdown}
                             </Text>
-                        </View>
+                        </View> */}
                         </View>
                         </View>
                         </View>
