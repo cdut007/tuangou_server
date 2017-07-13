@@ -16,7 +16,7 @@ import {
  import CircleImage from '../common/CircleImage';
  import HttpRequest from '../common/HttpRequest/HttpRequest'
  var Global = require('../common/globals');
-
+import AddressView from './AddressView'
 export default class HomeView extends Component {
     constructor(props) {
         super(props)
@@ -37,6 +37,12 @@ export default class HomeView extends Component {
     }
 
     componentWillMount(){
+    //     this.props.navigator.push({
+    //        component: AddressView,
+    //         props: {
+       //
+    //            }
+    //    })
     this.fetchProductList();
     }
 
