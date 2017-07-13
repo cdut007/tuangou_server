@@ -128,7 +128,10 @@ export default class GroupBuyCar extends Component {
         for (var i = 0; i < categoryDataAry.length; i++) {
             categoryDataAry[i].group_buy_goods.map((item, n) => {
                 if (item.selected) {
-                    selectedPrice+= 3*7;
+                    if (!item.seletecedCount) {
+                        item.seletecedCount = 0 ;
+                    }
+                    selectedPrice+= item.price*item.seletecedCount;
                 }
             })
         }
@@ -164,6 +167,11 @@ export default class GroupBuyCar extends Component {
         if (!item) {
             return ({})
         }
+
+        if (!item.seletecedCount) {
+            item.seletecedCount = 0 ;
+        }
+
         return(<CheckBox
                     label=''
                     checkedImage={require('../images/choose_one_click@2x.png')}
@@ -210,11 +218,16 @@ export default class GroupBuyCar extends Component {
 
 
     onNumberAdd(item) {
-
+        item.seletecedCount+=1;
+        this.setState({ ...this.state })
     }
 
     onNumberMinus(item) {
-
+        item.seletecedCount=item.seletecedCount-1;
+        if (item.seletecedCount <0) {
+            item.seletecedCount = 0
+        }
+        this.setState({ ...this.state })
     }
 
 
@@ -245,12 +258,12 @@ export default class GroupBuyCar extends Component {
                 <View style={{alignItems:'flex-end',textAlign:'right',flex:6,justifyContent:'flex-end',fontSize: 12, color: "#757575",}}>
 
                         <View style={{ height: 30, borderWidth: 0.5, borderColor: 'b3b3b3', borderRadius: 2, flexDirection: 'row', alignItems: 'center' }}>
-                        <TouchableOpacity onPress={this.onNumberAdd.bind(this, item)}
+                        <TouchableOpacity onPress={this.onNumberMinus.bind(this, item)}
                             style={{ width: 30, height: 30, alignItems: 'center', justifyContent: 'center' }}>
                             <Text style={{ color: '#b3b3b3', }}>-</Text>
                         </TouchableOpacity>
-                        <Text style={{ color: '#757575', alignItems: 'center', justifyContent: 'center',flex: 1, textAlign: 'center' }}>22</Text>
-                        <TouchableOpacity onPress={this.onNumberMinus.bind(this, item)}
+                        <Text style={{ color: '#757575', alignItems: 'center', justifyContent: 'center',flex: 1, textAlign: 'center' }}>{item.seletecedCount}</Text>
+                        <TouchableOpacity onPress={this.onNumberAdd.bind(this, item)}
                             style={{ width: 30, height: 30, alignItems: 'center', justifyContent: 'center' }}>
                             <Text style={{ color: '#b3b3b3' }}>+</Text>
                         </TouchableOpacity>
