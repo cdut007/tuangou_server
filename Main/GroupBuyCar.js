@@ -17,6 +17,7 @@ import GroupBuyNowView from './GroupBuyNowView'
 import CommitButton from '../common/CommitButton'
 var Global = require('../common/globals');
 import AddressView from './AddressView'
+import HttpRequest from '../common/HttpRequest/HttpRequest'
 
 export default class GroupBuyCar extends Component {
     constructor(props) {
@@ -46,8 +47,8 @@ export default class GroupBuyCar extends Component {
     onGroupBuyNow(){
         var goodsIds = []
     this.state.gbDetail.group_buy_goods.map((item, i) => {
-        if (item.selected) {
-            goodsIds.push(item.id)
+        if (item.selected && item.seletecedCount && item.seletecedCount>0) {
+            goodsIds.push({goods:item.id,quantity:item.seletecedCount})
         }
     })
     if (this.state.gbDetail.id == null || !goodsIds.length) {
@@ -55,20 +56,31 @@ export default class GroupBuyCar extends Component {
         return
     }
 
-    let param = { goods_ids: goodsIds, group_buy: this.state.gbDetail.id }
+    let param = { goods: goodsIds, agent_code: Global.agent_code }
     if (!Global.user_address) {
         this.props.navigator.push({
             component: AddressView,
         })
     }
     else {
+
+        HttpRequest.post('/generic_order', param, this.onGroupBuySuccess.bind(this),
+                (e) => {
+                    alert('提交订单失败，请稍后再试。')
+                    console.log(' error:' + e)
+                })
+
+        }
+    }
+
+    onGroupBuySuccess(response){
+
         this.props.navigator.push({
            component: GroupBuyNowView,
             props: {
 
                }
        })
-        }
     }
 
     clickBack() {

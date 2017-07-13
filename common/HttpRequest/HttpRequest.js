@@ -40,7 +40,7 @@ get(apiName, body,successCallback, failCallback)
     }
 
 
-    console.log('Get requesr:' + url)
+    console.log('GET requesr:' + url)
 
     const req = new XMLHttpRequest()
 
@@ -74,79 +74,72 @@ get(apiName, body,successCallback, failCallback)
 
       req.send()
 
-    // fetch(url, {
-    //     mode:'no-cors',
-    //     headers:{'Access-Control-Allow-Origin': '*',},
-    //     method: 'GET',})
-    //  .then((response) => {response.text()
-    // console.log("responseText:"+response.status);
-    // console.log("responsejson:"+JSON.stringify(response));
-    //  })
-    //   .then((responseText) => {
-    //     console.log("responseText11:"+responseText);
-    //     var response = JSON.parse(responseText);
-    //     if (response.message =='success') {
-    //         successCallback(response);
-    //     }else{
-    //         failCallback(responseText)
-    //     }
-    //
-    //   })
-    //   .catch(function(err){
-    //     failCallback(err);
-    //   });
 
   },
 
-post(apiName, body,successCallback, failCallback)
+  post(apiName, body,successCallback, failCallback)
   {
-    if(!httpToken.length)
-    {
-        httpToken = Global.token;
+      if(!httpToken)
+      {
+          httpToken = Global.token;
+          AsyncStorage.getItem('k_http_token').then(function(result){
+                if (result !== null){
+                   httpToken = result
+                   console.log('httpToken = '+httpToken)
+                } else {
+                  console.log('get http token error:' + errs)
+                }
+              }.bind(this)).catch(function(error){
+                  //this._appendMessage('AsyncStorage error: ' + error.message);
+              }.bind(this));
 
-        AsyncStorage.getItem('k_http_token').then(function(result){
-              if (result !== null){
-                 httpToken = result
-                 console.log('httpToken = '+httpToken)
-              } else {
-                console.log('get http token error:' + errs)
-              }
-            }.bind(this)).catch(function(error){
-                //this._appendMessage('AsyncStorage error: ' + error.message);
-            }.bind(this));
-    }
 
-    var url = apiAddr + apiName
-    try {
-        console.log('Post requesr:' + url +":[param body]="+JSON.stringify(body))
-    } catch (e) {
 
-    } finally {
 
-    }
+      }else{
 
-    if (httpToken == null) httpToken = ''
-    fetch(url, {
-        method: 'POST',
-        headers: new Headers({
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': 'JWT ' + httpToken
-        }),
-        body: JSON.stringify(body)})
-      .then((response) => response.text())
-      .then((responseText) => {
-        console.log(responseText);
-        var response = JSON.parse(responseText);
-        if (response.code == 200 || response.access_token || response.id) {
-            successCallback(response);
-        }else{
-            failCallback(responseText)
+      }
+
+      var param = ""
+      var url = apiAddr + apiName+'?format=json'
+    
+
+
+      console.log('POST requesr:' + url+";param="+JSON.stringify(body))
+
+      const req = new XMLHttpRequest()
+
+
+        req.onload = function () {
+          try{
+
+              var response = JSON.parse(req.response);
+            console.log('result:' + req.response)
+
+                if (response.message =='Success' || response.message =='success' ) {
+                    successCallback(response);
+                }else{
+                    failCallback(req.response)
+                }
+          }catch(error){
+              failCallback(error)
+          }
         }
 
-      })
-      .catch(function(err){
-        failCallback(err);
-      });
-  }
+        req.ontimeout = function(e) {  console.log('result ontimeout') };
+        req.onerror = function(e) {  console.log('result onerror'+e)
+        failCallback(e)
+          };
+        req.timeout = 5000;
+
+        req.open('POST', url,true)
+        req.setRequestHeader("Content-Type","application/json");
+        if (httpToken && httpToken.length) {
+            req.setRequestHeader("Authorization", 'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMDU0MTg3NCwiaWF0IjoxNDk5OTM3MDc0fQ.eyJpZCI6Nn0.C-O_p1vLWznfZH3lNX46b_Qt76d9Zl0NzAN6q1DQTgU');//httpToken);
+        }
+
+        req.send(JSON.stringify(body))
+
+
+    }
 }
