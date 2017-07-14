@@ -70,8 +70,9 @@ get(apiName, body,successCallback, failCallback)
 
       if (httpToken && httpToken.length) {
 
-          req.setRequestHeader("Authorization", 'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMDU0MTg3NCwiaWF0IjoxNDk5OTM3MDc0fQ.eyJpZCI6Nn0.C-O_p1vLWznfZH3lNX46b_Qt76d9Zl0NzAN6q1DQTgU');//httpToken);
-  
+          req.setRequestHeader("Authorization", httpToken);
+          //'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMDU0MTg3NCwiaWF0IjoxNDk5OTM3MDc0fQ.eyJpZCI6Nn0.C-O_p1vLWznfZH3lNX46b_Qt76d9Zl0NzAN6q1DQTgU'
+
       }
 
       req.send()
@@ -137,8 +138,9 @@ get(apiName, body,successCallback, failCallback)
         req.open('POST', url,true)
         req.setRequestHeader("Content-Type","application/json");
         if (httpToken && httpToken.length) {
-            req.setRequestHeader("Authorization", 'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMDU0MTg3NCwiaWF0IjoxNDk5OTM3MDc0fQ.eyJpZCI6Nn0.C-O_p1vLWznfZH3lNX46b_Qt76d9Zl0NzAN6q1DQTgU');//httpToken);
-        }
+            req.setRequestHeader("Authorization", httpToken);
+            //'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMDU0MTg3NCwiaWF0IjoxNDk5OTM3MDc0fQ.eyJpZCI6Nn0.C-O_p1vLWznfZH3lNX46b_Qt76d9Zl0NzAN6q1DQTgU'
+    }
 
         req.send(JSON.stringify(body))
 

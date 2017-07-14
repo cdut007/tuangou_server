@@ -32,6 +32,11 @@ export default class Welcome extends Component
            console.log('url code='+code);
            if (code) {
                 this.getUserInfoByCode(code)
+                 var agent_code = this.getQueryString('state',str);
+                 if (agent_code) {
+                     Global.agent_code = agent_code;
+                 }
+
            }
 
             //     var response = new Object();
@@ -152,7 +157,7 @@ export default class Welcome extends Component
 
          console.log('log pathnames='+window.location.href);
 
-        var url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx9747b8e0e756d85f&redirect_uri=http%3A%2F%2Fwww.ailinkgo.com&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect';
+        var url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx9747b8e0e756d85f&redirect_uri=http%3A%2F%2Fwww.ailinkgo.com&response_type=code&scope=snsapi_userinfo&state='+Global.agent_code+'#wechat_redirect';
         Linking.canOpenURL(url).then(supported => {
              return Linking.openURL(url);
            });
