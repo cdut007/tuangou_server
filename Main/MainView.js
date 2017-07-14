@@ -39,7 +39,7 @@ export default class MainView extends Component {
             var str = url.substr(pos+1);
             var agent_code = this.getQueryString('agent_code',str);
              console.log('url agent_code='+agent_code);
-             agent_code = 'oANa5v4DA46AKU8iyA303UJBLYmo';//for test.
+             //agent_code = 'oANa5v4DA46AKU8iyA303UJBLYmo';//for test.
              if (agent_code) {
                  Global.agent_code = agent_code;
              }
@@ -107,7 +107,7 @@ export default class MainView extends Component {
             return(<View/>)
         }
 
-        if (!this.state.hasLogin)
+        if (this.state.hasLogin)
         {
 
             return (

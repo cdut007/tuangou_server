@@ -141,6 +141,11 @@ export default class Welcome extends Component
 
     onLoginPress()
     {
+
+        if (!Global.agent_code) {
+            alert('请通过团长分享链接访问！')
+            return
+        }
         // WeChat.sendAuthRequest('snsapi_userinfo','1111111').then(res=>{
         //     console.log('log result='+res);
         // })
