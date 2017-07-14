@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 //import Banner from 'react-native-banner';
  import NavBar from '../common/NavBar';
-// import ProductCatagoryListViewTab from './ProductCatagoryListViewTab'
+ import ProductCatagoryListViewTab from './ProductCatagoryListViewTab'
  import ProductDetail from './ProductDetail'
  import CircleImage from '../common/CircleImage';
  import HttpRequest from '../common/HttpRequest/HttpRequest'
@@ -209,7 +209,8 @@ export default class HomeView extends Component {
                            'index': product.goods_id,
                            'image': {uri:product.image},
                             'title':'更多精选',
-                           'tag': 'scan_more'
+                           'tag': 'scan_more',
+                           'name':classify.name,
                        });
                    }else{
                        toolsData.push({
