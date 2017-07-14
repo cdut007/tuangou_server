@@ -15,7 +15,9 @@ import {
 import SettingView from './SettingView';
 import NavBar from '../common/NavBar'
 import GroupOrderDetailView from './GroupOrderDetailView';
+import HttpRequest from '../common/HttpRequest/HttpRequest'
 
+var Global = require('../common/globals');
 
 export default class GroupOrderListView extends Component {
     constructor(props) {
@@ -38,10 +40,32 @@ export default class GroupOrderListView extends Component {
             },
              values: ['拼团中', '已完成',],
              selectedIndex:0,
+             orders:[],
 
         }
     }
 
+
+    componentDidMount() {
+    let orderStatus = this.props.isDoneStatus ? 1 : 0
+    this.refreshOderInfo(orderStatus);
+    }
+
+    refreshOderInfo(orderStatus){
+        let param = { status: orderStatus,agent_code: Global.agent_code}
+
+        HttpRequest.get('/generic_order', param, this.onGetListSuccess.bind(this),
+            (e) => {
+                console.log(' error:' + e)
+
+            })
+    }
+
+    onGetListSuccess(response) {
+        this.setState({
+            orders: response.data.group_buy
+        })
+    }
 
     onViewLayout(layoutEvent) {
     var height = layoutEvent.nativeEvent.layout.height;
@@ -63,12 +87,23 @@ export default class GroupOrderListView extends Component {
         this.setState({
           selectedIndex: event.nativeEvent.selectedSegmentIndex,
         });
+
+        console.log("value=="+event.nativeEvent.selectedSegmentIndex);
+        if (event.nativeEvent.selectedSegmentIndex=='1') {
+            this.refreshOderInfo(1);
+        }else{
+            this.refreshOderInfo(0);
+        }
       }
 
       _onValueChange(value) {
+          console.log("value=="+value);
+
         this.setState({
           value: value,
         });
+
+
       }
 
     render() {
@@ -101,6 +136,7 @@ export default class GroupOrderListView extends Component {
     }
 
     onItemsClick(prouductItems){
+
         this.props.navigator.push({
                 props: {
                     items:prouductItems,
@@ -120,33 +156,21 @@ export default class GroupOrderListView extends Component {
     }
 
     renderProductCategoryView() {
-         var categoryDataAry = [];
+         var categoryDataAry = this.state.orders;
          var displayCategoryAry = [];
 
-         var toolsData = [
-             {
-                 'index': 0,
-                 'title': '稍后通知',
-                 'image': {uri:'http://img1.juimg.com/141110/330464-1411100SS535.jpg'}
-             },
-
-
-         ]
-
-         categoryDataAry.push({id:'meat',name:'品质水果',image: require('../images/fruit_type@2x.png'),prouductItems:toolsData,countdown:'48:38:29'},);
-         categoryDataAry.push({id:'meat',name:'绿色生鲜',image: require('../images/fresh_type@2x.png'),prouductItems:toolsData,countdown:'48:38:29'},);
-            for (var i = 0; i<categoryDataAry.length; i++) {
-                var items = categoryDataAry[i].prouductItems;
+                for (var i = 0; i<categoryDataAry.length; i++) {
+                var items = categoryDataAry[i];
                 displayCategoryAry.push(
                         <View style={{margin:0}}>
                         <View style = {[styles.brandLabelContainer,{marginBottom:10}]}>
                         <View style={{marginLeft:10,marginTop:10,marginRight:5, alignItems:'center',
                         justifyContent:'flex-start',}}>
                         <Image style={{resizeMode:'contain', marginRight:5,alignItems:'center',width:30,height:30,
-              justifyContent:'center'}} source={categoryDataAry[i].image}/>
+              justifyContent:'center'}} source={{ uri: items.classify.icon }}/>
                              </View>
                         <Text style={{fontSize:16,color:'#1b1b1b'}}>
-                                {categoryDataAry[i].name}
+                                {items.classify.name}
                             </Text>
                             </View>
 
@@ -171,7 +195,9 @@ export default class GroupOrderListView extends Component {
         </TouchableOpacity>)
     }
 
-    renderItemInfo(item,w,h){
+    renderItemInfo(item,w,h,total){
+
+
         if (item.tag!='total_count') {
             return(<View style={{resizeMode:'contain', alignItems:'center',width: w, height: h,
             justifyContent:'center',paddingLeft:20,paddingRight:10,flexDirection: "row",backgroundColor:'#f7f7f7',
@@ -181,17 +207,17 @@ export default class GroupOrderListView extends Component {
                 <View style={{
                 flex:2}}>
                 <Image style={{resizeMode:'contain', alignItems:'center',width: 80, height: 80,
-                justifyContent:'center',}} source={item.image}/>
+                justifyContent:'center',}} source={{ uri: item.goods.goods.images[0].image }}/>
                 </View>
                 <View style={{
                 height:h,
                 alignItems:'flex-start',
                 flex:6}}>
-                <Text style={{marginLeft:30,marginTop:10,numberOfLines:2,ellipsizeMode:'tail',fontSize: 14, color: "#1c1c1c",}}>越南芒果</Text>
-                <Text style={{marginLeft:30,alignItems:'center',justifyContent:'center',fontSize: 12, color: "#757575",}}>每个约350g</Text>
+                <Text style={{marginLeft:30,marginTop:10,numberOfLines:2,ellipsizeMode:'tail',fontSize: 14, color: "#1c1c1c",}}>{item.goods.goods.name}</Text>
+                <Text style={{marginLeft:30,alignItems:'center',justifyContent:'center',fontSize: 12, color: "#757575",}}>{item.goods.goods.brief_dec}</Text>
                 <View style={{alignItems:'center',flexDirection:'row',marginLeft:30,paddingBottom:10,position:'absolute',left:0,right:0,bottom:0}}>
-                <Text style={{alignItems:'center',justifyContent:'center',fontSize: 16, color: "#fb7210",}}>S$ 8.00</Text>
-                <Text style={{alignItems:'center',textAlign:'right',flex:9,justifyContent:'center',fontSize: 12, color: "#757575",}}>已购 230</Text>
+                <Text style={{alignItems:'center',justifyContent:'center',fontSize: 16, color: "#fb7210",}}>S$ {item.goods.goods.price}</Text>
+                <Text style={{alignItems:'center',textAlign:'right',flex:9,justifyContent:'center',fontSize: 12, color: "#757575",}}>已购 {total}</Text>
                 </View>
                 </View>
 
@@ -203,29 +229,51 @@ export default class GroupOrderListView extends Component {
     renderCategorysView(prouductItems) {
         var width = this.state.mainStyle.screenWidth;
         const w = width , h = 110
-        let items = prouductItems
-        let renderSwipeView = (types, n) => {
-            return (
-                <View style={styles.toolsView}>
-                    {
-                        types.map((item, i) => {
-                            let render = (
-                                <View style={[{ width: w, height: h ,marginTop:0,marginRight:5,marginBottom:0 }, styles.toolsItem]}>
-                                     {this.renderItemInfo(item,w,h)}
-                                </View>
-                            )
-                            return (
-                                    <TouchableHighlight style={{ width: w, height: h }} key={i} onPress={this.onItemsClick.bind(this,items)}>{render}</TouchableHighlight>
-
-                            )
-                        })
-                    }
-                </View>
-            )
+        let items = prouductItems.order_goods
+        var total = 0 ;
+        for (var i = 0; i < items.length; i++) {
+            total += items[i].quantity;
         }
-        return (
-            renderSwipeView(prouductItems)
+
+        var item = items[0];
+
+        let render = (
+            <View style={[{ width: w, height: h ,marginTop:0,marginRight:5,marginBottom:0 }, styles.toolsItem]}>
+                 {this.renderItemInfo(item,w,h,total)}
+            </View>
         )
+
+        return (
+            <View style={styles.toolsView}>
+
+            <TouchableHighlight style={{ width: w, height: h }} key={i} onPress={this.onItemsClick.bind(this,prouductItems)}>{render}</TouchableHighlight>
+
+
+            </View>
+        )
+
+        // let renderSwipeView = (types, n) => {
+        //     return (
+        //         <View style={styles.toolsView}>
+        //             {
+        //                 types.map((item, i) => {
+        //                     let render = (
+        //                         <View style={[{ width: w, height: h ,marginTop:0,marginRight:5,marginBottom:0 }, styles.toolsItem]}>
+        //                              {this.renderItemInfo(item,w,h,total)}
+        //                         </View>
+        //                     )
+        //                     return (
+        //                             <TouchableHighlight style={{ width: w, height: h }} key={i} onPress={this.onItemsClick.bind(this,items)}>{render}</TouchableHighlight>
+        //
+        //                     )
+        //                 })
+        //             }
+        //         </View>
+        //     )
+        // }
+        // return (
+        //     renderSwipeView(items)
+        // )
     }
 
 }

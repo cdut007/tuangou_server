@@ -31,8 +31,10 @@ export default class GroupOrderDetailView extends Component {
                 height:1000,
                 alignSelf:'stretch',
             },
+            productGoods:this.props.items,
 
         }
+
     }
 
 
@@ -75,42 +77,13 @@ export default class GroupOrderDetailView extends Component {
     }
 
     renderProductCategoryView() {
-         var categoryDataAry = [];
+         var categoryDataAry = this.state.productGoods.order_goods;
          var displayCategoryAry = [];
-
-         var toolsData = [
-             {
-                 'index': 0,
-                 'title': '稍后通知',
-                 'image': {uri:'http://img1.juimg.com/141110/330464-1411100SS535.jpg'}
-             }, {
-                  'index': 0,
-                  'title': '稍后通知',
-                  'image': {uri:'http://img1.juimg.com/141110/330464-1411100SS535.jpg'}
-              }, {
-                   'index': 0,
-                   'title': '稍后通知',
-                   'image': {uri:'http://img1.juimg.com/141110/330464-1411100SS535.jpg'}
-               }, {
-                    'index': 0,
-                    'title': '稍后通知',
-                    'image': {uri:'http://img1.juimg.com/141110/330464-1411100SS535.jpg'}
-                }, {
-                     'index': 0,
-                     'title': '稍后通知',
-                     'image': {uri:'http://img1.juimg.com/141110/330464-1411100SS535.jpg'}
-                 },
-
-
-         ]
-
-         categoryDataAry.push({id:'meat',name:'品质水果','image': require('../images/fruit_type@2x.png'),prouductItems:toolsData,countdown:'48:38:29'},);
-         categoryDataAry.push({id:'meat',name:'绿色生鲜','image': require('../images/fresh_type@2x.png'),prouductItems:toolsData,countdown:'48:38:29'},);
-            for (var i = 0; i<categoryDataAry.length; i++) {
+           for (var i = 0; i<categoryDataAry.length; i++) {
                 displayCategoryAry.push(
                         <View style={{margin:0}}>
 
-                        {this.renderCategorysView(categoryDataAry[i].prouductItems)}
+                        {this.renderCategorysView(categoryDataAry[i])}
 
                         </View>
             );
@@ -128,17 +101,17 @@ export default class GroupOrderDetailView extends Component {
                 <View style={{
                 flex:2}}>
                 <Image style={{resizeMode:'contain', alignItems:'center',width: 80, height: 80,
-                justifyContent:'center',}} source={item.image}/>
+                justifyContent:'center',}} source={{ uri: item.goods.goods.images[0].image }}/>
                 </View>
                 <View style={{
                 height:h,
                 alignItems:'flex-start',
                 flex:6}}>
-                <Text style={{marginLeft:30,marginTop:10,numberOfLines:2,ellipsizeMode:'tail',fontSize: 14, color: "#1c1c1c",}}>越南芒果</Text>
-                <Text style={{marginLeft:30,alignItems:'center',justifyContent:'center',fontSize: 12, color: "#757575",}}>每个约350g</Text>
+                <Text style={{marginLeft:30,marginTop:10,numberOfLines:2,ellipsizeMode:'tail',fontSize: 14, color: "#1c1c1c",}}>{item.goods.goods.name}</Text>
+                <Text style={{marginLeft:30,alignItems:'center',justifyContent:'center',fontSize: 12, color: "#757575",}}>{item.goods.goods.brief_dec}</Text>
                 <View style={{alignItems:'center',flexDirection:'row',marginLeft:30,paddingBottom:10,position:'absolute',left:0,right:0,bottom:0}}>
-                <Text style={{alignItems:'center',justifyContent:'center',fontSize: 16, color: "#fb7210",}}>S$ 8.00</Text>
-                <Text style={{alignItems:'center',textAlign:'right',flex:9,justifyContent:'center',fontSize: 12, color: "#757575",}}>已购 230</Text>
+                <Text style={{alignItems:'center',justifyContent:'center',fontSize: 16, color: "#fb7210",}}>S$ {item.goods.goods.price}</Text>
+                <Text style={{alignItems:'center',textAlign:'right',flex:9,justifyContent:'center',fontSize: 12, color: "#757575",}}>已购 {item.quantity}</Text>
                 </View>
                 </View>
 
@@ -148,30 +121,21 @@ export default class GroupOrderDetailView extends Component {
     }
 
     renderCategorysView(prouductItems) {
-        const w = width , h = 110
+
         var width = this.state.mainStyle.screenWidth;
-        let renderSwipeView = (types, n) => {
-            return (
-                <View style={styles.toolsView}>
-                    {
-                        types.map((item, i) => {
-                            let render = (
-                                <View style={[{ width: w, height: h ,marginTop:5,marginRight:5,marginBottom:0 }, styles.toolsItem]}>
-                                     {this.renderItemInfo(item,w,h)}
-                                </View>
-                            )
-                            return (
+        const w = width , h = 110
+        let render = (
+            <View style={[{ width: w, height: h ,marginTop:5,marginRight:5,marginBottom:0 }, styles.toolsItem]}>
+                 {this.renderItemInfo(prouductItems,w,h)}
+            </View>
+        )
 
-                                    <TouchableOpacity style={{ width: w, height: h }} key={i} onPress={() => { this.onItemClick(prouductItems) }}>{render}</TouchableOpacity>
-
-                            )
-                        })
-                    }
-                </View>
-            )
-        }
         return (
-            renderSwipeView(prouductItems)
+            <View style={styles.toolsView}>
+
+            <TouchableOpacity style={{ width: w, height: h }}  onPress={() => { this.onItemClick(prouductItems) }}>{render}</TouchableOpacity>
+
+            </View>
         )
     }
 

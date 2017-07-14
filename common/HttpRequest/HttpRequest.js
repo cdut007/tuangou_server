@@ -69,7 +69,9 @@ get(apiName, body,successCallback, failCallback)
       req.open('GET', url,true)
 
       if (httpToken && httpToken.length) {
-          req.setRequestHeader("Authorization", httpToken);
+
+          req.setRequestHeader("Authorization", 'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMDU0MTg3NCwiaWF0IjoxNDk5OTM3MDc0fQ.eyJpZCI6Nn0.C-O_p1vLWznfZH3lNX46b_Qt76d9Zl0NzAN6q1DQTgU');//httpToken);
+  
       }
 
       req.send()
@@ -102,7 +104,7 @@ get(apiName, body,successCallback, failCallback)
 
       var param = ""
       var url = apiAddr + apiName+'?format=json'
-    
+
 
 
       console.log('POST requesr:' + url+";param="+JSON.stringify(body))
