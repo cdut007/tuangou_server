@@ -147,6 +147,7 @@ export default class GroupBuyCar extends Component {
                 }
             })
         }
+        selectedPrice = selectedPrice.toFixed(2)
 
         return(<View style={{alignItems:'center',width: width, height: h,
         justifyContent:'center',margin:0,flexDirection: "row",}}>
