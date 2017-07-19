@@ -206,7 +206,7 @@ export default class ProductCatagoryListViewTab extends Component {
             <View style={[styles.list_container,{marginTop:0}]}>
             <ListView
                 contentContainerStyle={styles.list}
-                style={[styles.list,{marginBottom:50}]}
+                style={[styles.listview_container,{marginBottom:50}]}
                 dataSource={this.state.dataSource}
                 initialListSize={21}
                 pageSize={3}
@@ -334,6 +334,12 @@ const styles = StyleSheet.create({
         width: 60,
         height: 60,
         marginRight: 10
+    },
+    listview_container: {
+        alignItems: 'flex-start',
+        flexDirection: 'row',
+        alignSelf:'stretch',
+        flexWrap: 'wrap',
     },
     list: {
         justifyContent: 'space-around',
