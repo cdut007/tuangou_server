@@ -1,6 +1,8 @@
 import { AsyncStorage } from 'react-native';
+var test = false;
+//const apiAddr = 'http://www.ailinkgo.com:3000/api/v1'http://47.88.139.113:3000/api/v1
+const apiAddr = test? 'http://www.ailinkgo.com:3000/api/v1':'http://www.ailinkgo.com:3000/api/v1';
 
-const apiAddr = 'http://www.ailinkgo.com:3000/api/v1'
 var httpToken = null
 var Global = require('../globals');
 var fetch = require('ReactJsonp');
@@ -35,7 +37,9 @@ get(apiName, body,successCallback, failCallback)
         param += element + "=" + body[element] + "&";
         count++;
     }
+    console.log(count+'GET requesr param:' + param)
     if (count>0) {
+        param = param.substr(0,param.length-1);
         url =  url+"&"+param;
     }
 
@@ -70,8 +74,12 @@ get(apiName, body,successCallback, failCallback)
 
       if (httpToken && httpToken.length) {
 
-          req.setRequestHeader("Authorization", httpToken);
-          //'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMDU0MTg3NCwiaWF0IjoxNDk5OTM3MDc0fQ.eyJpZCI6Nn0.C-O_p1vLWznfZH3lNX46b_Qt76d9Zl0NzAN6q1DQTgU'
+           if (test) {
+               req.setRequestHeader("Authorization",'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMDU0MTg3NCwiaWF0IjoxNDk5OTM3MDc0fQ.eyJpZCI6Nn0.C-O_p1vLWznfZH3lNX46b_Qt76d9Zl0NzAN6q1DQTgU');
+
+           }else{
+               req.setRequestHeader("Authorization", httpToken);
+           }
 
       }
 
@@ -138,9 +146,13 @@ get(apiName, body,successCallback, failCallback)
         req.open('POST', url,true)
         req.setRequestHeader("Content-Type","application/json");
         if (httpToken && httpToken.length) {
-            req.setRequestHeader("Authorization", httpToken);
-            //'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMDU0MTg3NCwiaWF0IjoxNDk5OTM3MDc0fQ.eyJpZCI6Nn0.C-O_p1vLWznfZH3lNX46b_Qt76d9Zl0NzAN6q1DQTgU'
-    }
+            if (test) {
+                req.setRequestHeader("Authorization",'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMDU0MTg3NCwiaWF0IjoxNDk5OTM3MDc0fQ.eyJpZCI6Nn0.C-O_p1vLWznfZH3lNX46b_Qt76d9Zl0NzAN6q1DQTgU');
+
+            }else{
+                req.setRequestHeader("Authorization", httpToken);
+            }
+        }
 
         req.send(JSON.stringify(body))
 

@@ -40,13 +40,11 @@ export default class GroupBuyNowView extends Component {
                     title="拼团成功"
                     leftIcon={require('../images/back@2x.png')}
                     leftPress={this.back.bind(this)} />
-                    <Text style={{fontSize:14,color:'#a9a9a9',padding:40,marginTop:20}}>该链接为团长：Lisa团长高优良品购的专属链接
-每次申请拼团后直接分享该链接至微信群即可
-团员点击链接购买的商品可在拼团中查看</Text>
-                    <Text style={{alignItems:'center',justifyContent:'center',textAlign:'center',fontSize:14,color:'#1c1c1c',padding:10,marginTop:40}}>https://pro.modao.cc/app/Fb0cbnqYMzpzDoqjdyO4QKreG44wH1s#screen=sB5D6183EED1496652452856</Text>
+                    <Text style={{fontSize:14,color:'#a9a9a9',padding:40,marginTop:20}}>拼团成功</Text>
+                    <Text style={{alignItems:'center',justifyContent:'center',textAlign:'center',fontSize:14,color:'#1c1c1c',padding:10,marginTop:40}}>点击右上方分享链接</Text>
                     <View style={{flex:1,marginTop:60,justifyContent:'center',flexDirection:'row'}}>
 
-                                        <TouchableOpacity style={{
+                                        {/* <TouchableOpacity style={{
                                             height: 36,
                                             width: 120,
                                             backgroundColor: '#6d9ee1',
@@ -61,9 +59,9 @@ export default class GroupBuyNowView extends Component {
                                         <Text style={{color:'#ffffff',fontSize:16}}>
                                          复制链接
                                         </Text>
-                                        </TouchableOpacity>
+                                        </TouchableOpacity> */}
 
-                                        <TouchableOpacity onPress={this.onSharePress.bind(this)}
+                                        {/* <TouchableOpacity onPress={this.onSharePress.bind(this)}
                                         style={{
                                             height: 36,
                                             width: 120,
@@ -79,7 +77,7 @@ export default class GroupBuyNowView extends Component {
                                         >
                                          分享链接
                                         </Text>
-                                        </TouchableOpacity>
+                                        </TouchableOpacity> */}
                     </View>
             </View>
         )

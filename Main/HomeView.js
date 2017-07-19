@@ -12,6 +12,7 @@ import {
 //import Banner from 'react-native-banner';
  import NavBar from '../common/NavBar';
  import ProductCatagoryListViewTab from './ProductCatagoryListViewTab'
+ import ProductCatagoryListView from './ProductCatagoryListView'
  import ProductDetail from './ProductDetail'
  import CircleImage from '../common/CircleImage';
  import HttpRequest from '../common/HttpRequest/HttpRequest'
@@ -33,6 +34,7 @@ export default class HomeView extends Component {
             },
 
             goodsList:[],
+            agent:{},
         }
     }
 
@@ -44,12 +46,45 @@ export default class HomeView extends Component {
     //            }
     //    })
     this.fetchProductList();
+    this.fetchAgentInfo();
     }
 
     onProudctListSuccess(response){
         console.log(' onProudctListSuccess:' + JSON.stringify(response))
         this.state.goodsList = response.data;
         this.setState({goodsList:this.state.goodsList});
+    }
+
+    onUserInfoSuccess(response){
+        console.log(' onUserInfoSuccess:' + JSON.stringify(response))
+        this.state.agent = response.data.user_profile;
+        Global.agent = response.data.user_profile;
+        this.setState({agent:this.state.agent});
+    }
+
+
+    fetchAgentInfo(){
+
+       var paramBody ={agent_code:Global.agent_code }
+       HttpRequest.get('/agent_info', paramBody, this.onUserInfoSuccess.bind(this),
+           (e) => {
+
+               try {
+                   var errorInfo = JSON.parse(e);
+                   console.log(errorInfo.description)
+                   if (errorInfo != null && errorInfo.description) {
+                       console.log(errorInfo.description)
+                   } else {
+                       console.log(e)
+                   }
+               }
+               catch(err)
+               {
+                   console.log(err)
+               }
+
+               console.log(' error:' + e)
+           })
     }
 
     fetchProductList(){
@@ -124,8 +159,8 @@ export default class HomeView extends Component {
 
     renderTopView() {
         var nickname = 'unkonwn'
-        if (Global.wxUserInfo && Global.wxUserInfo.nickname != null) {
-            nickname = Global.wxUserInfo.nickname
+        if (this.state.agent.nickname != null) {
+            nickname = this.state.agent.nickname
         }
 
 
@@ -160,8 +195,8 @@ export default class HomeView extends Component {
     }
 
     _displayIcon() {
-    if (Global.wxUserInfo && Global.wxUserInfo.headimgurl != null) {
-            return {uri: Global.wxUserInfo.headimgurl};
+    if (this.state.agent.headimgurl != null) {
+            return {uri: this.state.agent.headimgurl};
         } else {
                 return require('../images/default_head@2x.png');
             }
@@ -176,6 +211,14 @@ export default class HomeView extends Component {
                     }
             })
         }else{
+        //     this.props.navigator.push({
+        //        component: ProductCatagoryListView,
+        //         props: {
+        //             groupBuyDetail:
+        //             prouduct:prouduct,
+        //            }
+        //    })
+
             this.props.navigator.push({
                component: ProductCatagoryListViewTab,
                 props: {
@@ -211,6 +254,7 @@ export default class HomeView extends Component {
                             'title':'更多精选',
                            'tag': 'scan_more',
                            'name':classify.name,
+                           'classify_id':classify.id,
                        });
                    }else{
                        toolsData.push({

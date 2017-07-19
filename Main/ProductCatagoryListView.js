@@ -16,30 +16,33 @@ import GroupBuyCar from './GroupBuyCar'
 
 import CommitButton from '../common/CommitButton'
 import ProductDetail from './ProductDetail'
+var Global = require('../common/globals');
+
+var screenWidth=600
+var rowStyle={
+    screenWidth:600,
+    justifyContent: 'center',
+    padding: 1,
+    margin: 5,
+    width: 220,
+    height: 220,
+    backgroundColor: '#F6F6F6',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 2,
+    borderColor: '#CCC'
+}
 
 export default class ProductCatagoryListView extends Component {
     constructor(props) {
         super(props)
-
+        var ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         this.state = {
             goods: { description: '' },
             dataSource: ds,
-            rowStyle: {
-                screenWidth:600,
-                justifyContent: 'center',
-                padding: 1,
-                margin: 5,
-                width: 220,
-                height: 220,
-                backgroundColor: '#F6F6F6',
-                alignItems: 'center',
-                borderWidth: 1,
-                borderRadius: 2,
-                borderColor: '#CCC'
-            },
         }
 
-        var ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+
     }
 
     static propTypes:{
@@ -61,12 +64,21 @@ export default class ProductCatagoryListView extends Component {
         if(this.props.groupBuyDetail)
         {
             let rowData = this.props.groupBuyDetail.group_buy_goods
+
             if (rowData) {
+                    console.log('rowData================'+JSON.stringify(rowData))
+                    var dataBlob = [];
+                    for (var ii = 0; ii < rowData.length; ii++) {
+                      dataBlob.push(rowData[ii]);
+                    }
                 this.setState({
-                    dataSource: this.state.dataSource.cloneWithRows(rowData)
+                    dataSource: this.state.dataSource.cloneWithRows(dataBlob)
                 });
             }
 
+
+        }else{
+            console.log('no data found:')
         }
     }
 
@@ -79,38 +91,6 @@ export default class ProductCatagoryListView extends Component {
     }
 
 
-    sleep(time){
-        return new Promise(resolve => {
-            setTimeout(() => resolve(), time);
-        })
-    };
-
-    async onFetch(page = 1, startFetch, abortFetch){
-        try {
-            //This is required to determinate whether the first loading list is all loaded.
-            let pageLimit = 24;
-            pageLimit = 60;
-            let skip = (page - 1) * pageLimit;
-
-            //Generate dummy data
-            let rowData = Array.from({ length: pageLimit }, (value, index) => `item -> ${index + skip}`);
-
-            //Simulate the end of the list if there is no more data returned from the server
-            if (page === 10) {
-                rowData = [];
-            }
-            this.setState({
-                dataSource: this.state.dataSource.cloneWithRows(rowData),
-                isLoading: false,
-            });
-            //Simulate the network loading in ES7 syntax (async/await)
-            await this.sleep(2000);
-            startFetch(rowData, pageLimit);
-        } catch (err) {
-            abortFetch(); //manually stop the refresh or pagination if it encounters network error
-            console.log(err);
-        }
-    }
 
     renderHeader(){
         return (<View style={styles.topView} >
@@ -120,9 +100,9 @@ export default class ProductCatagoryListView extends Component {
 
     renderItem(item, sectionID, rowID){
         //write your own layout in list view
-        let w = (this.state.rowStyle.screenWidth - 20) / 2
-        return (<TouchableOpacity underlayColor="#dad9d7" style={this.state.rowStyle} onPress={this.onPress.bind(this)}>
-            <View style={this.state.rowStyle}>
+        let w = (screenWidth - 20) / 2
+        return (<TouchableOpacity underlayColor="#dad9d7" style={rowStyle} onPress={this.onPress.bind(this,rowID,items)}>
+            <View style={rowStyle}>
 
                 <Image style={{
                     resizeMode: 'contain', alignItems: 'center',
@@ -203,11 +183,12 @@ export default class ProductCatagoryListView extends Component {
 
     startGroupBuy() {
 
-        AsyncStorage.setItem('k_cur_gbdetail', JSON.stringify(this.props.groupBuyDetail), (error, result) => {
-            if (error) {
-                console.log('save k_cur_gbdetail faild.')
-            }
-        })
+        AsyncStorage.setItem('k_cur_gbdetail', JSON.stringify(this.props.groupBuyDetail)).then(function(){
+            console.log('save k_cur_gbdetail succ.')
+                    }.bind(this)).catch(function(error){
+                        console.log('save k_cur_gbdetail faild.' + error.message)
+            }.bind(this));
+
 
         Global.gbDetail = this.props.groupBuyDetail
 
@@ -221,7 +202,7 @@ export default class ProductCatagoryListView extends Component {
 
     renderFooter()
     {
-        return(<View style={{height: 49, width: this.state.rowStyle.screenWidth}}/>)
+        return(<View style={{height: 49, width: screenWidth}}/>)
     }
 
     onViewLayout(layoutEvent) {
@@ -230,36 +211,33 @@ export default class ProductCatagoryListView extends Component {
         return
     }
 
-    this.state.rowStyle.screenWidth = layoutEvent.nativeEvent.layout.width
-    this.setState({screenWidth:this.state.rowStyle.screenWidth});
-    console.log(layoutEvent.nativeEvent.layout.width+'wwwwww=='+this.state.rowStyle.screenWidth)
+    screenWidth = layoutEvent.nativeEvent.layout.width
+    this.setState({rowStyle:this.state.rowStyle });
+    console.log(layoutEvent.nativeEvent.layout.width+'wwwwww=='+screenWidth)
     }
 
     renderProductCategoryView() {
         if(!this.state.dataSource){
           return(<View style={styles.container} onLayout={this.onViewLayout.bind(this)}>
 
-                  <View style={{
-                  alignSelf:'stretch',width:this.state.rowStyle.screenWidth,position: 'absolute', left: 0, right: 0, bottom: 0 ,paddingTop:100}}><CommitButton title={'开始拼团'} onPress={this.startGroupBuy.bind(this)}></CommitButton></View>
-
               </View>)
         }
 
         return (
-            <View style={styles.container} onLayout={this.onViewLayout.bind(this)}>
-                <ListView
-                    renderHeader={this.renderHeader}
-                    contentContainerStyle={styles.list}
-                    dataSource={this.state.dataSource}
-                    initialListSize={21}
-                    pageSize={10}
-                    scrollRenderAheadDistance={500}
-                    renderRow={this.renderItem}
-                    removeClippedSubviews={false}
-                    renderFooter={this.renderFooter}
-                />
+            <View style={[styles.container,{marginTop:50}]} onLayout={this.onViewLayout.bind(this)}>
+            {/* <ListView
+                renderHeader={this.renderHeader}
+                contentContainerStyle={styles.list}
+                dataSource={this.state.dataSource}
+                initialListSize={21}
+                pageSize={10}
+                scrollRenderAheadDistance={500}
+                renderRow={this.renderItem}
+                removeClippedSubviews={false}
+                renderFooter={this.renderFooter}
+            /> */}
                 <View style={{
-                alignSelf:'stretch',width:this.state.rowStyle.screenWidth,position: 'absolute', left: 0, right: 0, bottom: 0 ,paddingTop:100}}><CommitButton title={'开始拼团'} onPress={this.startGroupBuy.bind(this)}></CommitButton></View>
+                alignSelf:'stretch',width:screenWidth,position: 'absolute', left: 0, right: 0, bottom: 0 ,}}><CommitButton title={'开始拼团'} onPress={this.startGroupBuy.bind(this)}></CommitButton></View>
 
             </View>
         );

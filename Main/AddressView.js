@@ -24,7 +24,7 @@ export default class AddressView extends Component {
             Global.user_address = new Object();
         }
         this.state = {
-            name: Global.wxUserInfo.nickname,
+            name: Global.agent.nickname,
             mobile: null,
             address: null,
         }
@@ -39,10 +39,14 @@ export default class AddressView extends Component {
     componentDidMount() {
         if (Global.user_address) {
             this.setState({
-                name: Global.wxUserInfo.nickname,
+                name: Global.agent.nickname,
                 address: Global.user_address.address,
                 mobile: Global.user_address.phone_num
             })
+            HttpRequest.get('/user_address', {}, this.onGetAddressSuccess.bind(this),
+                (e) => {
+                    console.log(' error:' + e)
+                })
         }
         else {
             HttpRequest.get('/user_address', {}, this.onGetAddressSuccess.bind(this),
@@ -56,6 +60,7 @@ export default class AddressView extends Component {
     onGetAddressSuccess(response) {
         Global.user_address = response.data.user_address
         this.setState({
+            name: Global.agent.nickname,
             address: response.data.user_address.address,
             mobile: response.data.user_address.phone_num
         })

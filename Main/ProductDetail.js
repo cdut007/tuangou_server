@@ -28,7 +28,7 @@ export default class ProductDetail extends Component {
                 flexWrap: "wrap",
                 justifyContent: 'center',
                 alignItems: 'center',
-                screenWidth:600,
+                screenWidth:500,
                 screenHeight:1000,
             },
             goods: { goods: { images: [{ image: '' }] } },//defualt image later
@@ -180,7 +180,7 @@ export default class ProductDetail extends Component {
             >
                 <View style={{alignSelf:'stretch'}}>
                     <Image
-                        style={{height:375}}
+                        style={{height:375,width:this.state.toolsView.screenWidth}}
                         source={{uri: goods.goods.images[0].image}}
                         />
                     <Text style={{flex:1,color:'#1c1c1c',fontSize:18,margin:10}}>{goods.goods.name}</Text>
