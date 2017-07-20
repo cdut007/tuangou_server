@@ -57,7 +57,7 @@ export default class ProductCatagoryListViewTab extends Component {
         var titles=[]
         for (var i = 0; i < response.data.group_buy.length; i++) {
             var item = response.data.group_buy[i]
-            titles.push(item.start_time)
+            titles.push(item.end_time)
         }
 
         this.setState({
@@ -239,7 +239,7 @@ export default class ProductCatagoryListViewTab extends Component {
         var item = this.state.routes[index]
         let key = item.id
         let gbDetail = this.state.allGbDetail[key]
-        return(this.createProdcutCategoryList(gbDetail,item.start_time))
+        return(this.createProdcutCategoryList(gbDetail,item.end_time))
 
 
         // var displayCategoryAry = []
@@ -247,7 +247,7 @@ export default class ProductCatagoryListViewTab extends Component {
         //     var item = this.state.routes[i]
         //     let key = item.id
         //     let gbDetail = this.state.allGbDetail[key]
-        //     displayCategoryAry.push(this.createProdcutCategoryList(gbDetail,item.start_time))
+        //     displayCategoryAry.push(this.createProdcutCategoryList(gbDetail,item.end_time))
         // }
         //
         // if (displayCategoryAry.length == 0) {

@@ -1,5 +1,5 @@
 import { AsyncStorage } from 'react-native';
-var test = false;
+var test = true;
 //const apiAddr = 'http://www.ailinkgo.com:3000/api/v1'http://47.88.139.113:3000/api/v1
 const apiAddr = test? 'http://www.ailinkgo.com:3000/api/v1':'http://www.ailinkgo.com:3000/api/v1';
 
@@ -75,13 +75,19 @@ get(apiName, body,successCallback, failCallback)
       if (httpToken && httpToken.length) {
 
            if (test) {
-               req.setRequestHeader("Authorization",'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMDU0MTg3NCwiaWF0IjoxNDk5OTM3MDc0fQ.eyJpZCI6Nn0.C-O_p1vLWznfZH3lNX46b_Qt76d9Zl0NzAN6q1DQTgU');
+               req.setRequestHeader("Authorization",'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMTE0MTc0NiwiaWF0IjoxNTAwNTM2OTQ2fQ.eyJpZCI6N30.fMTA_TXzKI42KMBZvDT3sZz0A-VaONStRsz6EP7P4L8');
 
            }else{
                req.setRequestHeader("Authorization", httpToken);
            }
 
+      }else{
+          if (test) {
+              req.setRequestHeader("Authorization",'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMTE0MTc0NiwiaWF0IjoxNTAwNTM2OTQ2fQ.eyJpZCI6N30.fMTA_TXzKI42KMBZvDT3sZz0A-VaONStRsz6EP7P4L8');
+
+          }
       }
+
 
       req.send()
 
@@ -147,12 +153,19 @@ get(apiName, body,successCallback, failCallback)
         req.setRequestHeader("Content-Type","application/json");
         if (httpToken && httpToken.length) {
             if (test) {
-                req.setRequestHeader("Authorization",'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMDU0MTg3NCwiaWF0IjoxNDk5OTM3MDc0fQ.eyJpZCI6Nn0.C-O_p1vLWznfZH3lNX46b_Qt76d9Zl0NzAN6q1DQTgU');
+                req.setRequestHeader("Authorization",'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMTE0MTc0NiwiaWF0IjoxNTAwNTM2OTQ2fQ.eyJpZCI6N30.fMTA_TXzKI42KMBZvDT3sZz0A-VaONStRsz6EP7P4L8');
 
             }else{
                 req.setRequestHeader("Authorization", httpToken);
             }
+        }else{
+            if (test) {
+                req.setRequestHeader("Authorization",'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMTE0MTc0NiwiaWF0IjoxNTAwNTM2OTQ2fQ.eyJpZCI6N30.fMTA_TXzKI42KMBZvDT3sZz0A-VaONStRsz6EP7P4L8');
+
+            }
         }
+
+    
 
         req.send(JSON.stringify(body))
 
