@@ -16,10 +16,12 @@ import SettingView from './SettingView';
 import NavBar from '../common/NavBar'
 import GroupOrderDetailView from './GroupOrderDetailView';
 import HttpRequest from '../common/HttpRequest/HttpRequest'
-
 var Global = require('../common/globals');
-
+import EventEmitter from 'EventEmitter';
 export default class GroupOrderListView extends Component {
+    static propTypes:{
+        emitter: PropTypes.object,
+    }
     constructor(props) {
         super(props)
         var title = "拼团中";
@@ -49,7 +51,14 @@ export default class GroupOrderListView extends Component {
     componentDidMount() {
     let orderStatus = this.props.isDoneStatus ? 1 : 0
     this.refreshOderInfo(orderStatus);
+    if (this.props.emitter) {
+         console.log('inti group_refresh emitter~~~')
+        this.props.emitter.on('group_refresh', () => {
+         console.log('group_refresh~~~')
+         this.refreshOderInfo(this.state.selectedIndex);
+        });
     }
+     }
 
     refreshOderInfo(orderStatus){
         let param = { status: orderStatus,agent_code: Global.agent_code}

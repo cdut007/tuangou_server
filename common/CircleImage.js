@@ -71,7 +71,7 @@ renderImage(){
         {
 
           return(
-            <Image source={this.renderImage()} style ={[this.props.imageStyle]}/>
+            <Image source={this.renderImage()} style ={[this.props.circleStyle,this.props.imageStyle]}/>
           );
         }else{
           return (
@@ -85,7 +85,7 @@ renderImage(){
         if (Platform.OS === 'web')
         {
           return(
-            <Image source={this.props.src} style ={[this.props.imageStyle]}/>
+            <Image source={this.props.src} style ={[this.props.circleStyle,this.props.imageStyle]}/>
           );
         }else{
           return (
@@ -106,6 +106,7 @@ var styles = StyleSheet.create({
     borderColor : 'white',
     backgroundColor : '#00000000',
     borderRadius : 100,
+    alignSelf: 'center',
     padding: 0,
 
   },

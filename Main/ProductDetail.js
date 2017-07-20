@@ -9,6 +9,7 @@ import {
     ScrollView,
     TouchableOpacity,
     AsyncStorage,
+    WebView
 } from 'react-native';
 
 var hasGotGbDetail = false
@@ -17,7 +18,7 @@ import NavBar from '../common/NavBar'
 import CommitButton from '../common/CommitButton'
 import GroupBuyCar from './GroupBuyCar'
 var Global = require('../common/globals');
-
+var BGWASH = 'rgba(255,255,255,0.8)';
 
 export default class ProductDetail extends Component {
     constructor(props) {
@@ -32,7 +33,8 @@ export default class ProductDetail extends Component {
                 screenHeight:1000,
             },
             goods: { goods: { images: [{ image: '' }] } },//defualt image later
-            gbDetail: { classify: { name: '', icon: '' }, group_buy_goods: [] }
+            gbDetail: { classify: { name: '', icon: '' }, group_buy_goods: [] },
+            url:'https://m.baidu.com',
 
             }
     }
@@ -67,7 +69,8 @@ export default class ProductDetail extends Component {
     onProudctDetailSuccess(response) {
       this.setState({ goods: response.data })
 
-      var paramBody = {group_buy: response.data.group_buy}
+      var paramBody = {group_buy: response.data.group_buy,
+      agent_code:Global.agent_code}
       HttpRequest.get('/group_buy_detail' ,paramBody, this.onGroupBuyDetailSuccess.bind(this),
           (e) => {
               try {
@@ -89,8 +92,8 @@ export default class ProductDetail extends Component {
 
     _fetchGoods(spec_id) {
 
-        var paramBody = {}
-                HttpRequest.get('/goods_detail/' + spec_id, paramBody, this.onProudctDetailSuccess.bind(this),
+        var paramBody = {agent_code:Global.agent_code,goods:spec_id}
+                HttpRequest.get('/goods_detail', paramBody, this.onProudctDetailSuccess.bind(this),
                     (e) => {
                         try {
                             var errorInfo = JSON.parse(e);
@@ -207,7 +210,6 @@ export default class ProductDetail extends Component {
                             {this.state.gbDetail.classify.name}
                         </Text>
                         </View>
-                        {/* {this.renderCategorysView(goodsRecommendItems)} */}
                         <View style={{backgroundColor:'#f2f2f2',height:10,flex:1,}}>
                         </View>
 
@@ -218,6 +220,8 @@ export default class ProductDetail extends Component {
                         <Text style={{fontSize:16,color:'#1b1b1b',textAlign:'left',margin:10}}>
                                 {this.state.gbDetail.classify.desc}
                                 </Text>
+
+                        {this.renderCategorysView(goodsRecommendItems,goods.goods)}
 
                     {/* <HTMLView
                         value={htmlContent}
@@ -231,7 +235,24 @@ export default class ProductDetail extends Component {
         );
     }
 
-    renderCategorysView(prouductItems) {
+    renderCategorysView(prouductItems,goods) {
+      if (true) {
+          var divStyle = {
+             color: 'blue',
+              width: this.state.toolsView.screenWidth
+             
+         };
+          return (
+              // <iframe src="https://www.baidu.com" width="540" height="450"></iframe>
+            <View style={[{ width: this.state.toolsView.screenWidth}]}>
+            <div
+            style={divStyle}
+            dangerouslySetInnerHTML={{__html: goods.desc}}
+            >
+            </div>
+            </View>
+          )
+      }
         var width = this.state.toolsView.screenWidth;
         const w = width / 3 - 9, h = w
 
@@ -326,5 +347,9 @@ const styles = StyleSheet.create({
     row: {
         flexDirection: 'row',
     },
+    webView: {
+    backgroundColor: BGWASH,
+    height: 350,
+  },
 
 });

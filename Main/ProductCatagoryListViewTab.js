@@ -164,16 +164,16 @@ export default class ProductCatagoryListViewTab extends Component {
         })
     };
 
-    startGroupBuy() {
+    startGroupBuy(groupBuyDetail) {
 
-        AsyncStorage.setItem('k_cur_gbdetail', JSON.stringify(this.props.groupBuyDetail)).then(function(){
+        AsyncStorage.setItem('k_cur_gbdetail', JSON.stringify(groupBuyDetail)).then(function(){
             console.log('save k_cur_gbdetail succ.')
                     }.bind(this)).catch(function(error){
                         console.log('save k_cur_gbdetail faild.' + error.message)
             }.bind(this));
 
 
-        Global.gbDetail = this.props.groupBuyDetail
+        Global.gbDetail = groupBuyDetail
 
         this.props.navigator.push({
             component: GroupBuyCar,
@@ -217,7 +217,7 @@ export default class ProductCatagoryListViewTab extends Component {
                 renderRow={this.renderItem.bind(this)}
             />
                 <View style={{
-                alignSelf:'stretch',width:screenWidth,position: 'absolute', left: 0, right: 0, bottom: 0 }}><CommitButton title={'开始拼团'} onPress={this.startGroupBuy.bind(this)}></CommitButton></View>
+                alignSelf:'stretch',width:screenWidth,position: 'absolute', left: 0, right: 0, bottom: 0 }}><CommitButton title={'开始拼团'} onPress={this.startGroupBuy.bind(this,groupBuyDetail)}></CommitButton></View>
 
             </View>
             </View>

@@ -245,9 +245,9 @@ export default class HomeView extends Component {
                var classify = this.state.goodsList[i].classify
                var goodsMaxLengh = goods.length > 6 ? 6: goods.length;
                var toolsData = [];
-               for (var i = 0; i < goodsMaxLengh; i++) {
-                   var product = goods[i]
-                   if (i == goodsMaxLengh -1 ) {
+               for (var j = 0; j < goodsMaxLengh; j++) {
+                   var product = goods[j]
+                   if (j == goodsMaxLengh -1 ) {
                        toolsData.push({
                            'index': product.goods_id,
                            'image': {uri:product.image},

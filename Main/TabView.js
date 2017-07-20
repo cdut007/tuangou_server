@@ -13,16 +13,17 @@ import {
  import HomeView from './HomeView';
  import GroupBuyCar from './GroupBuyCar';
  import GroupOrderListView from './GroupOrderListView';
-
-
+ import EventEmitter from 'events';
 export default class TabView extends Component
 {
 
      constructor(props)
     {
         super(props)
+        var emitter = new EventEmitter;
         this.state={
-            selectedTab: 'tab1'
+            selectedTab: 'tab1',
+            emitter:emitter,
         }
     }
 
@@ -75,9 +76,11 @@ export default class TabView extends Component
        if (tab == 'tab1') {
            return (<HomeView {...this.props}/>)
        }else if(tab == 'tab2'){
+
            return (<GroupBuyCar {...this.props}/>)
        } {
-          return (<GroupOrderListView {...this.props}/>)
+               this.state.emitter.emit('group_refresh');
+          return (<GroupOrderListView {...this.props} emitter = {this.state.emitter}/>)
        }
 
     }
