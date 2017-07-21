@@ -179,7 +179,7 @@ export default class HomeView extends Component {
 
                 <View>
                 <CircleImage
-                  imageStyle={styles.logo}
+                  imageStyle={[styles.logo,{'border-radius':'50%'}]}
                   src={this._displayIcon() }
                   />
                 </View>

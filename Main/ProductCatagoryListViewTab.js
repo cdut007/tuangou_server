@@ -10,7 +10,7 @@ var screenWidth = 600,screenHeight=1000;
 import CommitButton from '../common/CommitButton'
 import ScrollableTabView from '../common/components/scrolltab/index'
  import ProductDetail from './ProductDetail'
-
+import CountDownTimer from '../common/components/CountDown'
 import GroupBuyCar from './GroupBuyCar'
 
 export default class ProductCatagoryListViewTab extends Component {
@@ -290,6 +290,21 @@ export default class ProductCatagoryListViewTab extends Component {
                     onChange={this._onChange.bind(this)}
                     style={{alignSelf:'stretch',margin:20}}
                     onValueChange={this._onValueChange.bind(this)} />
+                    {/* <CountDownTimer
+                         //date={new Date(parseInt(endTime))}
+                         date="2017-11-28T00:00:00+00:00"
+                         days={{plural: '天 ',singular: '天 '}}
+                         hours=':'
+                         mins=':'
+                         segs=''
+
+                         daysStyle={styles.time}
+                         hoursStyle={styles.time}
+                         minsStyle={styles.time}
+                         secsStyle={styles.time}
+                         firstColonStyle={styles.colon}
+                         secondColonStyle={styles.colon}
+                     /> */}
                    {this.onSenceItem(this.state.selectedIndex)}
                 {/* <ScrollableTabView style={styles.container}>
                {this.onSenceItem()}
@@ -366,4 +381,18 @@ const styles = StyleSheet.create({
     label: {
         color: '#ea6b10',
     },
+    //时间文字
+     time: {
+       paddingHorizontal: 3,
+       backgroundColor: 'rgba(85, 85, 85, 1)',
+       fontSize: 12,
+       color: 'white',
+       marginHorizontal: 3,
+       borderRadius: 2,
+     },
+     //冒号
+     colon: {
+       fontSize: 12, color: 'rgba(85, 85, 85, 1)'
+     },
+
 });

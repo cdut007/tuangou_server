@@ -12,10 +12,10 @@ import {
 
 import TimerMixin from 'react-timer-mixin';
 
-const screenWidth = Dimensions.get('window').width;
+const screenWidth = 600;//Dimensions.get('window').width;
 
 export default class Swiper extends React.Component {
-  static propTypes = {
+  static propTypes : {
     horizontal                       : React.PropTypes.bool,
     style                            : View.propTypes.style,
     activeDotStyle                   : View.propTypes.style,
@@ -31,7 +31,7 @@ export default class Swiper extends React.Component {
     renderPagination                 : React.PropTypes.func,
   };
 
-  static defaultProps = {
+  static defaultProps : {
     horizontal                       : true,
     pagingEnabled                    : true,
     showsHorizontalScrollIndicator   : false,
@@ -49,7 +49,7 @@ export default class Swiper extends React.Component {
     whRatio                          : 2
   };
 
-  static autoplayTimer = null;
+  static autoplayTimer:null;
 
   constructor(props) {
     super(props);

@@ -19,7 +19,7 @@ import CommitButton from '../common/CommitButton'
 import GroupBuyCar from './GroupBuyCar'
 var Global = require('../common/globals');
 var BGWASH = 'rgba(255,255,255,0.8)';
-
+import Banner from '../common/components/banner/index';
 export default class ProductDetail extends Component {
     constructor(props) {
         super(props)
@@ -172,6 +172,18 @@ export default class ProductDetail extends Component {
        })
     }
 
+    bannerClickListener(index) {
+    this.setState({
+        clickTitle: this.state.banners[index].title ? `you click ${this.state.banners[index].title}` : 'this banner has no title',
+    })
+
+}
+
+bannerOnMomentumScrollEnd(event, state) {
+    //  console.log(`--->onMomentumScrollEnd page index:${state.index}, total:${state.total}`);
+    this.defaultIndex = state.index;
+}
+
     renderProductDetailView() {
         const ItemW = this.state.toolsView.screenWidth / 3 - 9, ItemH = ItemW * 1.5
         var goods = this.state.goods;
@@ -191,6 +203,14 @@ export default class ProductDetail extends Component {
             keyboardShouldPersistTaps={false}
             >
                 <View style={{alignSelf:'stretch'}}>
+                {/* <Banner
+                 style={{height:375,width:this.state.toolsView.screenWidth}}
+                banners={goods.goods.images}
+                defaultIndex={this.defaultIndex}
+                onMomentumScrollEnd={this.bannerOnMomentumScrollEnd.bind(this)}
+                intent={this.bannerClickListener.bind(this)}
+
+            /> */}
                     <Image
                         style={{height:375,width:this.state.toolsView.screenWidth}}
                         source={{uri: goods.goods.images[0].image}}
