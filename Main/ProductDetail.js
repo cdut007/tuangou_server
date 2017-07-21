@@ -165,6 +165,7 @@ export default class ProductDetail extends Component {
     }
 
     renderProductDetailView() {
+        const ItemW = this.state.toolsView.screenWidth / 3 - 9, ItemH = ItemW * 1.5
         var goods = this.state.goods;
         var goodsRecommendItems= this.state.gbDetail.group_buy_goods;
             // if(!goods){
@@ -210,6 +211,19 @@ export default class ProductDetail extends Component {
                             {this.state.gbDetail.classify.name}
                         </Text>
                         </View>
+                        <ScrollView
+                        keyboardDismissMode='on-drag'
+                        keyboardShouldPersistTaps={false}
+
+                        showsHorizontalScrollIndicator={false}
+                        showsVerticalScrollIndicator={false}
+                        contentContainerStyle={{width:ItemW*goodsRecommendItems.length,height:ItemH}}
+                        style={{width:this.state.toolsView.screenWidth,height:ItemH}}
+                    >
+
+                        {this.renderCategorysView(goodsRecommendItems)}
+                    </ScrollView>
+
                         <View style={{backgroundColor:'#f2f2f2',height:10,flex:1,}}>
                         </View>
 
@@ -221,7 +235,7 @@ export default class ProductDetail extends Component {
                                 {this.state.gbDetail.classify.desc}
                                 </Text>
 
-                        {this.renderCategorysView(goodsRecommendItems,goods.goods)}
+                        {this.renderDetailView(goodsRecommendItems,goods.goods)}
 
                     {/* <HTMLView
                         value={htmlContent}
@@ -235,24 +249,26 @@ export default class ProductDetail extends Component {
         );
     }
 
+    renderDetailView(prouductItems,goods){
+        var divStyle = {
+           color: 'blue',
+            width: this.state.toolsView.screenWidth
+
+       };
+        return (
+            // <iframe src="https://www.baidu.com" width="540" height="450"></iframe>
+          <View style={[{ width: this.state.toolsView.screenWidth}]}>
+          <div
+          style={divStyle}
+          dangerouslySetInnerHTML={{__html: goods.desc}}
+          >
+          </div>
+          </View>
+        )
+    }
+
     renderCategorysView(prouductItems,goods) {
-      if (true) {
-          var divStyle = {
-             color: 'blue',
-              width: this.state.toolsView.screenWidth
-             
-         };
-          return (
-              // <iframe src="https://www.baidu.com" width="540" height="450"></iframe>
-            <View style={[{ width: this.state.toolsView.screenWidth}]}>
-            <div
-            style={divStyle}
-            dangerouslySetInnerHTML={{__html: goods.desc}}
-            >
-            </div>
-            </View>
-          )
-      }
+
         var width = this.state.toolsView.screenWidth;
         const w = width / 3 - 9, h = w
 
