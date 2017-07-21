@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 
 import CheckBox from '../common/checkbox'
-
+import ProductDetail from './ProductDetail'
 import NavBar from '../common/NavBar'
 import GroupBuyNowView from './GroupBuyNowView'
 import CommitButton from '../common/CommitButton'
@@ -243,6 +243,17 @@ export default class GroupBuyCar extends Component {
         this.setState({ ...this.state })
     }
 
+   onProdcutInfo(prouductItem){
+       this.props.navigator.push({
+          component: ProductDetail,
+           props: {
+               prouduct:{
+                   'index': prouductItem.id,
+                   'image': {uri:prouductItem.goods.images[0].image},
+               },
+              }
+      })
+   }
 
     renderItemInfo(item,w,h){
         if (item.tag!='total_count') {
@@ -255,11 +266,11 @@ export default class GroupBuyCar extends Component {
             {this.renderCheckBox(item)}
                  </View>
 
-                <View style={{
-                flex:2}}>
+                <TouchableOpacity style={{
+                flex:2}}  onPress={this.onProdcutInfo.bind(this, item)}>
                 <Image style={{resizeMode:'contain', alignItems:'center',width: 80, height: 80,
                 justifyContent:'center',}} source={{ uri: item.goods.images[0].image }}/>
-                </View>
+                </TouchableOpacity>
                 <View style={{
                 height:h,
                 alignItems:'flex-start',

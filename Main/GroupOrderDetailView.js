@@ -12,12 +12,12 @@ import {
 
 
 import NavBar from '../common/NavBar'
-
+import ProductDetail from './ProductDetail'
 
 export default class GroupOrderDetailView extends Component {
     constructor(props) {
         super(props)
-        var title = "品质水果";
+        var title =this.props.items.classify.name;
 
         this.state={
             goods:{description:''},
@@ -63,8 +63,17 @@ export default class GroupOrderDetailView extends Component {
         )
     }
 
-    onItemClick(prouductItems){
-
+    onItemClick(prouductItem){
+        console.log('order_product_info:'+JSON.stringify(prouductItem))
+        this.props.navigator.push({
+           component: ProductDetail,
+            props: {
+                prouduct:{
+                    'index': prouductItem.goods.id,
+                    'image': {uri:prouductItem.goods.goods.images[0].image},
+                },
+               }
+       })
     }
 
     renderGroupOrderListView(){

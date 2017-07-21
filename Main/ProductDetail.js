@@ -40,8 +40,16 @@ export default class ProductDetail extends Component {
     }
 
 
-    onItemClick(prouduct){
-
+    onItemClick(prouductItem){
+        this.props.navigator.replace({
+           component: ProductDetail,
+            props: {
+                prouduct:{
+                    'index': prouductItem.id,
+                    'image': {uri:prouductItem.goods.images[0].image},
+                },
+               }
+       })
     }
 
 

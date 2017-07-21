@@ -57,7 +57,7 @@ export default class ProductCatagoryListViewTab extends Component {
         var titles=[]
         for (var i = 0; i < response.data.group_buy.length; i++) {
             var item = response.data.group_buy[i]
-            titles.push(item.end_time)
+            titles.push('截团时间 '+item.end_time)
         }
 
         this.setState({
