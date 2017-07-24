@@ -13,6 +13,8 @@ import ScrollableTabView from '../common/components/scrolltab/index'
 import CountDownTimer from '../common/components/CountDown'
 import GroupBuyCar from './GroupBuyCar'
 
+import Banner from '../common/components/banner/index';
+
 export default class ProductCatagoryListViewTab extends Component {
 
     constructor(props){
@@ -28,6 +30,7 @@ export default class ProductCatagoryListViewTab extends Component {
                 dataSource: ds,
                 values:[],
                 selectedIndex:0,
+                banners:[],
             };
         }
 
@@ -47,6 +50,7 @@ export default class ProductCatagoryListViewTab extends Component {
 
                 console.log(' error:' + e)
             })
+            this.fetchBanner();
     }
 
     onGroupBuyListSuccess(response) {
@@ -183,13 +187,43 @@ export default class ProductCatagoryListViewTab extends Component {
         })
     }
 
+    onBannerSuccess(response){
+        console.log('get banners succ.....'+JSON.stringify(response))
+    this.state.banners = response.data.images;
+    this.setState({banners:this.state.banners});
+}
+
+    fetchBanner(){
+    var paramBody ={ }
+
+    HttpRequest.get('/banner', paramBody, this.onBannerSuccess.bind(this),
+        (e) => {
+
+            try {
+                var errorInfo = JSON.parse(e);
+                console.log(errorInfo.description)
+                if (errorInfo != null && errorInfo.description) {
+                    console.log(errorInfo.description)
+                } else {
+                    console.log(e)
+                }
+            }
+            catch(err)
+            {
+                console.log(err)
+            }
+
+            console.log(' error:' + e)
+        })
+}
+
 
     renderProductCategoryView(groupBuyDetail ,title) {
 
         let rowData = groupBuyDetail.group_buy_goods
 
         if (rowData) {
-                console.log('rowData================'+JSON.stringify(rowData))
+            //    console.log('rowData================'+JSON.stringify(rowData))
 
             this.state.dataSource = this.state.dataSource.cloneWithRows(rowData)
 
@@ -202,7 +236,7 @@ export default class ProductCatagoryListViewTab extends Component {
         }
 
         return (
-            <View  style={[styles.list_container,{height:screenHeight}]}>
+            <View  style={[styles.list_container,{height:screenHeight-275}]}>
             <View style={[styles.list_container,{marginTop:0}]}>
             <ListView
                 contentContainerStyle={styles.list}
@@ -277,12 +311,41 @@ export default class ProductCatagoryListViewTab extends Component {
 
     }
 
+    renderTopView() {
+        var image = ''
+        if (this.state.banners.length>0) {
+            return (
+                // <Image
+                //    style={styles.topView}
+                //    source={{uri: this.state.banners[0].image}}
+                //    />
+                //
+                 <Banner
+                    style={styles.topView}
+                    banners={this.state.banners}
+                    defaultIndex={0}
+                />
+
+            )
+        }
+        //
+        // {/* <Banner
+        //     style={styles.topView}
+        //     banners={this.banners}
+        //     defaultIndex={this.defaultIndex}
+        //     onMomentumScrollEnd={this.bannerOnMomentumScrollEnd.bind(this)}
+        //     intent={this.bannerClickListener.bind(this)}
+        // /> */}
+
+
+    }
 
     renderTabView() {
          if (this.state.gbList.group_buy && this.state.gbList.group_buy.length) {
 
             return(
                 <View  onLayout={this.onViewLayout.bind(this)}>
+
                 <SegmentedControlIOS
                     values={this.state.values}
                     tintColor='#ea6b10'
@@ -290,6 +353,7 @@ export default class ProductCatagoryListViewTab extends Component {
                     onChange={this._onChange.bind(this)}
                     style={{alignSelf:'stretch',margin:20}}
                     onValueChange={this._onValueChange.bind(this)} />
+                    {this.renderTopView()}
                     {/* <CountDownTimer
                          //date={new Date(parseInt(endTime))}
                          date="2017-11-28T00:00:00+00:00"
@@ -305,6 +369,7 @@ export default class ProductCatagoryListViewTab extends Component {
                          firstColonStyle={styles.colon}
                          secondColonStyle={styles.colon}
                      /> */}
+
                    {this.onSenceItem(this.state.selectedIndex)}
                 {/* <ScrollableTabView style={styles.container}>
                {this.onSenceItem()}
@@ -389,6 +454,10 @@ const styles = StyleSheet.create({
        color: 'white',
        marginHorizontal: 3,
        borderRadius: 2,
+     },
+     topView: {
+         height: 275,
+         alignSelf:'stretch',
      },
      //冒号
      colon: {

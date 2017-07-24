@@ -20,10 +20,12 @@ import GroupBuyCar from './GroupBuyCar'
 var Global = require('../common/globals');
 var BGWASH = 'rgba(255,255,255,0.8)';
 import Banner from '../common/components/banner/index';
+import HorizontalScrollView from '../common/components/banner/HorizontalScrollView'
 export default class ProductDetail extends Component {
     constructor(props) {
         super(props)
         this.state={
+            defaultIndex:0,
             toolsView: {
                 flexDirection: "row",
                 flexWrap: "wrap",
@@ -173,16 +175,42 @@ export default class ProductDetail extends Component {
     }
 
     bannerClickListener(index) {
-    this.setState({
-        clickTitle: this.state.banners[index].title ? `you click ${this.state.banners[index].title}` : 'this banner has no title',
-    })
+    // this.setState({
+    //     clickTitle: this.state.banners[index].title ? `you click ${this.state.banners[index].title}` : 'this banner has no title',
+    // })
 
 }
 
 bannerOnMomentumScrollEnd(event, state) {
-    //  console.log(`--->onMomentumScrollEnd page index:${state.index}, total:${state.total}`);
-    this.defaultIndex = state.index;
+     console.log(`--->onMomentumScrollEnd page index:${state.index}, total:${state.total}`);
+    this.state.defaultIndex = state.index;
 }
+
+  renderTopBanner(goods){
+      if (goods.goods.images && goods.goods.images.length > 1 && goods.goods.images[0].image != '') {
+
+           console.log("--->banners :"+ JSON.stringify(goods.goods.images[0].image));
+         
+          return (
+
+              <Banner
+               style={{height:375,width:this.state.toolsView.screenWidth}}
+              banners={goods.goods.images}
+              defaultIndex={this.state.defaultIndex}
+              onMomentumScrollEnd={this.bannerOnMomentumScrollEnd.bind(this)}
+              intent={this.bannerClickListener.bind(this)}
+
+          />
+          )
+      }else{
+          return(
+              <Image
+                 style={{height:375,width:this.state.toolsView.screenWidth}}
+                 source={{uri: goods.goods.images[0].image}}
+                 />
+          )
+      }
+  }
 
     renderProductDetailView() {
         const ItemW = this.state.toolsView.screenWidth / 3 - 9, ItemH = ItemW * 1.5
@@ -203,18 +231,8 @@ bannerOnMomentumScrollEnd(event, state) {
             keyboardShouldPersistTaps={false}
             >
                 <View style={{alignSelf:'stretch'}}>
-                {/* <Banner
-                 style={{height:375,width:this.state.toolsView.screenWidth}}
-                banners={goods.goods.images}
-                defaultIndex={this.defaultIndex}
-                onMomentumScrollEnd={this.bannerOnMomentumScrollEnd.bind(this)}
-                intent={this.bannerClickListener.bind(this)}
 
-            /> */}
-                    <Image
-                        style={{height:375,width:this.state.toolsView.screenWidth}}
-                        source={{uri: goods.goods.images[0].image}}
-                        />
+                  {this.renderTopBanner(goods)}
                     <Text style={{flex:1,color:'#1c1c1c',fontSize:18,margin:10}}>{goods.goods.name}</Text>
                     <View style={{alignItems:'center',flexDirection:'row',
                     justifyContent:'flex-start',margin:10,
@@ -272,7 +290,7 @@ bannerOnMomentumScrollEnd(event, state) {
                 </View>
             </ScrollView>
 
-            <View style={{position: 'absolute', left: 0, right: 0, bottom: 0}}><CommitButton title={'开始拼团'} onPress = {this.startGroupBuy.bind(this)}></CommitButton></View>
+            <View style={{position: 'absolute', left: 0, right: 0, bottom: 0}}><CommitButton title={'加入拼团车'} onPress = {this.startGroupBuy.bind(this)}></CommitButton></View>
             </View>
         );
     }

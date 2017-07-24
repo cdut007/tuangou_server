@@ -12,8 +12,7 @@ import {
 
 import TimerMixin from 'react-timer-mixin';
 
-const screenWidth = 600;//Dimensions.get('window').width;
-
+var autoplayTimeout = 2.5
 export default class Swiper extends React.Component {
   static propTypes : {
     horizontal                       : React.PropTypes.bool,
@@ -65,6 +64,11 @@ export default class Swiper extends React.Component {
     this._renderScrollView = this._renderScrollView.bind(this);
     this._onPageScrollStateChanged = this._onPageScrollStateChanged.bind(this);
     this._calContainer = this._calContainer.bind(this);
+
+    if (!this.state.index) {
+        this.state.index = 0
+    }
+
   }
 
   componentWillReceiveProps(props) {
@@ -85,8 +89,8 @@ export default class Swiper extends React.Component {
     initState.index = Math.max(Math.min(props.defaultIndex, initState.total - 1), 0);
 
     initState.dir = props.horizontal == false ? 'y' : 'x';
-    initState.width = screenWidth;
-    initState.height = screenWidth / props.whRatio;
+    // initState.width = screenWidth;
+    // initState.height = screenWidth / props.whRatio;
     initState.offset = {};
 
     if (initState.total > 1) {
@@ -103,6 +107,13 @@ export default class Swiper extends React.Component {
    * Automatic srolling
    */
   _autoplay() {
+
+      console.log('autoplay='+this.props.autoplay)
+        console.log('isScrolling='+this.props.isScrolling)
+          console.log('autoplayEnd='+this.props.autoplayEnd)
+            console.log('this.state.index='+this.state.index)
+console.log('Array.isArray(this.props.children)='+Array.isArray(this.props.children))
+
     if(!Array.isArray(this.props.children)
       || !this.props.autoplay
       || this.state.isScrolling
@@ -111,16 +122,30 @@ export default class Swiper extends React.Component {
     this.clearTimeout(this.autoplayTimer);
 
     this.autoplayTimer = this.setTimeout(() => {
+          console.log('setTimeout  setTimeout  setTimeout setTimeout autoplay='+this.state.index)
       if(!this.props.loop
         && (this.props.autoplayDirection
           ? this.state.index == this.state.total - 1
           : this.state.index == 0)) {
+               console.log('end ~~~~~~~setTimeout  setTimeout  setTimeout setTimeout autoplay=')
         return this.setState({
           autoplayEnd: true
         });
       }
-      this._scrollTo(this.props.autoplayDirection ? 1 : -1);
-    }, this.props.autoplayTimeout * 1000);
+ //      this._scrollTo(this.state.index);
+
+
+     this._scrollTo(1);
+
+         this.setTimeout(()=>{
+              this.state.index = this.state.index + 1 ;
+              if (this.state.index == this.state.total) {
+                  this.state.index = 0
+              }
+     console.log('@@@@@@@@@@@@@@@~setTimeout  setTimeout  setTimeout setTimeout autoplay=')
+     this._onPageScrollStateChanged('idle');
+              this._autoplay();},1000)
+    }, autoplayTimeout * 1000);
   }
 
   /**
@@ -128,6 +153,7 @@ export default class Swiper extends React.Component {
    * @param  {object} e native event
    */
   _onScrollBegin(e) {
+       console.log('_onScrollBegin_onScrollBegin_onScrollBegin_onScrollBegin_onScrollBegin')
     // update scroll state
     this.setState({
       isScrolling: true
@@ -143,6 +169,7 @@ export default class Swiper extends React.Component {
    * @param  {object} e native event
    */
   _onScrollEnd(e) {
+      console.log('_onScrollEnd====')
     // update scroll state
     this.setState({
       isScrolling: false
@@ -169,7 +196,25 @@ export default class Swiper extends React.Component {
     });
   }
 
+  // setPage(selectedPage) {
+  //   this._scrollToPage(selectedPage, true);
+  // }
+  //
+  // setPageWithoutAnimation(selectedPage) {
+  //   this._scrollToPage(selectedPage, false);
+  // }
+
+//   _scrollToPage(selectedPage, animated) {
+//   if(selectedPage < 0 || selectedPage >= this.props.children.length) return;
+//
+//   this.refs.scrollView.scrollTo({
+//     animated: animated,
+//     x: this.state.width  * selectedPage
+//   })
+// }
+
   _onPageScrollStateChanged(scrollState) {
+       console.log('_onPageScrollStateChanged_onPageScrollStateChanged'+scrollState)
     if(scrollState == 'idle') {
     //   console.log('_onPageScrollStateChanged idle index:', this.state.index);
       if(this.state.isScrolling) {
@@ -185,10 +230,12 @@ export default class Swiper extends React.Component {
       if(this.props.loop) {
         if(this._viewPagerIndex < 1) {
           this._viewPagerIndex = this.state.total;
-          this.refs.scrollView.setPageWithoutAnimation(this._viewPagerIndex);
+          //this._scrollTo(this._viewPagerIndex)
+          this.refs.scrollView.setPage(this._viewPagerIndex);
         } else if (this._viewPagerIndex > this.state.total) {
           this._viewPagerIndex = 1;
-          this.refs.scrollView.setPageWithoutAnimation(1);
+            //this._scrollTo(1)
+          this.refs.scrollView.setPage(1);
         }
       }
     } else {
@@ -206,6 +253,7 @@ export default class Swiper extends React.Component {
    * @param  {string} dir    'x' || 'y'
    */
   _updateIndex(offset, dir) {
+        console.log('_updateIndex_updateIndex'+offset)
     let state = this.state;
     let index = state.index;
     let diff = offset[dir] - state.offset[dir];
@@ -242,6 +290,8 @@ export default class Swiper extends React.Component {
    * @param  {number} index offset index
    */
   _scrollTo(index) {
+
+          console.log(this.state.total+'sssssssssssssssssss=='+index+'ssssssssssssss='+this.state.isScrolling)
     if (this.state.isScrolling || this.state.total < 2) return;
     let state = this.state;
     let diff = (this.props.loop ? 1 : 0) + index + this.state.index;
@@ -250,15 +300,15 @@ export default class Swiper extends React.Component {
     if(state.dir == 'x') x = diff * state.width;
     if(state.dir == 'y') y = diff * state.height;
     if(this.refs.scrollView) {
-      if(Platform.OS == 'ios') {
-        this.refs.scrollView.scrollTo({
-          y,
-          x
-        });
-      } else {
+     // if(Platform.OS == 'ios') {
+        // this.refs.scrollView.scrollTo({
+        //   y,
+        //   x
+        // });
+    //   } else {
         this._viewPagerIndex = diff;
         this.refs.scrollView.setPage(diff);
-      }
+    //   }
     }
 
     // update scroll state
@@ -303,19 +353,21 @@ export default class Swiper extends React.Component {
   }
 
   _renderScrollView(pages) {
-    if (Platform.OS === 'ios') {
-      return (
-        <ScrollView
-          ref="scrollView"
-          {...this.props}
-          contentContainerStyle={[styles.wrapper]}
-          contentOffset={this.state.offset}
-          onScrollBeginDrag={this._onScrollBegin}
-          onMomentumScrollEnd={this._onScrollEnd}>
-          {pages}
-        </ScrollView>
-      );
-    }
+    //   return (
+    //     <ScrollView
+    //       ref="scrollView"
+    //       {...this.props}
+    //       contentContainerStyle={[styles.wrapper]}
+    //        horizontal={true}
+    //       contentOffset={this.state.offset}
+    //        pagingEnabled={true}
+    //        showsHorizontalScrollIndicator={false}
+    //       onScrollBeginDrag={this._onScrollBegin}
+    //       onMomentumScrollEnd={this._onScrollEnd}>
+    //       {pages}
+    //     </ScrollView>
+    //   );
+
     return (
       <ViewPagerAndroid
         ref="scrollView"
@@ -327,7 +379,7 @@ export default class Swiper extends React.Component {
         style={[{flex: 1, height: this.state.height}, styles.wrapper]}>
         {pages}
       </ViewPagerAndroid>
-    );
+     );
   }
 
   _calContainer(e) {
@@ -408,6 +460,8 @@ const styles = StyleSheet.create({
 
   wrapper: {
     backgroundColor: 'transparent',
+    height: 375,
+
   },
 
   slide: {

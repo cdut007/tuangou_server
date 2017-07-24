@@ -13,7 +13,6 @@ import {
 } from 'react-native';
 
 import Swiper from './Swiper';
-const screenWidth = 600;
 
 class Banner extends React.Component {
 
@@ -31,6 +30,8 @@ class Banner extends React.Component {
 
     render() {
         let imageViews = this.images.map((image, index) => {
+
+            console.log('banner ---image====='+image)
             return (
                 <TouchableOpacity
                     activeOpacity={1}
@@ -91,14 +92,12 @@ const styles = StyleSheet.create({
         bottom: 0,
         justifyContent: 'center',
         height: 35,
-        width: screenWidth,
     },
     titleBg: {
         backgroundColor: 'rgba(0,0,0,.4)',
         position: 'absolute',
         bottom: 0,
         height: 35,
-        width: screenWidth,
     },
     titleStyle: {
         color: 'white',
@@ -106,7 +105,8 @@ const styles = StyleSheet.create({
         marginLeft: 10,
     },
     image: {
-        flex: 1,
+        height: 375,
+        width:414,
     },
 });
 

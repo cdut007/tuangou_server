@@ -251,7 +251,7 @@ export default class HomeView extends Component {
                        toolsData.push({
                            'index': product.goods_id,
                            'image': {uri:product.image},
-                            'title':'更多精选',
+                            'title':'更多精选,\n欢迎选购',
                            'tag': 'scan_more',
                            'name':classify.name,
                            'classify_id':classify.id,
@@ -311,7 +311,7 @@ export default class HomeView extends Component {
         justifyContent:'center',backgroundColor:'#999999'}}
         needsOffscreenAlphaCompositing={true}
         >
-        <Text needsOffscreenAlphaCompositing={true} style={{opacity:1,alignItems:'center',justifyContent:'center',fontSize: 14, color: "#ffffff",}}>{item.title}</Text>
+        <Text  numberOfLines={2} needsOffscreenAlphaCompositing={true} style={{opacity:1,alignItems:'center',justifyContent:'center',fontSize: 14, color: "#ffffff",}}>{item.title}</Text>
         </View>)
     }
 
