@@ -162,13 +162,44 @@ export default class ProductDetail extends Component {
                  console.log('save k_cur_gbdetail faild.')
         }.bind(this));
 
-
+       var group_buy_goods_car = []
+        if (Global.gbDetail) {
+            group_buy_goods_car = Global.gbDetail.group_buy_goods_car
+            if (!group_buy_goods_car) {
+                group_buy_goods_car = []
+            }
+        }
        Global.gbDetail = this.state.gbDetail
+       Global.gbDetail.group_buy_goods_car = group_buy_goods_car
 
+       var hasFound = false
+       for (var i = 0; i <  Global.gbDetail.group_buy_goods_car.length; i++) {
+           var goods = Global.gbDetail.group_buy_goods_car[i]
+           if (goods.id == this.state.goods.id) {
+               hasFound = true;
+               if (!goods.seletecedCount) {
+                   goods.seletecedCount = 0 ;
+               }
+               goods.selected = true
+               goods.seletecedCount+=1;
+
+               break;
+           }
+
+       }
+       if (!hasFound) {
+           if (!this.state.goods.seletecedCount) {
+               this.state.goods.seletecedCount = 0 ;
+           }
+           this.state.goods.seletecedCount+=1;
+           this.state.goods.selected = true
+           Global.gbDetail.group_buy_goods_car.push(this.state.goods)
+       }
 
         this.props.navigator.push({
            component: GroupBuyCar,
             props: {
+                goods:this.state.goods,
                 showBack:true,
                }
        })
@@ -190,7 +221,7 @@ bannerOnMomentumScrollEnd(event, state) {
       if (goods.goods.images && goods.goods.images.length > 1 && goods.goods.images[0].image != '') {
 
            console.log("--->banners :"+ JSON.stringify(goods.goods.images[0].image));
-         
+
           return (
 
               <Banner

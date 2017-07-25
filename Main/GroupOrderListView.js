@@ -182,6 +182,9 @@ export default class GroupOrderListView extends Component {
                         <Text style={{fontSize:16,color:'#1b1b1b'}}>
                                 {items.classify.name}
                             </Text>
+                            <Text style={{flex:1, marginRight:5,fontSize:16,color:'#757575',textAlign:'right'}}>
+                                    预计发货 {categoryDataAry[i].ship_time}
+                                </Text>
                             </View>
 
                         {this.renderCategorysView(items)}

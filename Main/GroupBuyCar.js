@@ -32,21 +32,24 @@ export default class GroupBuyCar extends Component {
                 screenHeight:1000,
             },
 
-            gbDetail: { classify: { name: '', icon: '' }, group_buy_goods: [] }
+            gbDetail: { classify: { name: '', icon: '' }, group_buy_goods_car: [] }
+
+        }
+
+        if (Global.gbDetail && Global.gbDetail.group_buy_goods_car) {
+            this.state.gbDetail = Global.gbDetail
 
         }
 
     }
 
     componentDidMount() {
-    if (Global.gbDetail) {
-        this.setState({ gbDetail: Global.gbDetail })
-    }
+
     }
 
     onGroupBuyNow(){
         var goodsIds = []
-    this.state.gbDetail.group_buy_goods.map((item, i) => {
+    this.state.gbDetail.group_buy_goods_car.map((item, i) => {
         if (item.selected && item.seletecedCount && item.seletecedCount>0) {
             goodsIds.push({goods:item.id,quantity:item.seletecedCount})
         }
@@ -74,7 +77,8 @@ export default class GroupBuyCar extends Component {
     }
 
     onGroupBuySuccess(response){
-
+        Global.gbDetail=null;
+        this.setState({gbDetail: { classify: { name: '', icon: '' }, group_buy_goods_car: [] }})
         this.props.navigator.push({
            component: GroupBuyNowView,
             props: {
@@ -138,7 +142,7 @@ export default class GroupBuyCar extends Component {
         let selectedPrice = 0
         var categoryDataAry = [this.state.gbDetail];
         for (var i = 0; i < categoryDataAry.length; i++) {
-            categoryDataAry[i].group_buy_goods.map((item, n) => {
+            categoryDataAry[i].group_buy_goods_car.map((item, n) => {
                 if (item.selected) {
                     if (!item.seletecedCount) {
                         item.seletecedCount = 0 ;
@@ -193,8 +197,8 @@ export default class GroupBuyCar extends Component {
                     onChange={(checked) => {
                         item.selected = !checked
 
-                        if (item.classify && item.group_buy_goods) {
-                            item.group_buy_goods.map((subitem, i) => {
+                        if (item.classify && item.group_buy_goods_car) {
+                            item.group_buy_goods_car.map((subitem, i) => {
                                 subitem.selected = item.selected
                             })
                         }
@@ -218,8 +222,11 @@ export default class GroupBuyCar extends Component {
                         <Text style={{fontSize:16,color:'#1b1b1b'}}>
                                 {categoryDataAry[i].classify.name}
                             </Text>
+                            <Text style={{flex:1, marginRight:5,fontSize:16,color:'#757575',textAlign:'right'}}>
+                                    发货时间  {categoryDataAry[i].ship_time}
+                                </Text>
                             </View>
-                        {this.renderCategorysView(categoryDataAry[i].group_buy_goods)}
+                        {this.renderCategorysView(categoryDataAry[i].group_buy_goods_car)}
                         <View style = {{flex:1,justifyContent:'flex-end',alignItems: 'flex-end',marginRight:5}}>
 
                         </View>
@@ -256,6 +263,7 @@ export default class GroupBuyCar extends Component {
    }
 
     renderItemInfo(item,w,h){
+        console.log('item===='+JSON.stringify(item))
         if (item.tag!='total_count') {
             return(<View style={{resizeMode:'contain', alignItems:'center',width: w, height: h,
             justifyContent:'center',paddingLeft:10,paddingRight:10,flexDirection: "row",backgroundColor:'#f7f7f7',
@@ -278,7 +286,7 @@ export default class GroupBuyCar extends Component {
                 <Text style={{marginLeft:30,marginTop:10,numberOfLines:2,ellipsizeMode:'tail',fontSize: 14, color: "#1c1c1c",}}>{item.goods.name}</Text>
                 <Text style={{marginLeft:30,alignItems:'center',justifyContent:'center',fontSize: 12, color: "#757575",}}>{item.brief_dec}</Text>
                 <View style={{alignItems:'center',flexDirection:'row',marginLeft:30,paddingBottom:10,position:'absolute',left:0,right:0,bottom:0}}>
-                <Text style={{alignItems:'center',justifyContent:'center',fontSize: 16, color: "#fb7210",}}>库存 {item.stock}</Text>
+                <Text style={{alignItems:'center',justifyContent:'center',fontSize: 16, color: "#fb7210",}}>S$ {item.price}</Text>
                 <View style={{alignItems:'flex-end',textAlign:'right',flex:6,justifyContent:'flex-end',fontSize: 12, color: "#757575",}}>
 
                         <View style={{ height: 30, borderWidth: 0.5, borderColor: 'b3b3b3', borderRadius: 2, flexDirection: 'row', alignItems: 'center' }}>

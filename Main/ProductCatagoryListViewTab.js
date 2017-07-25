@@ -31,6 +31,7 @@ export default class ProductCatagoryListViewTab extends Component {
                 values:[],
                 selectedIndex:0,
                 banners:[],
+                endTime:0,
             };
         }
 
@@ -61,7 +62,7 @@ export default class ProductCatagoryListViewTab extends Component {
         var titles=[]
         for (var i = 0; i < response.data.group_buy.length; i++) {
             var item = response.data.group_buy[i]
-            titles.push('截团时间 '+item.end_time)
+            titles.push('发货时间 '+item.ship_time)
         }
 
         this.setState({
@@ -236,11 +237,11 @@ export default class ProductCatagoryListViewTab extends Component {
         }
 
         return (
-            <View  style={[styles.list_container,{height:screenHeight-275}]}>
+            <View  style={[styles.list_container,{height:screenHeight-180}]}>
             <View style={[styles.list_container,{marginTop:0}]}>
             <ListView
                 contentContainerStyle={styles.list}
-                style={[styles.listview_container,{marginBottom:50}]}
+                style={[styles.listview_container,{marginBottom:0}]}
                 dataSource={this.state.dataSource}
                 initialListSize={21}
                 pageSize={3}
@@ -250,8 +251,8 @@ export default class ProductCatagoryListViewTab extends Component {
                 scrollRenderAheadDistance={500}
                 renderRow={this.renderItem.bind(this)}
             />
-                <View style={{
-                alignSelf:'stretch',width:screenWidth,position: 'absolute', left: 0, right: 0, bottom: 0 }}><CommitButton title={'开始拼团'} onPress={this.startGroupBuy.bind(this,groupBuyDetail)}></CommitButton></View>
+                {/* <View style={{
+                alignSelf:'stretch',width:screenWidth,position: 'absolute', left: 0, right: 0, bottom: 0 }}><CommitButton title={'开始拼团'} onPress={this.startGroupBuy.bind(this,groupBuyDetail)}></CommitButton></View> */}
 
             </View>
             </View>
@@ -271,9 +272,10 @@ export default class ProductCatagoryListViewTab extends Component {
 
 
         var item = this.state.routes[index]
+
         let key = item.id
         let gbDetail = this.state.allGbDetail[key]
-        return(this.createProdcutCategoryList(gbDetail,item.end_time))
+        return(this.createProdcutCategoryList(gbDetail,item.ship_time))
 
 
         // var displayCategoryAry = []
@@ -281,7 +283,7 @@ export default class ProductCatagoryListViewTab extends Component {
         //     var item = this.state.routes[i]
         //     let key = item.id
         //     let gbDetail = this.state.allGbDetail[key]
-        //     displayCategoryAry.push(this.createProdcutCategoryList(gbDetail,item.end_time))
+        //     displayCategoryAry.push(this.createProdcutCategoryList(gbDetail,item.ship_time))
         // }
         //
         // if (displayCategoryAry.length == 0) {
@@ -298,6 +300,8 @@ export default class ProductCatagoryListViewTab extends Component {
       });
 
       console.log("value=="+event.nativeEvent.selectedSegmentIndex);
+          var item = this.state.routes[event.nativeEvent.selectedSegmentIndex]
+          this.state.endTime = item.end_time
      this.onSenceItem(event.nativeEvent.selectedSegmentIndex)
     }
 
@@ -354,9 +358,10 @@ export default class ProductCatagoryListViewTab extends Component {
                     style={{alignSelf:'stretch',margin:20}}
                     onValueChange={this._onValueChange.bind(this)} />
                     {this.renderTopView()}
+
                     {/* <CountDownTimer
-                         //date={new Date(parseInt(endTime))}
-                         date="2017-11-28T00:00:00+00:00"
+                         date={new Date(parseInt(this.state.endTime))}
+                        //  date="2017-11-28T00:00:00+00:00"
                          days={{plural: '天 ',singular: '天 '}}
                          hours=':'
                          mins=':'
@@ -369,6 +374,10 @@ export default class ProductCatagoryListViewTab extends Component {
                          firstColonStyle={styles.colon}
                          secondColonStyle={styles.colon}
                      /> */}
+{/*
+                     <Text style={{flex:1, height:30,fontSize:16,color:'#757575',textAlign:'center'}}>
+                     截团时间 {this.state.endTime}
+                     </Text> */}
 
                    {this.onSenceItem(this.state.selectedIndex)}
                 {/* <ScrollableTabView style={styles.container}>
@@ -456,7 +465,7 @@ const styles = StyleSheet.create({
        borderRadius: 2,
      },
      topView: {
-         height: 275,
+         height: 180,
          alignSelf:'stretch',
      },
      //冒号
