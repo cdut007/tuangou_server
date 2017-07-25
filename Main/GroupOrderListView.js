@@ -211,7 +211,6 @@ export default class GroupOrderListView extends Component {
     renderItemInfo(item,w,h,total){
 
 
-        if (item.tag!='total_count') {
             return(<View style={{resizeMode:'contain', alignItems:'center',width: w, height: h,
             justifyContent:'center',paddingLeft:20,paddingRight:10,flexDirection: "row",backgroundColor:'#f7f7f7',
             flex:1}}>
@@ -235,7 +234,7 @@ export default class GroupOrderListView extends Component {
                 </View>
 
             </View>)
-        }
+
 
     }
 
@@ -243,6 +242,9 @@ export default class GroupOrderListView extends Component {
         var width = this.state.mainStyle.screenWidth;
         const w = width , h = 110
         let items = prouductItems.order_goods
+        if (items.length == 0) {
+            return
+        }
         var total = 0 ;
         for (var i = 0; i < items.length; i++) {
             total += items[i].quantity;

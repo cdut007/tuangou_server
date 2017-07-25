@@ -14,13 +14,15 @@ import HttpRequest from '../common/HttpRequest/HttpRequest'
 import NavBar from '../common/NavBar'
 import ProductDetail from './ProductDetail'
 var Global = require('../common/globals');
-
+import EventEmitter from 'events';
+var deletedItem;
 export default class GroupOrderDetailView extends Component {
     constructor(props) {
         super(props)
         var title =this.props.items.classify.name;
-
+        var emitter = new EventEmitter;
         this.state={
+            emitter:emitter,
             goods:{description:''},
             title:title,
             mainStyle:{
@@ -31,6 +33,7 @@ export default class GroupOrderDetailView extends Component {
                 screenWidth:600,
                 height:1000,
                 alignSelf:'stretch',
+                paddingBottom:50,
             },
             productGoods:this.props.items,
 
@@ -107,6 +110,7 @@ export default class GroupOrderDetailView extends Component {
             agent_code:Global.agent_code,
 
         }
+        deletedItem = item;
         HttpRequest.delete('/generic_order', param, this.onCancelSuccess.bind(this,item),
                 (e) => {
 
@@ -116,7 +120,7 @@ export default class GroupOrderDetailView extends Component {
 
     removeByValue(arr, val) {
       for(var i=0; i<arr.length; i++) {
-        if(arr[i] == val) {
+        if(arr[i].goods.id == val.goods.id) {
           arr.splice(i, 1);
           return arr;
         }
@@ -124,10 +128,12 @@ export default class GroupOrderDetailView extends Component {
       return arr
     }
 
-    onCancelSuccess(response,item)
+    onCancelSuccess(response)
     {
-         this.state.productGoods = this.removeByValue(this.state.productGoods,item)
+         this.state.productGoods.order_goods = this.removeByValue(this.state.productGoods.order_goods,deletedItem)
+           this.state.emitter.emit('group_refresh');
          this.setState({productGoods:this.state.productGoods})
+         deletedItem=null;
     }
 
     rendCancelOrder(item){
