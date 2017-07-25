@@ -148,7 +148,7 @@ export default class GroupOrderListView extends Component {
 
         this.props.navigator.push({
                 props: {
-
+                    status:this.state.selectedIndex,
                     items:prouductItems,
                 },
 

@@ -10,9 +10,10 @@ import {
     ScrollView,
 } from 'react-native';
 
-
+import HttpRequest from '../common/HttpRequest/HttpRequest'
 import NavBar from '../common/NavBar'
 import ProductDetail from './ProductDetail'
+var Global = require('../common/globals');
 
 export default class GroupOrderDetailView extends Component {
     constructor(props) {
@@ -100,6 +101,44 @@ export default class GroupOrderDetailView extends Component {
             return displayCategoryAry;
     }
 
+    cancelOrder(item){
+        let param = {
+            goods_id: item.goods.id,
+            agent_code:Global.agent_code,
+
+        }
+        HttpRequest.delete('/generic_order', param, this.onCancelSuccess.bind(this,item),
+                (e) => {
+
+                    console.log(' error:' + e)
+                })
+    }
+
+    removeByValue(arr, val) {
+      for(var i=0; i<arr.length; i++) {
+        if(arr[i] == val) {
+          arr.splice(i, 1);
+          return arr;
+        }
+      }
+      return arr
+    }
+
+    onCancelSuccess(response,item)
+    {
+         this.state.productGoods = this.removeByValue(this.state.productGoods,item)
+         this.setState({productGoods:this.state.productGoods})
+    }
+
+    rendCancelOrder(item){
+            if(this.props.status == 0){
+                return(<TouchableOpacity style={{alignItems:'center',justifyContent:'center',
+                flex:3}}  onPress={this.cancelOrder.bind(this, item)}>
+                <Text style={{alignItems:'center',textAlign:'right',flex:1,justifyContent:'center',fontSize: 12, color: "#ff7575",}}>取消订单</Text>
+                </TouchableOpacity>)
+            }
+    }
+
     renderItemInfo(item,w,h){
         if (item.tag!='total_count') {
             return(<View style={{resizeMode:'contain', alignItems:'center',width: w, height: h,
@@ -120,7 +159,9 @@ export default class GroupOrderDetailView extends Component {
                 <Text style={{marginLeft:30,alignItems:'center',justifyContent:'center',fontSize: 12, color: "#757575",}}>{item.goods.brief_dec}</Text>
                 <View style={{alignItems:'center',flexDirection:'row',marginLeft:30,paddingBottom:10,position:'absolute',left:0,right:0,bottom:0}}>
                 <Text style={{alignItems:'center',justifyContent:'center',fontSize: 16, color: "#fb7210",}}>S$ {item.goods.price}</Text>
-                <Text style={{alignItems:'center',textAlign:'right',flex:9,justifyContent:'center',fontSize: 12, color: "#757575",}}>已购 {item.quantity}</Text>
+                <Text style={{alignItems:'center',textAlign:'right',flex:7,justifyContent:'center',fontSize: 12, color: "#757575",}}>已购 {item.quantity}</Text>
+                {this.rendCancelOrder(item)}
+
                 </View>
                 </View>
 

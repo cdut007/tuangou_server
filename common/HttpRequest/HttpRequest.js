@@ -75,7 +75,7 @@ get(apiName, body,successCallback, failCallback)
       if (httpToken && httpToken.length) {
 
            if (test) {
-               req.setRequestHeader("Authorization",'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMTE0MTc0NiwiaWF0IjoxNTAwNTM2OTQ2fQ.eyJpZCI6N30.fMTA_TXzKI42KMBZvDT3sZz0A-VaONStRsz6EP7P4L8');
+               req.setRequestHeader("Authorization",'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMTU1NDY1MywiaWF0IjoxNTAwOTQ5ODUzfQ.eyJpZCI6M30.7xmlVjBO9bUpitIUfYxNX57ydQqP_NMuLexe1FVT99s');
 
            }else{
                req.setRequestHeader("Authorization", httpToken);
@@ -83,7 +83,7 @@ get(apiName, body,successCallback, failCallback)
 
       }else{
           if (test) {
-              req.setRequestHeader("Authorization",'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMTE0MTc0NiwiaWF0IjoxNTAwNTM2OTQ2fQ.eyJpZCI6N30.fMTA_TXzKI42KMBZvDT3sZz0A-VaONStRsz6EP7P4L8');
+              req.setRequestHeader("Authorization",'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMTU1NDY1MywiaWF0IjoxNTAwOTQ5ODUzfQ.eyJpZCI6M30.7xmlVjBO9bUpitIUfYxNX57ydQqP_NMuLexe1FVT99s');
 
           }
       }
@@ -93,6 +93,83 @@ get(apiName, body,successCallback, failCallback)
 
 
   },
+  delete(apiName, body,successCallback, failCallback)
+  {
+      if(!httpToken)
+      {
+          httpToken = Global.token;
+          AsyncStorage.getItem('k_http_token').then(function(result){
+                if (result !== null){
+                   httpToken = result
+                   console.log('httpToken = '+httpToken)
+                } else {
+                  console.log('get http token error:' + errs)
+                }
+              }.bind(this)).catch(function(error){
+                  //this._appendMessage('AsyncStorage error: ' + error.message);
+              }.bind(this));
+
+
+
+
+      }else{
+
+      }
+
+      var param = ""
+      var url = apiAddr + apiName+'?format=json'
+
+
+
+      console.log('DELETE requesr:' + url+";param="+JSON.stringify(body))
+
+      const req = new XMLHttpRequest()
+
+
+        req.onload = function () {
+          try{
+
+              var response = JSON.parse(req.response);
+            console.log('result:' + req.response)
+
+                if (response.message =='Success' || response.message =='success' ) {
+                    successCallback(response);
+                }else{
+                    failCallback(req.response)
+                }
+          }catch(error){
+              failCallback(error)
+          }
+        }
+
+        req.ontimeout = function(e) {  console.log('result ontimeout') };
+        req.onerror = function(e) {  console.log('result onerror'+e)
+        failCallback(e)
+          };
+        req.timeout = 5000;
+
+        req.open('DELETE', url,true)
+        req.setRequestHeader("Content-Type","application/json");
+        if (httpToken && httpToken.length) {
+            if (test) {
+                req.setRequestHeader("Authorization",'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMTU1NDY1MywiaWF0IjoxNTAwOTQ5ODUzfQ.eyJpZCI6M30.7xmlVjBO9bUpitIUfYxNX57ydQqP_NMuLexe1FVT99s');
+
+            }else{
+                req.setRequestHeader("Authorization", httpToken);
+            }
+        }else{
+            if (test) {
+                req.setRequestHeader("Authorization",'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMTU1NDY1MywiaWF0IjoxNTAwOTQ5ODUzfQ.eyJpZCI6M30.7xmlVjBO9bUpitIUfYxNX57ydQqP_NMuLexe1FVT99s');
+
+            }
+        }
+
+
+
+        req.send(JSON.stringify(body))
+
+
+    },
 
   post(apiName, body,successCallback, failCallback)
   {
@@ -153,19 +230,19 @@ get(apiName, body,successCallback, failCallback)
         req.setRequestHeader("Content-Type","application/json");
         if (httpToken && httpToken.length) {
             if (test) {
-                req.setRequestHeader("Authorization",'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMTE0MTc0NiwiaWF0IjoxNTAwNTM2OTQ2fQ.eyJpZCI6N30.fMTA_TXzKI42KMBZvDT3sZz0A-VaONStRsz6EP7P4L8');
+                req.setRequestHeader("Authorization",'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMTU1NDY1MywiaWF0IjoxNTAwOTQ5ODUzfQ.eyJpZCI6M30.7xmlVjBO9bUpitIUfYxNX57ydQqP_NMuLexe1FVT99s');
 
             }else{
                 req.setRequestHeader("Authorization", httpToken);
             }
         }else{
             if (test) {
-                req.setRequestHeader("Authorization",'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMTE0MTc0NiwiaWF0IjoxNTAwNTM2OTQ2fQ.eyJpZCI6N30.fMTA_TXzKI42KMBZvDT3sZz0A-VaONStRsz6EP7P4L8');
+                req.setRequestHeader("Authorization",'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMTU1NDY1MywiaWF0IjoxNTAwOTQ5ODUzfQ.eyJpZCI6M30.7xmlVjBO9bUpitIUfYxNX57ydQqP_NMuLexe1FVT99s');
 
             }
         }
 
-    
+
 
         req.send(JSON.stringify(body))
 

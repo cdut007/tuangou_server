@@ -182,7 +182,9 @@ export default class ProductDetail extends Component {
                }
                goods.selected = true
                goods.seletecedCount+=1;
-
+               goods.classify_name = this.state.gbDetail.classify.name
+               goods.classify_id = this.state.gbDetail.classify_id
+               goods.ship_time = this.state.gbDetail.ship_time
                break;
            }
 
@@ -193,6 +195,10 @@ export default class ProductDetail extends Component {
            }
            this.state.goods.seletecedCount+=1;
            this.state.goods.selected = true
+           this.state.goods.classify_name = this.state.gbDetail.classify.name
+           this.state.goods.classify_id = this.state.gbDetail.classify_id
+           this.state.goods.ship_time = this.state.gbDetail.ship_time
+
            Global.gbDetail.group_buy_goods_car.push(this.state.goods)
        }
 

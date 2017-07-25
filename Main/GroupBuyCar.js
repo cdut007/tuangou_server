@@ -76,6 +76,11 @@ export default class GroupBuyCar extends Component {
         }
     }
 
+    clear(){
+        Global.gbDetail=null;
+        this.setState({gbDetail: { classify: { name: '', icon: '' }, group_buy_goods_car: [] }})
+    }
+
     onGroupBuySuccess(response){
         Global.gbDetail=null;
         this.setState({gbDetail: { classify: { name: '', icon: '' }, group_buy_goods_car: [] }})
@@ -94,11 +99,14 @@ export default class GroupBuyCar extends Component {
    renderTopBar(){
        if (this.props.showBack) {
            return(<NavBar title="拼团车"
+           rightTitle='清空'
+           rightPress={this.clear.bind(this)}
            leftIcon={require('../images/back@2x.png')}
            leftPress={this.clickBack.bind(this)}/>
            )
        }else{
-           return(<NavBar title="拼团车" />)
+           return(<NavBar title="拼团车"  rightTitle='清空'
+           rightPress={this.clear.bind(this)}/>)
        }
    }
 
@@ -209,7 +217,46 @@ export default class GroupBuyCar extends Component {
 
 
     renderProductCategoryView() {
-         var categoryDataAry =[this.state.gbDetail];
+         var categoryDataAry =[];
+         var len = this.state.gbDetail.group_buy_goods_car.length
+         var sortedArr = this.state.gbDetail.group_buy_goods_car.sort((a, b) => (a.classify_id < b.classify_id || a.ship_time > b.ship_time) ? 1 : -1);
+         var temp_group_buy_goods_car = [];
+          for (var i = 0; i < len; i++) {
+             var goods = this.state.gbDetail.group_buy_goods_car[i]
+
+             temp_group_buy_goods_car.push(goods)
+
+              if (i==0) {
+                 categoryDataAry.push({classify:{name:goods.classify_name},ship_time:goods.ship_time,group_buy_goods_car:temp_group_buy_goods_car})
+
+              }
+             if (i < len-1) {
+                  var nextGoods = this.state.gbDetail.group_buy_goods_car[i+1]
+                 if (goods.classify_id != nextGoods.classify_id || goods.ship_time != nextGoods.ship_time) {
+
+
+                     categoryDataAry[categoryDataAry.length-1].group_buy_goods_car = temp_group_buy_goods_car
+
+                     temp_group_buy_goods_car=[]
+                     if (i == len - 2) {//the last one.
+                         categoryDataAry.push({classify:{name:nextGoods.classify_name},ship_time:nextGoods.ship_time,group_buy_goods_car:[nextGoods]})
+
+                     }else{
+                         categoryDataAry.push({classify:{name:nextGoods.classify_name},ship_time:nextGoods.ship_time,group_buy_goods_car:temp_group_buy_goods_car})
+
+                     }
+
+
+                 }else{
+                     if (i == len - 2) {//the last one.
+                          temp_group_buy_goods_car.push(nextGoods)
+                          categoryDataAry[categoryDataAry.length-1].group_buy_goods_car = temp_group_buy_goods_car
+                           temp_group_buy_goods_car=[]
+                     }
+                 }
+             }
+
+          }
          var displayCategoryAry = [];
           for (var i = 0; i<categoryDataAry.length; i++) {
                 displayCategoryAry.push(
