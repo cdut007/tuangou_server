@@ -32,6 +32,7 @@ export default class ProductCatagoryListViewTab extends Component {
                 selectedIndex:0,
                 banners:[],
                 endTime:0,
+                image:null,
             };
         }
 
@@ -51,7 +52,7 @@ export default class ProductCatagoryListViewTab extends Component {
 
                 console.log(' error:' + e)
             })
-            this.fetchBanner();
+            //this.fetchBanner();
     }
 
     onGroupBuyListSuccess(response) {
@@ -68,7 +69,8 @@ export default class ProductCatagoryListViewTab extends Component {
         this.setState({
             values:titles,
             gbList: response.data,
-            routes: response.data.group_buy
+            routes: response.data.group_buy,
+            image:response.data.image,
         })
 
         if (response.data.group_buy.length) {
@@ -79,6 +81,14 @@ export default class ProductCatagoryListViewTab extends Component {
                 })
         }
 
+    }
+
+    changeTheTab(id){
+        var paramBody = { group_buy: id ,agent_code:Global.agent_code}
+        HttpRequest.get('/group_buy_detail', paramBody, this.onGroupBuyDetailSuccess.bind(this),
+            (e) => {
+                console.log('group_buy_detail error:' + e)
+            })
     }
 
 
@@ -299,6 +309,7 @@ export default class ProductCatagoryListViewTab extends Component {
         selectedIndex: event.nativeEvent.selectedSegmentIndex,
       });
 
+     this.changeTheTab(this.state.routes[event.nativeEvent.selectedSegmentIndex].id)
       console.log("value=="+event.nativeEvent.selectedSegmentIndex);
           var item = this.state.routes[event.nativeEvent.selectedSegmentIndex]
           this.state.endTime = item.end_time
@@ -317,18 +328,20 @@ export default class ProductCatagoryListViewTab extends Component {
 
     renderTopView() {
         var image = ''
-        if (this.state.banners.length>0) {
+        if (this.state.image) {
+            var banners = [];
+            banners.push({image:this.state.image})
             return (
-                // <Image
-                //    style={styles.topView}
-                //    source={{uri: this.state.banners[0].image}}
-                //    />
-                //
-                 <Banner
-                    style={styles.topView}
-                    banners={this.state.banners}
-                    defaultIndex={0}
-                />
+                <Image
+                   style={styles.topView}
+                   source={{uri: this.state.image}}
+                   />
+
+                //  <Banner
+                //     style={styles.topView}
+                //     banners={banners}
+                //     defaultIndex={0}
+                // />
 
             )
         }
