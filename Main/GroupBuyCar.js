@@ -18,10 +18,14 @@ import CommitButton from '../common/CommitButton'
 var Global = require('../common/globals');
 import AddressView from './AddressView'
 import HttpRequest from '../common/HttpRequest/HttpRequest'
+import EventEmitter from 'EventEmitter';
 
 export default class GroupBuyCar extends Component {
+
+
     constructor(props) {
         super(props)
+        var emitter = new EventEmitter;
         this.state={
             toolsView: {
                 flexDirection: "row",
@@ -31,6 +35,7 @@ export default class GroupBuyCar extends Component {
                 screenWidth:600,
                 screenHeight:1000,
             },
+            emitter:emitter,
 
             gbDetail: { classify: { name: '', icon: '' }, group_buy_goods_car: [] }
 
@@ -45,33 +50,53 @@ export default class GroupBuyCar extends Component {
 
     componentDidMount() {
 
+
     }
+
+     buyNow(delay ){
+         var goodsIds = []
+     this.state.gbDetail.group_buy_goods_car.map((item, i) => {
+         if (item.selected && item.seletecedCount && item.seletecedCount>0) {
+             goodsIds.push({goods:item.id,quantity:item.seletecedCount})
+         }
+     })
+     if (this.state.gbDetail.id == null || !goodsIds.length) {
+         alert('请选择需要团购的商品。')
+         return
+     }
+
+     let param = { goods: goodsIds, agent_code: Global.agent_code }
+
+         if (!delay) {
+             HttpRequest.post('/generic_order', param, this.onGroupBuySuccess.bind(this),
+                     (e) => {
+                         alert('提交订单失败，请稍后再试。')
+                         console.log(' error:' + e)
+                     })
+         }else{
+
+             setTimeout(function() {
+                 HttpRequest.post('/generic_order', param, this.onGroupBuySuccess.bind(this),
+                         (e) => {
+                             alert('提交订单失败，请稍后再试。')
+                             console.log(' error:' + e)
+                         })
+            }.bind(this), 500);
+         }
+     }
 
     onGroupBuyNow(){
-        var goodsIds = []
-    this.state.gbDetail.group_buy_goods_car.map((item, i) => {
-        if (item.selected && item.seletecedCount && item.seletecedCount>0) {
-            goodsIds.push({goods:item.id,quantity:item.seletecedCount})
-        }
-    })
-    if (this.state.gbDetail.id == null || !goodsIds.length) {
-        alert('请选择需要团购的商品。')
-        return
-    }
 
-    let param = { goods: goodsIds, agent_code: Global.agent_code }
     if (!Global.user_address) {
         this.props.navigator.push({
             component: AddressView,
+            props:{
+                buycarView: this.buyNow.bind(this),
+            }
         })
     }
     else {
-
-        HttpRequest.post('/generic_order', param, this.onGroupBuySuccess.bind(this),
-                (e) => {
-                    alert('提交订单失败，请稍后再试。')
-                    console.log(' error:' + e)
-                })
+        this.buyNow(false)
 
         }
     }

@@ -15,10 +15,11 @@ import NavBar from '../common/NavBar'
 import HttpRequest from '../common/HttpRequest/HttpRequest'
 var Global = require('../common/globals');
 var width = 600;
-
+import EventEmitter from 'events';
 export default class AddressView extends Component {
     constructor(props) {
         super(props)
+        var emitter = new EventEmitter;
         if (!Global.wxUserInfo) {
             Global.wxUserInfo = new Object();
             Global.user_address = new Object();
@@ -27,12 +28,14 @@ export default class AddressView extends Component {
             name: Global.agent.nickname,
             mobile: null,
             address: null,
+            emitter:emitter,
         }
 
     }
 
 
     back() {
+        Global.user_address = null;
         this.props.navigator.pop()
     }
 
@@ -96,6 +99,11 @@ export default class AddressView extends Component {
             address: this.state.address,
             phone_num: this.state.mobile
         }
+
+         //this.state.emitter.emit('address_refresh');
+         if (this.props.buycarView) {
+             this.props.buycarView(true)
+         }
 
         this.props.navigator.pop()
     }

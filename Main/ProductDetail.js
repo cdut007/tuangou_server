@@ -327,7 +327,7 @@ bannerOnMomentumScrollEnd(event, state) {
                 </View>
             </ScrollView>
 
-            <View style={{position: 'absolute', left: 0, right: 0, bottom: 0}}><CommitButton title={'加入拼团车'} onPress = {this.startGroupBuy.bind(this)}></CommitButton></View>
+            <View style={{position: 'absolute', left: 0, right: 0, bottom: 0}}><CommitButton title={'立即购买'} onPress = {this.startGroupBuy.bind(this)}></CommitButton></View>
             </View>
         );
     }
