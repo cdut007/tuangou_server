@@ -14,6 +14,24 @@ import CountDownTimer from '../common/components/CountDown'
 import GroupBuyCar from './GroupBuyCar'
 
 import Banner from '../common/components/banner/index';
+Date.prototype.format = function(fmt)
+{ //author: meizz
+    var o = {
+        "M+" : this.getMonth()+1,                 //月份
+        "d+" : this.getDate(),                    //日
+        "h+" : this.getHours(),                   //小时
+        "m+" : this.getMinutes(),                 //分
+        "s+" : this.getSeconds(),                 //秒
+        "q+" : Math.floor((this.getMonth()+3)/3), //季度
+        "S"  : this.getMilliseconds()             //毫秒
+    };
+    if(/(y+)/.test(fmt))
+        fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));
+    for(var k in o)
+        if(new RegExp("("+ k +")").test(fmt))
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+    return fmt;
+};
 
 export default class ProductCatagoryListViewTab extends Component {
 
@@ -33,6 +51,14 @@ export default class ProductCatagoryListViewTab extends Component {
                 banners:[],
                 endTime:0,
                 image:null,
+                topView: {
+                    height: 180,
+                    width:320,
+                    alignSelf:'stretch',
+                    alignItems:'center',
+                    justifyContent:'center',
+
+                },
             };
         }
 
@@ -63,7 +89,9 @@ export default class ProductCatagoryListViewTab extends Component {
         var titles=[]
         for (var i = 0; i < response.data.group_buy.length; i++) {
             var item = response.data.group_buy[i]
-            titles.push('发货时间 '+item.ship_time)
+             var oldTime = (new Date(item.ship_time)).getTime();
+             var curTime = new Date(oldTime).format("M月d日");
+            titles.push(curTime+'发货拼团')
         }
 
         this.setState({
@@ -109,13 +137,14 @@ export default class ProductCatagoryListViewTab extends Component {
 
     screenWidth = layoutEvent.nativeEvent.layout.width
     screenHeight = layoutEvent.nativeEvent.layout.height
-    this.setState({rowStyle:this.state.rowStyle });
+    this.state.topView.screenWidth = screenWidth
+    this.setState({rowStyle:this.state.rowStyle,topView:this.state.topView });
     console.log(layoutEvent.nativeEvent.layout.width+'wwwwww=='+screenWidth)
     }
 
     renderItem(item, sectionID, rowID){
         //write your own layout in list view
-        let w = (screenWidth - 60) / 2
+        let w = (screenWidth - 20) / 2
         console.log(JSON.stringify(item)+'itemitemitemitem=='+rowID)
 
         return (<TouchableOpacity underlayColor="#dad9d7" style={[{
@@ -247,13 +276,14 @@ export default class ProductCatagoryListViewTab extends Component {
         }
 
         return (
-            <View  style={[styles.list_container,{height:screenHeight-180}]}>
+            <View  style={[styles.list_container,{height:screenHeight}]}>
             <View style={[styles.list_container,{marginTop:0}]}>
             <ListView
                 contentContainerStyle={styles.list}
                 style={[styles.listview_container,{marginBottom:0}]}
                 dataSource={this.state.dataSource}
                 initialListSize={21}
+                renderHeader={this.renderTopView.bind(this)}
                 pageSize={3}
                 keyboardShouldPersistTaps={true}
                  automaticallyAdjustContentInsets={false}
@@ -332,10 +362,16 @@ export default class ProductCatagoryListViewTab extends Component {
             var banners = [];
             banners.push({image:this.state.image})
             return (
+                <View style = {this.state.topView}>
                 <Image
-                   style={styles.topView}
+                   style={{resizeMode:'contain',height: 180,
+                   width:this.state.topView.screenWidth,
+                    }}
                    source={{uri: this.state.image}}
                    />
+
+                </View>
+
 
                 //  <Banner
                 //     style={styles.topView}
@@ -370,7 +406,7 @@ export default class ProductCatagoryListViewTab extends Component {
                     onChange={this._onChange.bind(this)}
                     style={{alignSelf:'stretch',margin:20}}
                     onValueChange={this._onValueChange.bind(this)} />
-                    {this.renderTopView()}
+
 
                     {/* <CountDownTimer
                          date={new Date(parseInt(this.state.endTime))}
@@ -477,10 +513,7 @@ const styles = StyleSheet.create({
        marginHorizontal: 3,
        borderRadius: 2,
      },
-     topView: {
-         height: 180,
-         alignSelf:'stretch',
-     },
+
      //冒号
      colon: {
        fontSize: 12, color: 'rgba(85, 85, 85, 1)'
