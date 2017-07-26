@@ -302,7 +302,7 @@ export default class GroupBuyCar extends Component {
           }
          var displayCategoryAry = [];
           for (var i = 0; i<categoryDataAry.length; i++) {
-              var oldTime = (new Date(categoryDataAry[i].ship_time)).getTime();
+              var oldTime = (new Date(categoryDataAry[i].ship_time.replace(' ','T'))).getTime();
               var curTime = new Date(oldTime).format("M月d号");
 
                 displayCategoryAry.push(

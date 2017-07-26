@@ -89,7 +89,7 @@ export default class ProductCatagoryListViewTab extends Component {
         var titles=[]
         for (var i = 0; i < response.data.group_buy.length; i++) {
             var item = response.data.group_buy[i]
-             var oldTime = (new Date(item.ship_time)).getTime();
+             var oldTime = (new Date(item.ship_time.replace(' ','T'))).getTime();
              var curTime = new Date(oldTime).format("M月d日");
             titles.push(curTime+'发货拼团')
         }
@@ -361,7 +361,7 @@ export default class ProductCatagoryListViewTab extends Component {
         if (this.state.image) {
             var banners = [];
             var item = this.state.routes[this.state.selectedIndex]
-            var endTime = (new Date(item.end_time)).getTime();
+            var endTime = (new Date(item.end_time.replace(' ','T'))).getTime();
             var curTime = new Date(endTime).format("yyyy-MM-ddThh:mm:ss+00:00");
             banners.push({image:this.state.image})
             return (

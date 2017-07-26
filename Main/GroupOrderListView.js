@@ -190,7 +190,7 @@ export default class GroupOrderListView extends Component {
 
                 for (var i = 0; i<categoryDataAry.length; i++) {
                 var items = categoryDataAry[i];
-                var oldTime = (new Date(items.ship_time)).getTime();
+                var oldTime = (new Date(items.ship_time.replace(' ','T'))).getTime();
                 var curTime = new Date(oldTime).format("M月d号");
                 displayCategoryAry.push(
                         <View style={{margin:0}}>
