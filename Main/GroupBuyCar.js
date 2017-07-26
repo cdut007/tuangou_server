@@ -314,7 +314,7 @@ export default class GroupBuyCar extends Component {
                         <Text style={{fontSize:16,color:'#1b1b1b'}}>
                                 {categoryDataAry[i].classify.name}
                             </Text>
-                            <Text style={{flex:1, marginRight:5,fontSize:16,color:'#757575',textAlign:'right'}}>
+                            <Text style={{flex:1, marginRight:5,fontSize:12,color:'#757575',textAlign:'right'}}>
                                     预计{curTime}发货
                                 </Text>
                             </View>
