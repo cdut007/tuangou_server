@@ -52,7 +52,7 @@ export default class ProductCatagoryListViewTab extends Component {
                 endTime:0,
                 image:null,
                 topView: {
-                    height: 180,
+                    height: 240,
                     width:320,
                     alignSelf:'stretch',
                     alignItems:'center',
@@ -360,8 +360,12 @@ export default class ProductCatagoryListViewTab extends Component {
         var image = ''
         if (this.state.image) {
             var banners = [];
+            var item = this.state.routes[this.state.selectedIndex]
+            var endTime = (new Date(item.end_time)).getTime();
+            var curTime = new Date(endTime).format("yyyy-MM-ddThh:mm:ss+00:00");
             banners.push({image:this.state.image})
             return (
+
                 <View style = {this.state.topView}>
                 <Image
                    style={{resizeMode:'contain',height: 180,
@@ -369,6 +373,31 @@ export default class ProductCatagoryListViewTab extends Component {
                     }}
                    source={{uri: this.state.image}}
                    />
+
+                   <Text style={{margin:10,fontSize:14,color:'#1c1c1c',textAlign:'center',alignItems:'center',justifyContent:'center'}}>
+                      {this.props.prouduct.classify_desc}
+                      </Text>
+
+                   <View style={{height:30,flexDirection:'row',alignItems:'center',justifyContent:'center',alignSelf:'stretch'}}>
+                   <Text style={{fontSize:12,color:'#e41515',textAlign:'center',alignItems:'center',justifyContent:'center'}}>
+                      截团倒计时
+                      </Text>
+                   <CountDownTimer
+                        date={curTime}
+                        // date="2017-11-28T00:00:00+00:00"
+                        days={{plural: '天 ',singular: '天 '}}
+                        hours=':'
+                        mins=':'
+                        segs=''
+
+                        daysStyle={styles.time}
+                        hoursStyle={styles.time}
+                        minsStyle={styles.time}
+                        secsStyle={styles.time}
+                        firstColonStyle={styles.colon}
+                        secondColonStyle={styles.colon}
+                    />
+                   </View>
 
                 </View>
 
@@ -406,27 +435,6 @@ export default class ProductCatagoryListViewTab extends Component {
                     onChange={this._onChange.bind(this)}
                     style={{alignSelf:'stretch',margin:20}}
                     onValueChange={this._onValueChange.bind(this)} />
-
-
-                    {/* <CountDownTimer
-                         date={new Date(parseInt(this.state.endTime))}
-                        //  date="2017-11-28T00:00:00+00:00"
-                         days={{plural: '天 ',singular: '天 '}}
-                         hours=':'
-                         mins=':'
-                         segs=''
-
-                         daysStyle={styles.time}
-                         hoursStyle={styles.time}
-                         minsStyle={styles.time}
-                         secsStyle={styles.time}
-                         firstColonStyle={styles.colon}
-                         secondColonStyle={styles.colon}
-                     /> */}
-{/*
-                     <Text style={{flex:1, height:30,fontSize:16,color:'#757575',textAlign:'center'}}>
-                     截团时间 {this.state.endTime}
-                     </Text> */}
 
                    {this.onSenceItem(this.state.selectedIndex)}
                 {/* <ScrollableTabView style={styles.container}>

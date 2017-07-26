@@ -255,6 +255,7 @@ export default class HomeView extends Component {
                            'tag': 'scan_more',
                            'name':classify.name,
                            'classify_id':classify.id,
+                           'classify_desc':classify.desc,
                        });
                    }else{
                        toolsData.push({

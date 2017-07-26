@@ -17,11 +17,12 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 30,
-    color: '#FFF',
+    color: '#e41515',
     marginLeft: 7,
   },
   container: {
     flexDirection: 'row',
+    height:40,
   },
   //时间文字
   defaultTime: {
@@ -158,14 +159,15 @@ class CountDown extends Component {
     //        +':'+this.leadingZeros(countDown.sec)}</Text>
     //    </View>
     //
-        <View style={this.props.containerStyle}>
+        <View style={[this.props.containerStyle,{flexDirection:'row'}]}>
+        
           { (countDown.days>0) ? <Text style={this.props.daysStyle}>{ this.leadingZeros(countDown.days)+days}</Text> : null}
           <Text style={this.props.hoursStyle}>{ this.leadingZeros(countDown.hours)}</Text>
-          <Text style={ this.props.firstColonStyle}>this.props.hours</Text>
+          <Text style={ this.props.firstColonStyle}>{this.props.hours}</Text>
           <Text style={this.props.minsStyle}>{this.leadingZeros(countDown.min)}</Text>
-          <Text style={this.props.secondColonStyle}>this.props.mins</Text>
+          <Text style={this.props.secondColonStyle}>{this.props.mins}</Text>
           <Text style={this.props.secsStyle}>{this.leadingZeros(countDown.sec)}</Text>
-          <Text style={this.props.secondColonStyle}>this.props.segs</Text>
+          <Text style={this.props.secondColonStyle}>{this.props.segs}</Text>
         </View>
 
 
