@@ -231,7 +231,7 @@ bannerOnMomentumScrollEnd(event, state) {
           return (
 
               <Banner
-               style={{height:375,width:this.state.toolsView.screenWidth}}
+               style={{height:305,width:this.state.toolsView.screenWidth}}
               banners={goods.goods.images}
               defaultIndex={this.state.defaultIndex}
               onMomentumScrollEnd={this.bannerOnMomentumScrollEnd.bind(this)}
@@ -242,7 +242,7 @@ bannerOnMomentumScrollEnd(event, state) {
       }else{
           return(
               <Image
-                 style={{height:375,width:this.state.toolsView.screenWidth}}
+                 style={{height:305,width:this.state.toolsView.screenWidth}}
                  source={{uri: goods.goods.images[0].image}}
                  />
           )
@@ -250,7 +250,7 @@ bannerOnMomentumScrollEnd(event, state) {
   }
 
     renderProductDetailView() {
-        const ItemW = this.state.toolsView.screenWidth / 3 - 9, ItemH = ItemW * 1.5
+        const ItemW = this.state.toolsView.screenWidth / 3 - 9, ItemH = 140
         var goods = this.state.goods;
         var goodsRecommendItems= this.state.gbDetail.group_buy_goods;
             // if(!goods){
@@ -272,8 +272,7 @@ bannerOnMomentumScrollEnd(event, state) {
                   {this.renderTopBanner(goods)}
                     <Text style={{flex:1,color:'#1c1c1c',fontSize:18,margin:10}}>{goods.goods.name}</Text>
                     <View style={{alignItems:'center',flexDirection:'row',
-                    justifyContent:'flex-start',margin:10,
-                    flex:1}}>
+                    justifyContent:'flex-start',margin:10,}}>
                     <Text style={{alignItems:'center', textAlign: 'left', justifyContent:'flex-start',numberOfLines:1,color:'#e31515',fontSize:20,}}>S$ {goods.price}</Text>
                     <Text style={{alignItems:'center',marginLeft:10,flex:7,
                     justifyContent:'center',numberOfLines:1,color:'#757575',fontSize:12}}>{goods.brief_dec}</Text>
@@ -288,16 +287,17 @@ bannerOnMomentumScrollEnd(event, state) {
                         alignItems: 'center',
                         margin:10,
                     }}>
-                        <Image style={{resizeMode:'contain', marginRight:5,alignItems:'center',width:32,height:32,
+                        <Image style={{resizeMode:'contain', marginRight:5,alignItems:'center',width:30,height:30,
               justifyContent:'center'}} source={{ uri: this.state.gbDetail.classify.icon }}/>
                         <Text style={{fontSize:16,color:'#1b1b1b'}}>
                             {this.state.gbDetail.classify.name}
                         </Text>
                         </View>
+
+                        <View style={{width:this.state.toolsView.screenWidth,height:160}}>
                         <ScrollView
                         keyboardDismissMode='on-drag'
                         keyboardShouldPersistTaps={false}
-
                         showsHorizontalScrollIndicator={false}
                         showsVerticalScrollIndicator={false}
                         contentContainerStyle={{width:ItemW*goodsRecommendItems.length,height:ItemH}}
@@ -306,13 +306,12 @@ bannerOnMomentumScrollEnd(event, state) {
 
                         {this.renderCategorysView(goodsRecommendItems)}
                     </ScrollView>
-
-                        <View style={{backgroundColor:'#f2f2f2',height:10,flex:1,}}>
                         </View>
 
-                        <Text style={{fontSize:18,color:'#757575',textAlign:'left',marginTop:20}}>
-                            商品详情
-                        </Text>
+                        <View style={{backgroundColor:'#f2f2f2',height:10,width:this.state.toolsView.screenWidth,}}>
+                        </View>
+
+
 
                         <Text style={{fontSize:16,color:'#1b1b1b',textAlign:'left',margin:10}}>
                                 {this.state.gbDetail.classify.desc}
@@ -353,7 +352,7 @@ bannerOnMomentumScrollEnd(event, state) {
     renderCategorysView(prouductItems,goods) {
 
         var width = this.state.toolsView.screenWidth;
-        const w = width / 3 - 9, h = w
+        const w = width / 3 - 9, h = 120
 
         let renderSwipeView = (types, n) => {
             return (
@@ -363,9 +362,8 @@ bannerOnMomentumScrollEnd(event, state) {
                             let render = (
                                 <View style={[{ width: w, height: h ,marginTop:5,marginRight:5,marginBottom:5 }, styles.toolsItem]}>
 
-                                    <Image style={{resizeMode:'contain', alignItems:'center',width: w-2, height: h,
-                                    justifyContent:'center',margin:2,
-                                    flex:1}} source={{uri: item.goods.images[0].image}}/>
+                                    <Image style={{resizeMode:'contain', alignItems:'center',width: w-2, height: h-20,
+                                    justifyContent:'center',margin:2,}} source={{uri: item.goods.images[0].image}}/>
                                     <Text style={{ fontSize: 12, color: '#1b1b1b', textAlign: 'center', numberOfLines: 2, margin: 10 }}>{item.goods.name}</Text>
                                     <Text style={{ textAlign: 'center', numberOfLines: 1, color: '#e31515', fontSize: 12}}>S$ {item.price}</Text>
 

@@ -53,9 +53,13 @@ export default class GroupBuyCar extends Component {
                 screenHeight:1000,
             },
             emitter:emitter,
+            btn_bottom:50,
 
             gbDetail: { classify: { name: '', icon: '' }, group_buy_goods_car: [] }
 
+        }
+        if (this.props.showBack) {
+            this.state.btn_bottom = 0
         }
 
         if (Global.gbDetail && Global.gbDetail.group_buy_goods_car) {
@@ -178,7 +182,7 @@ export default class GroupBuyCar extends Component {
                 {this.renderProductCategoryView()}
                 </ScrollView>
                 </View>
-                <View style={{position:'absolute',left:0,right:0,bottom:50,}}>
+                <View style={{position:'absolute',left:0,right:0,bottom:this.state.btn_bottom,}}>
                 <View style={{height:0.5,width:this.state.toolsView.screenWidth,backgroundColor:'#dedede'}}></View>
                 {this.renderProductStartGroupBuyView()}
                 </View>

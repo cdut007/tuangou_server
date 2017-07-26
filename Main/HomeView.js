@@ -115,7 +115,7 @@ export default class HomeView extends Component {
     if (height<=0) {
         return
     }
-    this.state.scrollContainerStyle.height = height - 100;
+    this.state.scrollContainerStyle.height = height - 60;
     this.state.toolsView.screenWidth = layoutEvent.nativeEvent.layout.width
     this.setState({scrollContainerStyle:this.state.scrollContainerStyle,toolsView:this.state.toolsView});
   }
