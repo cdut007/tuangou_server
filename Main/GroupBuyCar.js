@@ -59,6 +59,8 @@ export default class GroupBuyCar extends Component {
         }
 
         if (Global.gbDetail && Global.gbDetail.group_buy_goods_car) {
+            var sortedArr = Global.gbDetail.group_buy_goods_car.sort((a, b) => (a.classify_id < b.classify_id || a.ship_time > b.ship_time) ? 1 : -1);
+           this.state.gbDetail.group_buy_goods_car = sortedArr
             this.state.gbDetail = Global.gbDetail
 
         }
@@ -261,7 +263,6 @@ export default class GroupBuyCar extends Component {
     renderProductCategoryView() {
          var categoryDataAry =[];
          var len = this.state.gbDetail.group_buy_goods_car.length
-         var sortedArr = this.state.gbDetail.group_buy_goods_car.sort((a, b) => (a.classify_id < b.classify_id || a.ship_time > b.ship_time) ? 1 : -1);
          var temp_group_buy_goods_car = [];
           for (var i = 0; i < len; i++) {
              var goods = this.state.gbDetail.group_buy_goods_car[i]
