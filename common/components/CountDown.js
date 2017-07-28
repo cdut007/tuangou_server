@@ -160,7 +160,7 @@ class CountDown extends Component {
     //    </View>
     //
         <View style={[this.props.containerStyle,{flexDirection:'row'}]}>
-        
+
           { (countDown.days>0) ? <Text style={this.props.daysStyle}>{ this.leadingZeros(countDown.days)+days}</Text> : null}
           <Text style={this.props.hoursStyle}>{ this.leadingZeros(countDown.hours)}</Text>
           <Text style={ this.props.firstColonStyle}>{this.props.hours}</Text>
@@ -176,6 +176,10 @@ class CountDown extends Component {
   stop() {
     clearInterval(this.interval);
   }
+
+
+
+
   leadingZeros(num, length = null) {
 
     let length_ = length;

@@ -251,7 +251,7 @@ export default class HomeView extends Component {
                        toolsData.push({
                            'index': product.goods_id,
                            'image': {uri:product.image},
-                            'title':'更多精选,\n欢迎选购',
+                            'title':'前往购买',
                            'tag': 'scan_more',
                            'name':classify.name,
                            'classify_id':classify.id,
@@ -308,8 +308,8 @@ export default class HomeView extends Component {
         if (item.tag!='scan_more') {
             return
         }
-        return(<View style={{opacity:0.4, position:'absolute',left:0,top:0,alignItems:'center',flex:1,width: w, height: h ,
-        justifyContent:'center',backgroundColor:'#999999'}}
+        return(<View style={{opacity:0.4, position:'absolute',left:0,top:0,alignItems:'center',flex:1,width: w-2, height: h ,
+        justifyContent:'center',backgroundColor:'#ea6b10',marginTop:-1,marginRight:2,marginBottom:3}}
         needsOffscreenAlphaCompositing={true}
         >
         <Text  numberOfLines={2} needsOffscreenAlphaCompositing={true} style={{opacity:1,alignItems:'center',justifyContent:'center',fontSize: 14, color: "#ffffff",}}>{item.title}</Text>
