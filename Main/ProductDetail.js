@@ -148,7 +148,7 @@ export default class ProductDetail extends Component {
         )
     }
 
-    startGroupBuy(){
+    addGroupBuy(){
 
 
         if(!hasGotGbDetail)
@@ -164,6 +164,7 @@ export default class ProductDetail extends Component {
 
        var group_buy_goods_car = []
         if (Global.gbDetail) {
+           console.log('group_buy_goods_car:'+Global.gbDetail.group_buy_goods_car)
             group_buy_goods_car = Global.gbDetail.group_buy_goods_car
             if (!group_buy_goods_car) {
                 group_buy_goods_car = []
@@ -313,9 +314,10 @@ bannerOnMomentumScrollEnd(event, state) {
 
 
 
-                        <Text style={{fontSize:16,color:'#1b1b1b',textAlign:'left',margin:10}}>
-                                {this.state.gbDetail.classify.desc}
-                                </Text>
+                    <Text
+                        style={{ fontSize: 18, color: '#757575', textAlign: 'center', marginTop: 20, marginBottom: 20 }}>
+                        商品详情
+                    </Text>
 
                         {this.renderDetailView(goodsRecommendItems,goods.goods)}
 
@@ -326,11 +328,121 @@ bannerOnMomentumScrollEnd(event, state) {
                 </View>
             </ScrollView>
 
-            <View style={{position: 'absolute', left: 0, right: 0, bottom: 0}}><CommitButton title={'立即购买'} onPress = {this.startGroupBuy.bind(this)}></CommitButton></View>
+            <View style={{position: 'absolute', left: 0, right: 0, bottom: 0}}>
+
+
+                    {this.renderProductDetailBuyView()}
+
+
+            </View>
             </View>
         );
     }
+    goToGroupBuyCar(){
+        if(!hasGotGbDetail)
+        {
+            return
+        }
 
+        AsyncStorage.setItem('k_cur_gbdetail', JSON.stringify(this.state.gbDetail)).then(function(){
+            console.log('save k_cur_gbdetail succ.')
+        }.bind(this)).catch(function(error){
+            console.log('save k_cur_gbdetail faild.')
+        }.bind(this));
+
+        var group_buy_goods_car = []
+        if (Global.gbDetail) {
+            group_buy_goods_car = Global.gbDetail.group_buy_goods_car
+            if (!group_buy_goods_car) {
+                group_buy_goods_car = []
+            }
+        }
+        Global.gbDetail = this.state.gbDetail
+        Global.gbDetail.group_buy_goods_car = group_buy_goods_car
+
+        var hasFound = false
+        for (var i = 0; i <  Global.gbDetail.group_buy_goods_car.length; i++) {
+            var goods = Global.gbDetail.group_buy_goods_car[i]
+            if (goods.id == this.state.goods.id) {
+                hasFound = true;
+                if (!goods.seletecedCount) {
+                    goods.seletecedCount = 0 ;
+                }
+                goods.selected = true
+                goods.seletecedCount+=1;
+                goods.classify_name = this.state.gbDetail.classify.name
+                goods.classify_id = this.state.gbDetail.classify_id
+                goods.ship_time = this.state.gbDetail.ship_time
+                break;
+            }
+
+        }
+        if (!hasFound) {
+            if (!this.state.goods.seletecedCount) {
+                this.state.goods.seletecedCount = 0 ;
+            }
+            this.state.goods.seletecedCount+=1;
+            this.state.goods.selected = true
+            this.state.goods.classify_name = this.state.gbDetail.classify.name
+            this.state.goods.classify_id = this.state.gbDetail.classify_id
+            this.state.goods.ship_time = this.state.gbDetail.ship_time
+
+            Global.gbDetail.group_buy_goods_car.push(this.state.goods)
+        }
+
+        this.props.navigator.push({
+            component: GroupBuyCar,
+            props: {
+                goods:this.state.goods,
+                showBack:true,
+            }
+        })
+
+    }
+    onBuyNow(){
+
+    }
+    renderProductDetailBuyView(){
+        var width = this.state.toolsView.screenWidth;
+        console.log('received renderProductStartGroupBuyView layout width\n', width);
+        let h = 49
+
+
+
+        return(<View style={{ height: h,
+        justifyContent:'flex-start',flexDirection: "row"}}>
+            <TouchableOpacity style={{justifyContent:'center',alignItems: 'center',width:75}} onPress={this.goToGroupBuyCar.bind(this)} >
+                <View style={{height:49,flex:1,alignItems: 'center',backgroundColor:'rgb(244,244,244)'}}>
+                    <Image style={{resizeMode:'contain',paddingHorizontal:15, width: 40,height: 35,alignItems: 'center',justifyContent:'center',backgroundColor:'rgb(244,244,244,0.8)',}}
+                           source={require('../images/shoppingcart_icon@2x.png')}
+                    >
+                    </Image>
+
+                </View>
+            </TouchableOpacity>
+            <View style={{height:49,width:0.5,backgroundColor:'rgb(221,221,221)'}}></View>
+            <TouchableOpacity underlayColor="#ffffff" style={{width:150} }  onPress={this.onBuyNow.bind(this)}>
+
+                <View style={{flex:2,flexDirection:'row',justifyContent:'center',alignItems:'center',backgroundColor:'rgb(244,244,244)',height:49,}}>
+
+                    <Text  style={{fontSize: 16,
+                     textAlign: 'Center',fontFamily:'PingFangSC-Regular',
+                     color: 'rgb(117,117,117)',}}>立即购买</Text>
+
+                </View>
+            </TouchableOpacity>
+            <TouchableOpacity underlayColor="rgb(234,107,16,0.8)" style={{justifyContent:'flex-end',width:150}} onPress={this.addGroupBuy.bind(this)}  >
+
+                <View style={{flex:2,flexDirection:'row',justifyContent:'center',alignItems:'center',backgroundColor:'rgb(234,107,16)',height:49}}>
+
+                    <Text  style={{fontSize: 16,
+                     textAlign: 'Center',fontFamily:'PingFangSC-Regular',
+                     color: '#ffffff',}}>加入购物车</Text>
+
+                </View>
+            </TouchableOpacity>
+        </View>)
+    }
     renderDetailView(prouductItems,goods){
         var divStyle = {
            color: 'blue',

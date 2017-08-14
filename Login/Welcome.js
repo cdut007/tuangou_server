@@ -39,10 +39,10 @@ export default class Welcome extends Component
 
            }
 
-            //     var response = new Object();
-            //     response.data = new Object();
-            //     response.data.token = 'sasdadas';
-            //    this.onUserSuccess(response);
+               //  var response = new Object();
+               //  response.data = new Object();
+               //  response.data.token = 'sasdadas';
+               // this.onUserSuccess(response);
       }
 
     }

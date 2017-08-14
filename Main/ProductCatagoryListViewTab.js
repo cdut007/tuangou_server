@@ -76,9 +76,9 @@ export default class ProductCatagoryListViewTab extends Component {
         HttpRequest.get('/group_buy_list', param, this.onGroupBuyListSuccess.bind(this),
             (e) => {
 
-                console.log(' error:' + e)
+                console.log('group_buy_list error:' + e)
             })
-            //this.fetchBanner();
+            // this.fetchBanner();
     }
 
     onGroupBuyListSuccess(response) {
@@ -123,7 +123,7 @@ export default class ProductCatagoryListViewTab extends Component {
     onGroupBuyDetailSuccess(response) {
         let gbData = this.state.allGbDetail
         gbData[response.data.id] = response.data
-
+        console.log('allGbDetail :' + gbData)
         this.setState({
             allGbDetail: gbData
         })

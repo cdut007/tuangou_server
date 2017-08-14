@@ -272,7 +272,6 @@ const styles = StyleSheet.create({
            color: '#4f4f4f',
        },
        labelInfo: {
-           width: 40,
-           height: 40,
+
        },
 });

@@ -64,7 +64,7 @@ export default class HomeView extends Component {
 
 
     fetchAgentInfo(){
-
+        console.log('agent_code:'+Global.agent_code)
        var paramBody ={agent_code:Global.agent_code }
        HttpRequest.get('/agent_info', paramBody, this.onUserInfoSuccess.bind(this),
            (e) => {
@@ -106,7 +106,7 @@ export default class HomeView extends Component {
                     console.log(err)
                 }
 
-                console.log(' error:' + e)
+                console.log(' agent_home_page_list error:' + e)
             })
     }
 
@@ -156,7 +156,12 @@ export default class HomeView extends Component {
          console.log(`--->onMomentumScrollEnd page index:${state.index}, total:${state.total}`);
          this.defaultIndex = state.index;
      }
-
+    onAnnounceNow() {
+        // this.props.navigator.push({
+        //     component: NotifyNowView,
+        //
+        // })
+    }
     renderTopView() {
         var nickname = 'unkonwn'
         if (this.state.agent.nickname != null) {
@@ -266,7 +271,7 @@ export default class HomeView extends Component {
                }
                console.log(goodsMaxLengh+ ' toolsData max length === '+toolsData.length+";type name"+ classify.name);
 
-               categoryDataAry.push({id:classify.id,name:classify.name,image:{uri:classify.icon} ,prouductItems:toolsData,countdown:'48:38:29'},);
+               categoryDataAry.push({id:classify.id,name:classify.name,image:{uri:classify.icon} ,desc:classify.desc ,prouductItems:toolsData,countdown:'48:38:29'},);
 
            }
 
@@ -284,13 +289,13 @@ export default class HomeView extends Component {
                             </Text>
                             </View>
                         {this.renderCategorysView(categoryDataAry[i].prouductItems)}
-                        <View style = {{flex:1,justifyContent:'flex-end',alignItems: 'flex-end',marginRight:5}}>
-                        {/* <View
-                            style={styles.countdownContainer}>
-                            <Text style={styles.countdownText} >
-                                截团倒计时{categoryDataAry[i].countdown}
-                            </Text>
-                        </View> */}
+                        <View style = {{flex:1,justifyContent:'flex-start',alignItems: 'flex-start',marginLeft:5}}>
+                            <View onPress={this.onAnnounceNow.bind(this)}
+                                  style={styles.countdownContainer}>
+                                <Text style={styles.countdownText} >
+                                    {categoryDataAry[i].desc}
+                                </Text>
+                            </View>
                         </View>
                         </View>
                         </View>
@@ -308,18 +313,18 @@ export default class HomeView extends Component {
         if (item.tag!='scan_more') {
             return
         }
-        return(<View style={{opacity:0.4, position:'absolute',left:0,top:0,alignItems:'center',flex:1,width: w-2, height: h ,
-        justifyContent:'center',backgroundColor:'#ea6b10',marginTop:-1,marginRight:2,marginBottom:3}}
+        return(<View style={{opacity:0.8, position:'absolute',left:0,top:0,alignItems:'center',flex:1,width: w, height: h ,
+        justifyContent:'center',backgroundColor:'#ea6b10',marginRight:2}}
         needsOffscreenAlphaCompositing={true}
         >
-        <Text  numberOfLines={2} needsOffscreenAlphaCompositing={true} style={{opacity:1,alignItems:'center',justifyContent:'center',fontSize: 14, color: "#ffffff",}}>{item.title}</Text>
+        <Text  numberOfLines={2} needsOffscreenAlphaCompositing={true} style={{opacity:1,alignItems:'center',justifyContent:'center',fontSize: 18, color: "#ffffff",fontFamily:'PingFang-SC-Medium'}}>{item.title}</Text>
         </View>)
     }
 
     renderCategorysView(prouductItems) {
         var width = this.state.toolsView.screenWidth;
         console.log('received view layout width\n', width);
-        const w = width / 3 - 9, h = w
+        const w = (width - 30)/3, h = w
 
         let renderSwipeView = (types, n) => {
             return (
@@ -327,7 +332,7 @@ export default class HomeView extends Component {
                     {
                         types.map((item, i) => {
                             let render = (
-                                <View style={[{ width: w, height: h ,marginTop:5,marginRight:5,marginBottom:0 }, styles.toolsItem]}>
+                                <View style={[{ width: w, height: h ,}, styles.toolsItem]}>
 
                                     <Image style={{resizeMode:'cover', alignItems:'center',width: w-2, height: h,
                                     justifyContent:'center',margin:2,
@@ -368,22 +373,24 @@ const styles = StyleSheet.create({
     },
     countdownContainer:
     {
-        marginTop: 10,
+        marginTop: 20,
         marginBottom:20,
         height: 32,
-        borderColor: '#e31515',
-        borderWidth:1,
-        borderRadius: 5,
+        marginLeft:5,
+        marginRight:5,
         paddingLeft:5,
         paddingRight:5,
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent:'center',
+        justifyContent:'flex-start',
+
     },
 
     countdownText:{
-            color: '#e31515',
-            fontSize:14,
+        color: 'black',
+        fontSize:16,
+        fontFamily:'PingFangSC-Regular',
+        textAlign:'left',
     },
     brandLabelContainer:
     {   marginTop:5,

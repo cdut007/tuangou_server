@@ -39,7 +39,7 @@ export default class MainView extends Component {
             var str = url.substr(pos+1);
             var agent_code = this.getQueryString('agent_code',str);
              console.log('url agent_code='+agent_code);
-             //agent_code = 'oANa5v4DA46AKU8iyA303UJBLYmo';//for test.
+             agent_code = 'ocsmexGwV4BzMOQMFN_IzHwgkj3I';//for test.
              if (agent_code) {
                  Global.agent_code = agent_code;
              }
@@ -122,15 +122,25 @@ export default class MainView extends Component {
             )
         }
         else {
+            // return (
+            //     <Navigator
+            //     initialRoute={{component: WelcomeView, name: "WelcomePage", index: this.props.index}}
+            //     configureScene={() => Navigator.SceneConfigs.FloatFromRight}
+            //     renderScene={(route, navigator) => {
+            //           return <route.component navigator={navigator} {...route.props}/>
+            //         }
+            //     }
+            //   />
+            // )
             return (
                 <Navigator
-                initialRoute={{component: WelcomeView, name: "WelcomePage", index: this.props.index}}
-                configureScene={() => Navigator.SceneConfigs.FloatFromRight}
-                renderScene={(route, navigator) => {
+                    initialRoute={{component: TabView, name: "MainPage"}}
+                    configureScene={() => Navigator.SceneConfigs.FloatFromRight}
+                    renderScene={(route, navigator) => {
                       return <route.component navigator={navigator} {...route.props}/>
                     }
                 }
-              />
+                />
             )
         }
 
