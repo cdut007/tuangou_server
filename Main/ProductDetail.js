@@ -14,10 +14,12 @@ import {
 
 var hasGotGbDetail = false
 import HttpRequest from '../common/HttpRequest/HttpRequest'
+var Global = require('../common/globals');
 import NavBar from '../common/NavBar'
 import CommitButton from '../common/CommitButton'
 import GroupBuyCar from './GroupBuyCar'
-var Global = require('../common/globals');
+import ConfirmOrderView from './ConfirmOrderView'
+
 var BGWASH = 'rgba(255,255,255,0.8)';
 import Banner from '../common/components/banner/index';
 import HorizontalScrollView from '../common/components/banner/HorizontalScrollView'
@@ -37,6 +39,9 @@ export default class ProductDetail extends Component {
             goods: { goods: { images: [{ image: '' }] } },//defualt image later
             gbDetail: { classify: { name: '', icon: '' }, group_buy_goods: [] },
             url:'https://m.baidu.com',
+            cartNum:0,
+             group_buy:[],
+            cartShow: true,
 
             }
     }
@@ -60,13 +65,17 @@ export default class ProductDetail extends Component {
 
 
     componentDidMount() {
-        var prouduct = this.props.prouduct;
-        hasGotGbDetail = false
+        let param = {
+            agent_code:Global.agent_code,
 
-    this.setState({
-        goods: { goods: { images: [{ image: prouduct.image.uri }] } }
-    });
-        this._fetchGoods(prouduct.index);
+        }
+        HttpRequest.get('/shopping_cart', param, this.onGetFirstCartSuccess.bind(this),
+            (e) => {
+                alert('加入购物车失败，请稍后再试。')
+                console.log('shopping_cart error:' + e)
+            })
+
+
     }
 
     onGroupBuyDetailSuccess(response) {
@@ -149,69 +158,94 @@ export default class ProductDetail extends Component {
     }
 
     addGroupBuy(){
-
-
-        if(!hasGotGbDetail)
-       {
-           return
-       }
-
-       AsyncStorage.setItem('k_cur_gbdetail', JSON.stringify(this.state.gbDetail)).then(function(){
-                   console.log('save k_cur_gbdetail succ.')
-               }.bind(this)).catch(function(error){
-                 console.log('save k_cur_gbdetail faild.')
-        }.bind(this));
-
-       var group_buy_goods_car = []
-        if (Global.gbDetail) {
-           console.log('group_buy_goods_car:'+Global.gbDetail.group_buy_goods_car)
-            group_buy_goods_car = Global.gbDetail.group_buy_goods_car
-            if (!group_buy_goods_car) {
-                group_buy_goods_car = []
-            }
+        let param = {
+            agent_code:Global.agent_code,
+            goods: this.props.prouduct.index,
+            quantity: 1,
         }
-       Global.gbDetail = this.state.gbDetail
-       Global.gbDetail.group_buy_goods_car = group_buy_goods_car
+        HttpRequest.post('/shopping_cart', param, this.onAddCartSuccess.bind(this),
+            (e) => {
+                alert('加入购物车失败，请稍后再试。')
+                console.log('shopping_cart error:' + e)
+            })
 
-       var hasFound = false
-       for (var i = 0; i <  Global.gbDetail.group_buy_goods_car.length; i++) {
-           var goods = Global.gbDetail.group_buy_goods_car[i]
-           if (goods.id == this.state.goods.id) {
-               hasFound = true;
-               if (!goods.seletecedCount) {
-                   goods.seletecedCount = 0 ;
-               }
-               goods.selected = true
-               goods.seletecedCount+=1;
-               goods.classify_name = this.state.gbDetail.classify.name
-               goods.classify_id = this.state.gbDetail.classify_id
-               goods.ship_time = this.state.gbDetail.ship_time
-               break;
-           }
 
-       }
-       if (!hasFound) {
-           if (!this.state.goods.seletecedCount) {
-               this.state.goods.seletecedCount = 0 ;
-           }
-           this.state.goods.seletecedCount+=1;
-           this.state.goods.selected = true
-           this.state.goods.classify_name = this.state.gbDetail.classify.name
-           this.state.goods.classify_id = this.state.gbDetail.classify_id
-           this.state.goods.ship_time = this.state.gbDetail.ship_time
-
-           Global.gbDetail.group_buy_goods_car.push(this.state.goods)
-       }
-
-        this.props.navigator.push({
-           component: GroupBuyCar,
-            props: {
-                goods:this.state.goods,
-                showBack:true,
-               }
-       })
     }
+    onAddCartSuccess(response){
+        console.log('post shopping_cart response'+JSON.stringify(response))
+        if (response.message =='Success'){
+            let param = {
+                agent_code:Global.agent_code,
 
+            }
+            HttpRequest.get('/shopping_cart', param, this.onGetCartSuccess.bind(this),
+                (e) => {
+                    alert('加入购物车失败，请稍后再试。')
+                    console.log('shopping_cart error:' + e)
+                })
+        }else {
+
+        }
+
+
+    }
+    onGetFirstCartSuccess(response){
+        console.log(' get shopping_cart response'+JSON.stringify(response))
+
+
+        var cart = []
+        this.state.group_buy = response.data.group_buy
+
+        var group_buyNum = 0
+        console.log('group_buy.length:'+this.state.group_buy.length)
+        for (var i =0; i < this.state.group_buy.length; i++){
+            cart =  this.state.group_buy[i].cart_goods
+            group_buyNum += cart.length
+
+            console.log('group_buyNum:'+group_buyNum)
+
+        }
+
+
+
+        var prouduct = this.props.prouduct;
+        hasGotGbDetail = false
+
+        this.setState({
+            goods: { goods: { images: [{ image: prouduct.image.uri }] } },
+            group_buy : response.data.group_buy,
+            cartNum : group_buyNum,
+            cartShow: !this.state.cartShow
+        });
+        this._fetchGoods(prouduct.index);
+
+    }
+    onGetCartSuccess(response){
+        console.log(' get shopping_cart response'+JSON.stringify(response))
+
+
+        var cart = []
+        this.state.group_buy = response.data.group_buy
+
+        var group_buyNum = 0
+        console.log('group_buy.length:'+this.state.group_buy.length)
+        for (var i =0; i < this.state.group_buy.length; i++){
+            cart =  this.state.group_buy[i].cart_goods
+            group_buyNum += cart.length
+
+            console.log('group_buyNum:'+group_buyNum)
+
+        }
+        this.setState =({
+            group_buy : response.data.group_buy,
+            cartNum : group_buyNum,
+            cartShow: !this.state.cartShow
+        })
+
+
+
+
+    }
     bannerClickListener(index) {
     // this.setState({
     //     clickTitle: this.state.banners[index].title ? `you click ${this.state.banners[index].title}` : 'this banner has no title',
@@ -349,6 +383,11 @@ bannerOnMomentumScrollEnd(event, state) {
         }.bind(this)).catch(function(error){
             console.log('save k_cur_gbdetail faild.')
         }.bind(this));
+        AsyncStorage.setItem('k_cur_group_buy', JSON.stringify(this.state.group_buy)).then(function(){
+            console.log('save k_cur_group_buy succ.')
+        }.bind(this)).catch(function(error){
+            console.log('save k_cur_group_buy faild.')
+        }.bind(this));
 
         var group_buy_goods_car = []
         if (Global.gbDetail) {
@@ -360,68 +399,74 @@ bannerOnMomentumScrollEnd(event, state) {
         Global.gbDetail = this.state.gbDetail
         Global.gbDetail.group_buy_goods_car = group_buy_goods_car
 
-        var hasFound = false
-        for (var i = 0; i <  Global.gbDetail.group_buy_goods_car.length; i++) {
-            var goods = Global.gbDetail.group_buy_goods_car[i]
-            if (goods.id == this.state.goods.id) {
-                hasFound = true;
-                if (!goods.seletecedCount) {
-                    goods.seletecedCount = 0 ;
-                }
-                goods.selected = true
-                goods.seletecedCount+=1;
-                goods.classify_name = this.state.gbDetail.classify.name
-                goods.classify_id = this.state.gbDetail.classify_id
-                goods.ship_time = this.state.gbDetail.ship_time
-                break;
-            }
+        Global.group_buy = this.state.group_buy  
 
-        }
-        if (!hasFound) {
-            if (!this.state.goods.seletecedCount) {
-                this.state.goods.seletecedCount = 0 ;
-            }
-            this.state.goods.seletecedCount+=1;
-            this.state.goods.selected = true
-            this.state.goods.classify_name = this.state.gbDetail.classify.name
-            this.state.goods.classify_id = this.state.gbDetail.classify_id
-            this.state.goods.ship_time = this.state.gbDetail.ship_time
-
-            Global.gbDetail.group_buy_goods_car.push(this.state.goods)
-        }
 
         this.props.navigator.push({
             component: GroupBuyCar,
             props: {
-                goods:this.state.goods,
+                goods:this.state.group_buy  ,
                 showBack:true,
             }
         })
 
     }
     onBuyNow(){
-
+        // var categoryDataAry = []
+        // categoryDataAry.push({classify:{name:this.state.gbDetail.classify.name},ship_time:this.state.gbDetail.ship_time,group_buy_goods_car:[
+        //     {
+        //         goods: {
+        //             id: this.state.goods.id,
+        //             goods: {
+        //                 name: this.state.goods.goods.name,
+        //                 images: [
+        //                     {
+        //                         image: this.state.goods.goods.images[0].image
+        //                     }
+        //                 ]
+        //             },
+        //             price: this.state.goods.price,
+        //             stock: this.state.goods.stock,
+        //             brief_dec: this.state.goods.brief_dec,
+        //             group_buy: this.state.goods.group_buy
+        //         },
+        //         quantity: 1,
+        //         cart_id: ''
+        //     }]})
+        // Global.categoryData = categoryDataAry
+        // this.props.navigator.push({
+        //     component: ConfirmOrderView,
+        //     props: {
+        //
+        //         showBack:true,
+        //         isMoreBuy:false
+        //     }
+        // })
     }
     renderProductDetailBuyView(){
         var width = this.state.toolsView.screenWidth;
         console.log('received renderProductStartGroupBuyView layout width\n', width);
         let h = 49
 
+        let display = this.state.cartShow ? this.state.cartNum : this.state.cartNum;
+        console.log('this.state.cartNum '+display);
 
 
         return(<View style={{ height: h,
         justifyContent:'flex-start',flexDirection: "row"}}>
-            <TouchableOpacity style={{justifyContent:'center',alignItems: 'center',width:75}} onPress={this.goToGroupBuyCar.bind(this)} >
-                <View style={{height:49,flex:1,alignItems: 'center',backgroundColor:'rgb(244,244,244)'}}>
-                    <Image style={{resizeMode:'contain',paddingHorizontal:15, width: 40,height: 35,alignItems: 'center',justifyContent:'center',backgroundColor:'rgb(244,244,244,0.8)',}}
+            <TouchableOpacity style={{justifyContent:'center',alignItems: 'center',}} onPress={this.goToGroupBuyCar.bind(this)} >
+                <View style={{width:this.state.toolsView.screenWidth/5,height:49,flex:1,alignItems: 'center',backgroundColor:'rgb(244,244,244)'}}>
+                    <Image style={{resizeMode:'contain', width: 40,height: 35,alignItems: 'center',justifyContent:'center',backgroundColor:'rgb(244,244,244,0.8)',}}
                            source={require('../images/shoppingcart_icon@2x.png')}
                     >
                     </Image>
 
+                    <Text>{display}</Text>
+
                 </View>
             </TouchableOpacity>
             <View style={{height:49,width:0.5,backgroundColor:'rgb(221,221,221)'}}></View>
-            <TouchableOpacity underlayColor="#ffffff" style={{width:150} }  onPress={this.onBuyNow.bind(this)}>
+            <TouchableOpacity underlayColor="#ffffff" style={{width:this.state.toolsView.screenWidth/5*2} }  onPress={this.onBuyNow.bind(this)}>
 
                 <View style={{flex:2,flexDirection:'row',justifyContent:'center',alignItems:'center',backgroundColor:'rgb(244,244,244)',height:49,}}>
 
@@ -431,7 +476,7 @@ bannerOnMomentumScrollEnd(event, state) {
 
                 </View>
             </TouchableOpacity>
-            <TouchableOpacity underlayColor="rgb(234,107,16,0.8)" style={{justifyContent:'flex-end',width:150}} onPress={this.addGroupBuy.bind(this)}  >
+            <TouchableOpacity underlayColor="rgb(234,107,16,0.8)" style={{justifyContent:'flex-end',width:this.state.toolsView.screenWidth/5*2}} onPress={this.addGroupBuy.bind(this)}  >
 
                 <View style={{flex:2,flexDirection:'row',justifyContent:'center',alignItems:'center',backgroundColor:'rgb(234,107,16)',height:49}}>
 
@@ -462,7 +507,7 @@ bannerOnMomentumScrollEnd(event, state) {
     }
 
     renderCategorysView(prouductItems,goods) {
-
+    console.log('prouductItemsdetail:'+JSON.stringify(prouductItems))
         var width = this.state.toolsView.screenWidth;
         const w = width / 3 - 9, h = 120
 

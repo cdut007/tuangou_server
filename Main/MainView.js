@@ -15,6 +15,7 @@ import {
  import TabView from './TabView'
 import WelcomeView from '../Login/Welcome'
 //import * as WeChat from 'react-native-wechat';
+import HttpRequest from '../common/HttpRequest/HttpRequest'
 
 var Global = require('../common/globals');
 
@@ -39,7 +40,7 @@ export default class MainView extends Component {
             var str = url.substr(pos+1);
             var agent_code = this.getQueryString('agent_code',str);
              console.log('url agent_code='+agent_code);
-             // agent_code = 'ocsmexGwV4BzMOQMFN_IzHwgkj3I';//for test.
+             agent_code = 'ocsmexGwV4BzMOQMFN_IzHwgkj3I';//for test.
              if (agent_code) {
                  Global.agent_code = agent_code;
              }
@@ -94,12 +95,28 @@ export default class MainView extends Component {
 
 
 
+        let param = {
+            agent_code:Global.agent_code,
 
+        }
+        HttpRequest.get('/shopping_cart', param, this.onGetFirstCartSuccess.bind(this),
+            (e) => {
+                alert('加入购物车失败，请稍后再试。')
+                console.log('shopping_cart error:' + e)
+            })
 
 
 
     }
+    onGetFirstCartSuccess(response){
+        console.log(' get shopping_cart response23'+JSON.stringify(response))
 
+
+
+        Global.group_buy = response.data.group_buy
+
+
+    }
     render() {
 
          if(this.state.hasLogin == null)
@@ -122,26 +139,26 @@ export default class MainView extends Component {
             )
         }
         else {
-            return (
-                <Navigator
-                initialRoute={{component: WelcomeView, name: "WelcomePage", index: this.props.index}}
-                configureScene={() => Navigator.SceneConfigs.FloatFromRight}
-                renderScene={(route, navigator) => {
-                      return <route.component navigator={navigator} {...route.props}/>
-                    }
-                }
-              />
-            )
             // return (
             //     <Navigator
-            //         initialRoute={{component: TabView, name: "MainPage"}}
-            //         configureScene={() => Navigator.SceneConfigs.FloatFromRight}
-            //         renderScene={(route, navigator) => {
+            //     initialRoute={{component: WelcomeView, name: "WelcomePage", index: this.props.index}}
+            //     configureScene={() => Navigator.SceneConfigs.FloatFromRight}
+            //     renderScene={(route, navigator) => {
             //           return <route.component navigator={navigator} {...route.props}/>
             //         }
             //     }
-            //     />
+            //   />
             // )
+            return (
+                <Navigator
+                    initialRoute={{component: TabView, name: "MainPage"}}
+                    configureScene={() => Navigator.SceneConfigs.FloatFromRight}
+                    renderScene={(route, navigator) => {
+                      return <route.component navigator={navigator} {...route.props}/>
+                    }
+                }
+                />
+            )
         }
 
     }

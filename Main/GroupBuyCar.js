@@ -14,6 +14,7 @@ import CheckBox from '../common/checkbox'
 import ProductDetail from './ProductDetail'
 import NavBar from '../common/NavBar'
 import GroupBuyNowView from './GroupBuyNowView'
+import ConfirmOrderView from './ConfirmOrderView'
 import CommitButton from '../common/CommitButton'
 var Global = require('../common/globals');
 import AddressView from './AddressView'
@@ -52,6 +53,8 @@ export default class GroupBuyCar extends Component {
                 screenWidth:600,
                 screenHeight:1000,
             },
+            group_buy :  [
+            ],
             emitter:emitter,
             btn_bottom:50,
 
@@ -61,55 +64,92 @@ export default class GroupBuyCar extends Component {
         if (this.props.showBack) {
             this.state.btn_bottom = 0
         }
+        this.state.group_buy = Global.group_buy
+        console.log('this.state.group_buy5:'+JSON.stringify(this.state.group_buy))
 
-        if (Global.gbDetail && Global.gbDetail.group_buy_goods_car) {
-            var sortedArr = Global.gbDetail.group_buy_goods_car.sort((a, b) => (a.classify_id < b.classify_id || a.ship_time > b.ship_time) ? 1 : -1);
-           this.state.gbDetail.group_buy_goods_car = sortedArr
-            this.state.gbDetail = Global.gbDetail
 
+
+
+    }
+    getCarData(){
+            this.state.group_buy = Global.group_buy
+    }
+    componentDidMount() {
+        this.state.group_buy.map((item, i) => {
+
+            item.selected = true;
+
+        })
+        console.log('componentDidMount1')
+        if (Global.group_buy){
+            this.getCarData()
+        }else {
+
+            let param = {
+                agent_code:Global.agent_code,
+
+            }
+            HttpRequest.get('/shopping_cart', param, this.onGetFirstCartSuccess.bind(this),
+                (e) => {
+                    alert('加入购物车失败，请稍后再试。')
+                    console.log('shopping_cart error:' + e)
+                })
         }
 
     }
+    onGetFirstCartSuccess(response){
+        console.log(' get shopping_cart response3'+JSON.stringify(response))
 
-    componentDidMount() {
 
 
+        this.state.group_buy = response.data.group_buy
+
+
+
+
+
+
+
+        this.setState({
+            group_buy : response.data.group_buy,
+
+        });
+
+        this.getCarData()
     }
 
-     buyNow(delay ){
-         var goodsIds = []
-     this.state.gbDetail.group_buy_goods_car.map((item, i) => {
-         if (item.selected && item.seletecedCount && item.seletecedCount>0) {
-             goodsIds.push({goods:item.id,quantity:item.seletecedCount})
-         }
-     })
-     if (this.state.gbDetail.id == null || !goodsIds.length) {
-         alert('请选择需要团购的商品。')
-         return
-     }
 
-     let param = { goods: goodsIds, agent_code: Global.agent_code }
+    onConfirmOrderView(){
 
-         if (!delay) {
-             HttpRequest.post('/generic_order', param, this.onGroupBuySuccess.bind(this),
-                     (e) => {
-                         alert('提交订单失败，请稍后再试。')
-                         console.log(' error:' + e)
-                     })
-         }else{
+        console.log('onConfirmOrderView:'+JSON.stringify(Global.categoryDataAry))
 
-             setTimeout(function() {
-                 HttpRequest.post('/generic_order', param, this.onGroupBuySuccess.bind(this),
-                         (e) => {
-                             alert('提交订单失败，请稍后再试。')
-                             console.log(' error:' + e)
-                         })
-            }.bind(this), 500);
-         }
-     }
 
+        this.props.navigator.push({
+            component: ConfirmOrderView,
+
+        })
+         // if (!Global.user_address){
+         //     this.props.navigator.push({
+         //         component: AddressView,
+         //         props:{
+         //             // buycarView: this.buyNow.bind(this),
+         //         }
+         //     })
+         // }else {
+         //     this.props.navigator.push({
+         //         component: ConfirmOrderView,
+         //         props:{
+         //
+         //         }
+         //     })
+         //
+         // }
+    }
+    onSaveCartSuccess(){
+
+    }
     onGroupBuyNow(){
-
+        // this.buyNow(false)
     if (!Global.user_address) {
         this.props.navigator.push({
             component: AddressView,
@@ -169,7 +209,7 @@ export default class GroupBuyCar extends Component {
    }
 
     render() {
-        var scrollHeight = this.state.toolsView.screenHeight-150
+        var scrollHeight = this.state.toolsView.screenHeight-100
         console.log('received view layout scrollHeight\n', scrollHeight);
         return (
             <View style={styles.container} onLayout={this.onViewLayout.bind(this)}>
@@ -200,10 +240,10 @@ export default class GroupBuyCar extends Component {
         for (var i = 0; i < categoryDataAry.length; i++) {
             categoryDataAry[i].group_buy_goods_car.map((item, n) => {
                 if (item.selected) {
-                    if (!item.seletecedCount) {
-                        item.seletecedCount = 0 ;
+                    if (!item.quantity) {
+                        item.quantity = 0 ;
                     }
-                    selectedPrice+= item.price*item.seletecedCount;
+                    selectedPrice+= item.goods.price*item.quantity;
                 }
             })
         }
@@ -213,7 +253,7 @@ export default class GroupBuyCar extends Component {
         justifyContent:'center',margin:0,flexDirection: "row",}}>
         <View style={{marginLeft:20,marginRight:0, alignItems:'center',
         justifyContent:'center',}}>
-                 {this.renderCheckBox(this.state.gbDetail)}
+                 {this.renderCheckBox(this.state.group_buy)}
              </View>
 
             <View style={{
@@ -225,7 +265,7 @@ export default class GroupBuyCar extends Component {
             <Text style={{margin:10,alignItems:'center',justifyContent:'flex-start',fontSize: 14, color: "#757575",}}>合计：{selectedPrice}元</Text>
             </View>
             <View style={[{flex:4,alignItems:'flex-end',justifyContent:'flex-end',}]}>
-            <CommitButton title={'提交订单'} onPress={this.onGroupBuyNow.bind(this)}>
+            <CommitButton title={'提交订单'} onPress={this.onConfirmOrderView.bind(this)}>
             </CommitButton>
             </View>
         </View>)
@@ -234,15 +274,16 @@ export default class GroupBuyCar extends Component {
 
 
     onItemClick(prouduct){
-
+        console.log('prouduct5:'+JSON.stringify(prouduct))
     }
+
     renderCheckBox(item) {
         if (!item) {
             return ({})
         }
 
-        if (!item.seletecedCount) {
-            item.seletecedCount = 0 ;
+        if (!item.quantity) {
+            item.quantity = 0 ;
         }
 
         return(<CheckBox
@@ -266,47 +307,51 @@ export default class GroupBuyCar extends Component {
 
     renderProductCategoryView() {
          var categoryDataAry =[];
-         var len = this.state.gbDetail.group_buy_goods_car.length
-         var temp_group_buy_goods_car = [];
+         console.log('this.state.group_buy3:'+JSON.stringify(this.state.group_buy))
+         var len = this.state.group_buy.length
+
           for (var i = 0; i < len; i++) {
-             var goods = this.state.gbDetail.group_buy_goods_car[i]
 
-             temp_group_buy_goods_car.push(goods)
-
-              if (i==0) {
-                 categoryDataAry.push({classify:{name:goods.classify_name},ship_time:goods.ship_time,group_buy_goods_car:temp_group_buy_goods_car})
-
-              }
-             if (i < len-1) {
-                  var nextGoods = this.state.gbDetail.group_buy_goods_car[i+1]
-                 if (goods.classify_id != nextGoods.classify_id || goods.ship_time != nextGoods.ship_time) {
+              var cart_goods = this.state.group_buy[i]
+             var goods = cart_goods.cart_goods
 
 
-                     categoryDataAry[categoryDataAry.length-1].group_buy_goods_car = temp_group_buy_goods_car
 
-                     temp_group_buy_goods_car=[]
-                     if (i == len - 2) {//the last one.
-                         categoryDataAry.push({classify:{name:nextGoods.classify_name},ship_time:nextGoods.ship_time,group_buy_goods_car:[nextGoods]})
-
-                     }else{
-                         categoryDataAry.push({classify:{name:nextGoods.classify_name},ship_time:nextGoods.ship_time,group_buy_goods_car:temp_group_buy_goods_car})
-
-                     }
+                 categoryDataAry.push({classify:{name:cart_goods.classify.name},ship_time:cart_goods.ship_time,group_buy_goods_car:goods})
 
 
-                 }else{
-                     if (i == len - 2) {//the last one.
-                          temp_group_buy_goods_car.push(nextGoods)
-                          categoryDataAry[categoryDataAry.length-1].group_buy_goods_car = temp_group_buy_goods_car
-                           temp_group_buy_goods_car=[]
-                     }
-                 }
-             }
+             // if (i < len-1) {
+             //      var nextGoods = this.state.gbDetail.group_buy_goods_car[i+1]
+             //     if (goods.classify_id != nextGoods.classify_id || goods.ship_time != nextGoods.ship_time) {
+             //
+             //
+             //         categoryDataAry[categoryDataAry.length-1].group_buy_goods_car = temp_group_buy_goods_car
+             //
+             //         temp_group_buy_goods_car=[]
+             //         if (i == len - 2) {//the last one.
+             //             categoryDataAry.push({classify:{name:nextGoods.classify_name},ship_time:nextGoods.ship_time,group_buy_goods_car:[nextGoods]})
+             //
+             //         }else{
+             //             categoryDataAry.push({classify:{name:nextGoods.classify_name},ship_time:nextGoods.ship_time,group_buy_goods_car:temp_group_buy_goods_car})
+             //
+             //         }
+             //
+             //
+             //     }else{
+             //         if (i == len - 2) {//the last one.
+             //              temp_group_buy_goods_car.push(nextGoods)
+             //              categoryDataAry[categoryDataAry.length-1].group_buy_goods_car = temp_group_buy_goods_car
+             //               temp_group_buy_goods_car=[]
+             //         }
+             //     }
+             // }
 
           }
+          console.log('categoryDataAry1'+JSON.stringify(categoryDataAry))
+        Global.categoryDataAry = categoryDataAry
          var displayCategoryAry = [];
-          for (var i = 0; i<categoryDataAry.length; i++) {
-              var oldTime = (new Date(categoryDataAry[i].ship_time.replace(' ','T'))).getTime();
+          for (var j = 0; j<categoryDataAry.length; j++) {
+              var oldTime = (new Date(categoryDataAry[j].ship_time.replace(' ','T'))).getTime();
               var curTime = new Date(oldTime).format("M月d号");
 
                 displayCategoryAry.push(
@@ -314,16 +359,16 @@ export default class GroupBuyCar extends Component {
                         <View style = {styles.brandLabelContainer}>
                         <View style={{marginLeft:5,marginRight:5, alignItems:'center',
                         justifyContent:'flex-start',}}>
-                                {this.renderCheckBox(categoryDataAry[i])}
+                                {this.renderCheckBox(categoryDataAry[j])}
                              </View>
                         <Text style={{fontSize:16,color:'#1b1b1b'}}>
-                                {categoryDataAry[i].classify.name}
+                                {categoryDataAry[j].classify.name}
                             </Text>
                             <Text style={{flex:1, marginRight:5,fontSize:12,color:'#757575',textAlign:'right'}}>
                                     预计{curTime}发货
                                 </Text>
                             </View>
-                        {this.renderCategorysView(categoryDataAry[i].group_buy_goods_car)}
+                        {this.renderCategorysView(categoryDataAry[j].group_buy_goods_car)}
                         <View style = {{flex:1,justifyContent:'flex-end',alignItems: 'flex-end',marginRight:5}}>
 
                         </View>
@@ -335,14 +380,14 @@ export default class GroupBuyCar extends Component {
 
 
     onNumberAdd(item) {
-        item.seletecedCount+=1;
+        item.quantity+=1;
         this.setState({ ...this.state })
     }
 
     onNumberMinus(item) {
-        item.seletecedCount=item.seletecedCount-1;
-        if (item.seletecedCount <0) {
-            item.seletecedCount = 0
+        item.quantity=item.quantity-1;
+        if (item.quantity <0) {
+            item.quantity = 0
         }
         this.setState({ ...this.state })
     }
@@ -352,79 +397,79 @@ export default class GroupBuyCar extends Component {
           component: ProductDetail,
            props: {
                prouduct:{
-                   'index': prouductItem.id,
-                   'image': {uri:prouductItem.goods.images[0].image},
+                   'index': prouductItem.goods.id,
+                   'image': {uri:prouductItem.goods.goods.images[0].image},
                },
               }
       })
    }
 
-    renderItemInfo(item,w,h){
-        console.log('item===='+JSON.stringify(item))
-        if (item.tag!='total_count') {
-            return(<View style={{resizeMode:'contain', alignItems:'center',width: w, height: h,
+    renderItemInfo(item,w,h,i){
+        console.log('item====1'+JSON.stringify(item))
+
+        return(<View style={{resizeMode:'contain', alignItems:'center',width: w, height: h,
             justifyContent:'center',paddingLeft:10,paddingRight:10,flexDirection: "row",backgroundColor:'#f7f7f7',
             flex:1}}>
             <View style={{marginLeft:5,
             flex:1,marginRight:10, alignItems:'center',
             justifyContent:'center',}}>
-            {this.renderCheckBox(item)}
-                 </View>
+                {this.renderCheckBox(item)}
+            </View>
 
-                <TouchableOpacity style={{
+            <TouchableOpacity style={{
                 flex:2}}  onPress={this.onProdcutInfo.bind(this, item)}>
                 <Image style={{resizeMode:'contain', alignItems:'center',width: 80, height: 80,
-                justifyContent:'center',}} source={{ uri: item.goods.images[0].image }}/>
-                </TouchableOpacity>
-                <View style={{
+                justifyContent:'center',}} source={{ uri: item.goods.goods.images[0].image  }}/>
+            </TouchableOpacity>
+            <View style={{
                 height:h,
                 alignItems:'flex-start',
                 flex:6}}>
-                <Text style={{marginLeft:30,marginTop:10,numberOfLines:2,ellipsizeMode:'tail',fontSize: 14, color: "#1c1c1c",}}>{item.goods.name}</Text>
-                <Text style={{marginLeft:30,alignItems:'center',justifyContent:'center',fontSize: 12, color: "#757575",}}>{item.brief_dec}</Text>
+                <Text style={{marginLeft:30,marginTop:10,numberOfLines:2,ellipsizeMode:'tail',fontSize: 14, color: "#1c1c1c",}}>{item.goods.goods.name}</Text>
+                <Text style={{marginLeft:30,alignItems:'center',justifyContent:'center',fontSize: 12, color: "#757575",}}>{item.goods.brief_dec}</Text>
                 <View style={{alignItems:'center',flexDirection:'row',marginLeft:30,paddingBottom:10,position:'absolute',left:0,right:0,bottom:0}}>
-                <Text style={{alignItems:'center',justifyContent:'center',fontSize: 16, color: "#fb7210",}}>S$ {item.price}</Text>
-                <View style={{alignItems:'flex-end',textAlign:'right',flex:6,justifyContent:'flex-end',fontSize: 12, color: "#757575",}}>
+                    <Text style={{alignItems:'center',justifyContent:'center',fontSize: 16, color: "#fb7210",}}>S$ {item.goods.price}</Text>
+                    <View style={{alignItems:'flex-end',textAlign:'right',flex:6,justifyContent:'flex-end',fontSize: 12, color: "#757575",}}>
 
                         <View style={{ height: 30, borderWidth: 0.5, borderColor: 'b3b3b3', borderRadius: 2, flexDirection: 'row', alignItems: 'center' }}>
-                        <TouchableOpacity onPress={this.onNumberMinus.bind(this, item)}
-                            style={{ width: 30, height: 30, alignItems: 'center', justifyContent: 'center' }}>
-                            <Text style={{ color: '#b3b3b3', }}>-</Text>
-                        </TouchableOpacity>
-                        <Text style={{ color: '#757575', alignItems: 'center', justifyContent: 'center',flex: 1, textAlign: 'center' }}>{item.seletecedCount}</Text>
-                        <TouchableOpacity onPress={this.onNumberAdd.bind(this, item)}
-                            style={{ width: 30, height: 30, alignItems: 'center', justifyContent: 'center' }}>
-                            <Text style={{ color: '#b3b3b3' }}>+</Text>
-                        </TouchableOpacity>
+                            <TouchableOpacity onPress={this.onNumberMinus.bind(this, item)}
+                                              style={{ width: 30, height: 30, alignItems: 'center', justifyContent: 'center' }}>
+                                <Text style={{ color: '#b3b3b3', }}>-</Text>
+                            </TouchableOpacity>
+                            <Text style={{ color: '#757575', alignItems: 'center', justifyContent: 'center',flex: 1, textAlign: 'center' }}>{item.quantity}</Text>
+                            <TouchableOpacity onPress={this.onNumberAdd.bind(this, item)}
+                                              style={{ width: 30, height: 30, alignItems: 'center', justifyContent: 'center' }}>
+                                <Text style={{ color: '#b3b3b3' }}>+</Text>
+                            </TouchableOpacity>
                         </View>
 
+                    </View>
                 </View>
-                </View>
-                </View>
+            </View>
 
-            </View>)
-        }
+        </View>)
 
     }
 
     renderCategorysView(prouductItems) {
         var width = this.state.toolsView.screenWidth;
         const w = width , h = 110
+        console.log('prouductItems1==='+JSON.stringify(prouductItems))
+
 
         let renderSwipeView = (types, n) => {
             return (
-                <View style={this.state.toolsView}>
+                <View style={styles.toolsView}>
                     {
                         types.map((item, i) => {
                             let render = (
-                                <View style={[{ width: w, height: h ,marginTop:5,marginRight:5,marginBottom:5 }, styles.toolsItem]}>
-                                     {this.renderItemInfo(item,w,h)}
+                                <View style={[{ width: w, height: h-10, marginTop: 5, marginRight: 5,  }, styles.toolsItem]}>
+                                    {this.renderItemInfo(item, w, h)}
                                 </View>
+
                             )
                             return (
-
-                                    <TouchableOpacity style={{ width: w, height: h }} key={i} onPress={() => { this.onItemClick(item) }}>{render}</TouchableOpacity>
-
+                                <TouchableOpacity style={{ width: w - 10, height: h }} key={i} onPress={() => { this.onItemClick(item) }}>{render}</TouchableOpacity>
                             )
                         })
                     }
@@ -435,6 +480,7 @@ export default class GroupBuyCar extends Component {
             renderSwipeView(prouductItems)
         )
     }
+
 }
 
 

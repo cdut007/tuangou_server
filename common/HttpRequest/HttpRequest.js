@@ -2,7 +2,7 @@ import { AsyncStorage } from 'react-native';
 var test = true;
 //const apiAddr = 'http://www.ailinkgo.com:3000/api/v1'http://47.88.139.113:3000/api/v1
 const apiAddr = test? 'http://www.ailinkgo.com:3000/api/v1':'http://www.ailinkgo.com:3000/api/v1';
-
+var testHttpToken = 'eyJhbGciOiJIUzI1NiIsImV4cCI6MTU2MzI2NjQ0NywiaWF0IjoxNTAyNzg2NDQ3fQ.eyJpZCI6Nn0.m0KCl0VANnnITqQWRyL7xeYqnj-cBrpqvYAL1dk8p9w'
 var httpToken = null
 var Global = require('../globals');
 var fetch = require('ReactJsonp');
@@ -75,7 +75,7 @@ get(apiName, body,successCallback, failCallback)
       if (httpToken && httpToken.length) {
 
            if (test) {
-               req.setRequestHeader("Authorization",'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMTU1NDY1MywiaWF0IjoxNTAwOTQ5ODUzfQ.eyJpZCI6M30.7xmlVjBO9bUpitIUfYxNX57ydQqP_NMuLexe1FVT99s');
+               req.setRequestHeader("Authorization",testHttpToken);
 
            }else{
                req.setRequestHeader("Authorization", httpToken);
@@ -83,7 +83,7 @@ get(apiName, body,successCallback, failCallback)
 
       }else{
           if (test) {
-              req.setRequestHeader("Authorization",'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMTU1NDY1MywiaWF0IjoxNTAwOTQ5ODUzfQ.eyJpZCI6M30.7xmlVjBO9bUpitIUfYxNX57ydQqP_NMuLexe1FVT99s');
+              req.setRequestHeader("Authorization",testHttpToken);
 
           }
       }
@@ -93,6 +93,83 @@ get(apiName, body,successCallback, failCallback)
 
 
   },
+    put(apiName, body,successCallback, failCallback)
+    {
+        if(!httpToken)
+        {
+            httpToken = Global.token;
+            AsyncStorage.getItem('k_http_token').then(function(result){
+                if (result !== null){
+                    httpToken = result
+                    console.log('httpToken = '+httpToken)
+                } else {
+                    console.log('get http token error:' + errs)
+                }
+            }.bind(this)).catch(function(error){
+                //this._appendMessage('AsyncStorage error: ' + error.message);
+            }.bind(this));
+
+
+
+
+        }else{
+
+        }
+
+        var param = ""
+        var url = apiAddr + apiName+'?format=json'
+
+
+
+        console.log('PUT requesr:' + url+";param="+JSON.stringify(body))
+
+        const req = new XMLHttpRequest()
+
+
+        req.onload = function () {
+            try{
+
+                var response = JSON.parse(req.response);
+                console.log('result:' + req.response)
+
+                if (response.message =='Success' || response.message =='success' ) {
+                    successCallback(response);
+                }else{
+                    failCallback(req.response)
+                }
+            }catch(error){
+                failCallback(error)
+            }
+        }
+
+        req.ontimeout = function(e) {  console.log('result ontimeout') };
+        req.onerror = function(e) {  console.log('result onerror'+e)
+            failCallback(e)
+        };
+        req.timeout = 5000;
+
+        req.open('PUT', url,true)
+        req.setRequestHeader("Content-Type","application/json");
+        if (httpToken && httpToken.length) {
+            if (test) {
+                req.setRequestHeader("Authorization",testHttpToken);
+
+            }else{
+                req.setRequestHeader("Authorization", httpToken);
+            }
+        }else{
+            if (test) {
+                req.setRequestHeader("Authorization",testHttpToken);
+
+            }
+        }
+
+
+
+        req.send(JSON.stringify(body))
+
+
+    },
   delete(apiName, body,successCallback, failCallback)
   {
       if(!httpToken)
@@ -152,14 +229,14 @@ get(apiName, body,successCallback, failCallback)
         req.setRequestHeader("Content-Type","application/json");
         if (httpToken && httpToken.length) {
             if (test) {
-                req.setRequestHeader("Authorization",'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMTU1NDY1MywiaWF0IjoxNTAwOTQ5ODUzfQ.eyJpZCI6M30.7xmlVjBO9bUpitIUfYxNX57ydQqP_NMuLexe1FVT99s');
+                req.setRequestHeader("Authorization",testHttpToken);
 
             }else{
                 req.setRequestHeader("Authorization", httpToken);
             }
         }else{
             if (test) {
-                req.setRequestHeader("Authorization",'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMTU1NDY1MywiaWF0IjoxNTAwOTQ5ODUzfQ.eyJpZCI6M30.7xmlVjBO9bUpitIUfYxNX57ydQqP_NMuLexe1FVT99s');
+                req.setRequestHeader("Authorization",testHttpToken);
 
             }
         }
@@ -173,8 +250,10 @@ get(apiName, body,successCallback, failCallback)
 
   post(apiName, body,successCallback, failCallback)
   {
+
       if(!httpToken)
       {
+
           httpToken = Global.token;
           AsyncStorage.getItem('k_http_token').then(function(result){
                 if (result !== null){
@@ -230,14 +309,14 @@ get(apiName, body,successCallback, failCallback)
         req.setRequestHeader("Content-Type","application/json");
         if (httpToken && httpToken.length) {
             if (test) {
-                req.setRequestHeader("Authorization",'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMTU1NDY1MywiaWF0IjoxNTAwOTQ5ODUzfQ.eyJpZCI6M30.7xmlVjBO9bUpitIUfYxNX57ydQqP_NMuLexe1FVT99s');
+                req.setRequestHeader("Authorization",testHttpToken);
 
             }else{
                 req.setRequestHeader("Authorization", httpToken);
             }
         }else{
             if (test) {
-                req.setRequestHeader("Authorization",'eyJhbGciOiJIUzI1NiIsImV4cCI6MTUwMTU1NDY1MywiaWF0IjoxNTAwOTQ5ODUzfQ.eyJpZCI6M30.7xmlVjBO9bUpitIUfYxNX57ydQqP_NMuLexe1FVT99s');
+                req.setRequestHeader("Authorization",testHttpToken);
 
             }
         }
