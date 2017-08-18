@@ -9,7 +9,8 @@ import {
     ScrollView,
     TouchableOpacity,
     AsyncStorage,
-    WebView
+    WebView,
+
 } from 'react-native';
 
 var hasGotGbDetail = false
@@ -174,6 +175,7 @@ export default class ProductDetail extends Component {
     onAddCartSuccess(response){
         console.log('post shopping_cart response'+JSON.stringify(response))
         if (response.message =='Success'){
+
             let param = {
                 agent_code:Global.agent_code,
 
@@ -242,7 +244,7 @@ export default class ProductDetail extends Component {
             cartShow: !this.state.cartShow
         })
 
-
+        Alert.alert('该商品已加入到购物车')
 
 
     }
@@ -412,36 +414,37 @@ bannerOnMomentumScrollEnd(event, state) {
 
     }
     onBuyNow(){
-        // var categoryDataAry = []
-        // categoryDataAry.push({classify:{name:this.state.gbDetail.classify.name},ship_time:this.state.gbDetail.ship_time,group_buy_goods_car:[
-        //     {
-        //         goods: {
-        //             id: this.state.goods.id,
-        //             goods: {
-        //                 name: this.state.goods.goods.name,
-        //                 images: [
-        //                     {
-        //                         image: this.state.goods.goods.images[0].image
-        //                     }
-        //                 ]
-        //             },
-        //             price: this.state.goods.price,
-        //             stock: this.state.goods.stock,
-        //             brief_dec: this.state.goods.brief_dec,
-        //             group_buy: this.state.goods.group_buy
-        //         },
-        //         quantity: 1,
-        //         cart_id: ''
-        //     }]})
-        // Global.categoryData = categoryDataAry
-        // this.props.navigator.push({
-        //     component: ConfirmOrderView,
-        //     props: {
-        //
-        //         showBack:true,
-        //         isMoreBuy:false
-        //     }
-        // })
+        var categoryDataAry = []
+        categoryDataAry.push({classify:{name:this.state.gbDetail.classify.name},ship_time:this.state.gbDetail.ship_time,group_buy_goods_car:[
+            {
+                goods: {
+                    id: this.state.goods.id,
+                    goods: {
+                        name: this.state.goods.goods.name,
+                        images: [
+                            {
+                                image: this.state.goods.goods.images[0].image
+                            }
+                        ]
+                    },
+                    price: this.state.goods.price,
+                    stock: this.state.goods.stock,
+                    brief_dec: this.state.goods.brief_dec,
+                    group_buy: this.state.goods.group_buy
+                },
+                quantity: 1,
+                cart_id: ''
+            }]})
+        Global.categoryData = categoryDataAry
+
+        this.props.navigator.push({
+            component: ConfirmOrderView,
+            props: {
+
+                showBack:true,
+                isMoreBuy:false
+            }
+        })
     }
     renderProductDetailBuyView(){
         var width = this.state.toolsView.screenWidth;

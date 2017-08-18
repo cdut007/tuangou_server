@@ -48,7 +48,7 @@ export default class ConfirmOrderView extends Component{
             },
             title:title,
             orders:[],
-            isMoreBuy:true,
+            isMoreBuy: true,
             btn_bottom:50,
             mainStyle:{
                 flexDirection: "row",
@@ -63,16 +63,36 @@ export default class ConfirmOrderView extends Component{
 
             },
         }
+        console.log('ConfirmOrderView goods1DataAry1:'+JSON.stringify(Global.categoryDataAry))
+        if (this.props.isMoreBuy)
+        {
+            this.state.orders = Global.categoryDataAry
+            console.log('ConfirmOrderView goods1DataAry:'+JSON.stringify(this.state.orders))
+        }else {
+            this.state.orders = Global.categoryData
+            console.log('ConfirmOrderView goods1Data2:'+JSON.stringify(this.state.orders))
+        }
+        console.log('ConfirmOrderView goods1Data:'+JSON.stringify(this.state.orders))
+        for (var i = 0; i <  this.state.orders.length; i++){
+
+                this.state.orders[i].group_buy_goods_car.map((item, i) => {
+
+                item.selected = true;
+
+            })
+        }
+
+
     }
     componentDidMount() {
-        if (this.state.isMoreBuy)
+        if (this.props.isMoreBuy)
         {
             this.state.orders = Global.categoryDataAry
         }else {
             this.state.orders = Global.categoryData
         }
 
-        console.log('ConfirmOrderView goods:'+JSON.stringify(this.state.orders))
+        console.log('ConfirmOrderView goods2:'+JSON.stringify(this.state.orders))
 
 
         // let orderStatus = this.props.isDoneStatus ? 1 : 0
@@ -243,11 +263,12 @@ export default class ConfirmOrderView extends Component{
                         item.quantity = 0 ;
                     }
                     selectedPrice+= item.goods.price*item.quantity;
+                    console.log('item.goods.price :'+item.goods.price+'item.quantity:'+item.quantity);
                 }
             })
         }
         selectedPrice = selectedPrice.toFixed(2)
-
+        console.log('selectedPrice :', selectedPrice);
         return(<View style={{alignItems:'center',width: width, height: h,
         justifyContent:'center',margin:0,flexDirection: "row",}}>
 

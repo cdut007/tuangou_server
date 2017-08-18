@@ -95,15 +95,7 @@ export default class MainView extends Component {
 
 
 
-        let param = {
-            agent_code:Global.agent_code,
-
-        }
-        HttpRequest.get('/shopping_cart', param, this.onGetFirstCartSuccess.bind(this),
-            (e) => {
-                alert('加入购物车失败，请稍后再试。')
-                console.log('shopping_cart error:' + e)
-            })
+       Global.group_buy = []
 
 
 

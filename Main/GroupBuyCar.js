@@ -65,24 +65,31 @@ export default class GroupBuyCar extends Component {
             this.state.btn_bottom = 0
         }
         this.state.group_buy = Global.group_buy
-        console.log('this.state.group_buy5:'+JSON.stringify(this.state.group_buy))
+        console.log('this.state.group_buy6:'+JSON.stringify(this.state.group_buy))
+
+
+        for (var i = 0; i<  this.state.group_buy.length; i++){
 
 
 
+            this.state.group_buy[i].cart_goods.map((item, i) => {
 
+                item.selected = true;
+
+            })
+
+
+    }
     }
     getCarData(){
             this.state.group_buy = Global.group_buy
     }
     componentDidMount() {
-        this.state.group_buy.map((item, i) => {
 
-            item.selected = true;
-
-        })
         console.log('componentDidMount1')
         if (Global.group_buy){
             this.getCarData()
+            console.log('componentDidMount1')
         }else {
 
             let param = {
@@ -98,7 +105,7 @@ export default class GroupBuyCar extends Component {
 
     }
     onGetFirstCartSuccess(response){
-        console.log(' get shopping_cart response3'+JSON.stringify(response))
+
 
 
 
@@ -121,11 +128,28 @@ export default class GroupBuyCar extends Component {
 
     onConfirmOrderView(){
 
-        console.log('onConfirmOrderView:'+JSON.stringify(Global.categoryDataAry))
+    for (var i = 0; i< Global.categoryDataAry.length;i++)
+    {
+        var oldGoods = Global.categoryDataAry[i]
+        var newGroup_buy_goods_car = []
 
+        oldGoods.group_buy_goods_car.map((item, i) => {
+            if (item.selected){
+                newGroup_buy_goods_car.push(item)
+            }
+
+
+        })
+        Global.categoryDataAry[i].group_buy_goods_car = newGroup_buy_goods_car;
+    }
+        console.log('Global.categoryDataAry11:'+JSON.stringify(Global.categoryDataAry))
 
         this.props.navigator.push({
             component: ConfirmOrderView,
+
+            props: {
+                isMoreBuy: true,
+            }
 
         })
          // if (!Global.user_address){
@@ -165,8 +189,22 @@ export default class GroupBuyCar extends Component {
     }
 
     clear(){
+        let param = {
+            cart_id:item.cart_id,
+            quantity:item.quantity,
+
+
+
+        }
+
+        HttpRequest.put('/shopping_cart', param, this.onPutCartSuccess.bind(this),
+            (e) => {
+                alert('刷新购物车失败，请稍后再试。')
+                console.log('shopping_cart error:' + e)
+            })
+        this.state.group_buy = null;
         Global.gbDetail=null;
-        this.setState({gbDetail: { classify: { name: '', icon: '' }, group_buy_goods_car: [] }})
+        this.setState({group_buy:[] })
     }
 
     onGroupBuySuccess(response){
@@ -187,14 +225,12 @@ export default class GroupBuyCar extends Component {
    renderTopBar(){
        if (this.props.showBack) {
            return(<NavBar title="拼团车"
-           rightTitle='清空'
-           rightPress={this.clear.bind(this)}
+
            leftIcon={require('../images/back@2x.png')}
            leftPress={this.clickBack.bind(this)}/>
            )
        }else{
-           return(<NavBar title="拼团车"  rightTitle='清空'
-           rightPress={this.clear.bind(this)}/>)
+           return(<NavBar title="拼团车"  />)
        }
    }
 
@@ -236,9 +272,9 @@ export default class GroupBuyCar extends Component {
         let h = 51
 
         let selectedPrice = 0
-        var categoryDataAry = [this.state.gbDetail];
+        var categoryDataAry = this.state.group_buy;
         for (var i = 0; i < categoryDataAry.length; i++) {
-            categoryDataAry[i].group_buy_goods_car.map((item, n) => {
+            categoryDataAry[i].cart_goods.map((item, n) => {
                 if (item.selected) {
                     if (!item.quantity) {
                         item.quantity = 0 ;
@@ -253,7 +289,7 @@ export default class GroupBuyCar extends Component {
         justifyContent:'center',margin:0,flexDirection: "row",}}>
         <View style={{marginLeft:20,marginRight:0, alignItems:'center',
         justifyContent:'center',}}>
-                 {this.renderCheckBox(this.state.group_buy)}
+                 {this.renderAllCheckBox(categoryDataAry)}
              </View>
 
             <View style={{
@@ -274,7 +310,7 @@ export default class GroupBuyCar extends Component {
 
 
     onItemClick(prouduct){
-        console.log('prouduct5:'+JSON.stringify(prouduct))
+
     }
 
     renderCheckBox(item) {
@@ -285,7 +321,7 @@ export default class GroupBuyCar extends Component {
         if (!item.quantity) {
             item.quantity = 0 ;
         }
-
+        console.log('renderCheckBox1:'+JSON.stringify(item))
         return(<CheckBox
                     label=''
                     checkedImage={require('../images/choose_one_click@2x.png')}
@@ -303,11 +339,66 @@ export default class GroupBuyCar extends Component {
                      }}
                 />)
     }
+    renderGroupCheckBox(item) {
+        if (!item) {
+            return ({})
+        }
+
+
+        console.log('renderGroupCheckBox:'+JSON.stringify(item))
+        return(<CheckBox
+            label=''
+            checkedImage={require('../images/choose_one_click@2x.png')}
+            uncheckedImage={require('../images/choose_one@2x.png')}
+            checked={item.selected == null ? false : item.selected}
+            onChange={(checked) => {
+                         console.log('item.selected0'+JSON.stringify(item.selected ))
+                        item.selected = !checked
+                        console.log('item.selected1checked'+JSON.stringify(checked ))
+                        console.log('item.selected1'+JSON.stringify(item.selected ))
+                        if (item.classify && item.group_buy_goods_car) {
+                        console.log('item.selected2'+JSON.stringify(item.selected ))
+                            item.group_buy_goods_car.map((subitem, i) => {
+                                subitem.selected = item.selected
+                            })
+                        }
+                        console.log('item.selected3'+JSON.stringify(item.selected ))
+                        this.setState({ ...this.state })
+                         console.log('item.selected4'+JSON.stringify(item.selected ))
+                     }}
+        />
+
+        )
+    }
+    renderAllCheckBox(item) {
+        if (!item) {
+            return ({})
+        }
+
+
+        console.log('renderAllCheckBox:'+JSON.stringify(item))
+        return(<CheckBox
+            label=''
+            checkedImage={require('../images/choose_one_click@2x.png')}
+            uncheckedImage={require('../images/choose_one@2x.png')}
+            checked={item.selected == null ? false : item.selected}
+            onChange={(checked) => {
+                        item.selected = !checked
+
+                        if (item.classify && item.group_buy_goods_car) {
+                            item.group_buy_goods_car.map((subitem, i) => {
+                                subitem.selected = item.selected
+                            })
+                        }
+                        this.setState({ ...this.state })
+                     }}
+        />)
+    }
 
 
     renderProductCategoryView() {
          var categoryDataAry =[];
-         console.log('this.state.group_buy3:'+JSON.stringify(this.state.group_buy))
+
          var len = this.state.group_buy.length
 
           for (var i = 0; i < len; i++) {
@@ -315,9 +406,9 @@ export default class GroupBuyCar extends Component {
               var cart_goods = this.state.group_buy[i]
              var goods = cart_goods.cart_goods
 
+              categoryDataAry.push({classify:{name:cart_goods.classify.name},ship_time:cart_goods.ship_time,group_buy_goods_car:goods})
 
 
-                 categoryDataAry.push({classify:{name:cart_goods.classify.name},ship_time:cart_goods.ship_time,group_buy_goods_car:goods})
 
 
              // if (i < len-1) {
@@ -347,8 +438,9 @@ export default class GroupBuyCar extends Component {
              // }
 
           }
-          console.log('categoryDataAry1'+JSON.stringify(categoryDataAry))
+        console.log('Global.categoryDataAry13:'+JSON.stringify(Global.categoryDataAry))
         Global.categoryDataAry = categoryDataAry
+        console.log('Global.categoryDataAry14:'+JSON.stringify(Global.categoryDataAry))
          var displayCategoryAry = [];
           for (var j = 0; j<categoryDataAry.length; j++) {
               var oldTime = (new Date(categoryDataAry[j].ship_time.replace(' ','T'))).getTime();
@@ -359,7 +451,7 @@ export default class GroupBuyCar extends Component {
                         <View style = {styles.brandLabelContainer}>
                         <View style={{marginLeft:5,marginRight:5, alignItems:'center',
                         justifyContent:'flex-start',}}>
-                                {this.renderCheckBox(categoryDataAry[j])}
+                                {this.renderGroupCheckBox(categoryDataAry[j])}
                              </View>
                         <Text style={{fontSize:16,color:'#1b1b1b'}}>
                                 {categoryDataAry[j].classify.name}
@@ -375,13 +467,27 @@ export default class GroupBuyCar extends Component {
                         </View>
             );
             }
+
             return displayCategoryAry;
     }
 
 
     onNumberAdd(item) {
         item.quantity+=1;
-        this.setState({ ...this.state })
+        let param = {
+            cart_id:item.cart_id,
+            quantity:item.quantity,
+
+
+
+        }
+
+        HttpRequest.put('/shopping_cart', param, this.onPutCartSuccess.bind(this),
+            (e) => {
+                alert('刷新购物车失败，请稍后再试。')
+                console.log('shopping_cart error:' + e)
+            })
+
     }
 
     onNumberMinus(item) {
@@ -389,9 +495,31 @@ export default class GroupBuyCar extends Component {
         if (item.quantity <0) {
             item.quantity = 0
         }
-        this.setState({ ...this.state })
-    }
 
+
+        let param = {
+            cart_id:item.cart_id,
+            quantity:item.quantity,
+
+
+
+        }
+
+        HttpRequest.put('/shopping_cart', param, this.onPutCartSuccess.bind(this),
+            (e) => {
+                alert('刷新购物车失败，请稍后再试。')
+                console.log('shopping_cart error:' + e)
+            })
+
+    }
+    onPutCartSuccess(response){
+        console.log('item.quantity:'+JSON.stringify(response))
+        if (response.message == 'Success'){
+            this.setState({ ...this.state })
+        }
+
+
+    }
    onProdcutInfo(prouductItem){
        this.props.navigator.push({
           component: ProductDetail,
@@ -405,7 +533,7 @@ export default class GroupBuyCar extends Component {
    }
 
     renderItemInfo(item,w,h,i){
-        console.log('item====1'+JSON.stringify(item))
+
 
         return(<View style={{resizeMode:'contain', alignItems:'center',width: w, height: h,
             justifyContent:'center',paddingLeft:10,paddingRight:10,flexDirection: "row",backgroundColor:'#f7f7f7',
@@ -454,7 +582,7 @@ export default class GroupBuyCar extends Component {
     renderCategorysView(prouductItems) {
         var width = this.state.toolsView.screenWidth;
         const w = width , h = 110
-        console.log('prouductItems1==='+JSON.stringify(prouductItems))
+
 
 
         let renderSwipeView = (types, n) => {
