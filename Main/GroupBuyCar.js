@@ -92,38 +92,11 @@ export default class GroupBuyCar extends Component {
             console.log('componentDidMount1')
         }else {
 
-            let param = {
-                agent_code:Global.agent_code,
 
-            }
-            HttpRequest.get('/shopping_cart', param, this.onGetFirstCartSuccess.bind(this),
-                (e) => {
-                    alert('加入购物车失败，请稍后再试。')
-                    console.log('shopping_cart error:' + e)
-                })
         }
 
     }
-    onGetFirstCartSuccess(response){
 
-
-
-
-        this.state.group_buy = response.data.group_buy
-
-
-
-
-
-
-
-        this.setState({
-            group_buy : response.data.group_buy,
-
-        });
-
-        this.getCarData()
-    }
 
 
     onConfirmOrderView(){

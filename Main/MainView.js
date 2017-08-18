@@ -93,13 +93,26 @@ export default class MainView extends Component {
             }.bind(this));
 
 
+        if (me.state.hasLogin){
+            let param = {
+                agent_code:Global.agent_code,
+
+            }
+            HttpRequest.get('/shopping_cart', param, this.onGetFirstCartSuccess.bind(this),
+                (e) => {
+
+                    console.log('shopping_cart error:' + e)
+                })
+        }else {
+            Global.group_buy = []
+        }
 
 
-       Global.group_buy = []
 
 
 
     }
+
     onGetFirstCartSuccess(response){
         console.log(' get shopping_cart response23'+JSON.stringify(response))
 
@@ -131,26 +144,26 @@ export default class MainView extends Component {
             )
         }
         else {
-            // return (
-            //     <Navigator
-            //     initialRoute={{component: WelcomeView, name: "WelcomePage", index: this.props.index}}
-            //     configureScene={() => Navigator.SceneConfigs.FloatFromRight}
-            //     renderScene={(route, navigator) => {
-            //           return <route.component navigator={navigator} {...route.props}/>
-            //         }
-            //     }
-            //   />
-            // )
             return (
                 <Navigator
-                    initialRoute={{component: TabView, name: "MainPage"}}
-                    configureScene={() => Navigator.SceneConfigs.FloatFromRight}
-                    renderScene={(route, navigator) => {
+                initialRoute={{component: WelcomeView, name: "WelcomePage", index: this.props.index}}
+                configureScene={() => Navigator.SceneConfigs.FloatFromRight}
+                renderScene={(route, navigator) => {
                       return <route.component navigator={navigator} {...route.props}/>
                     }
                 }
-                />
+              />
             )
+            // return (
+            //     <Navigator
+            //         initialRoute={{component: TabView, name: "MainPage"}}
+            //         configureScene={() => Navigator.SceneConfigs.FloatFromRight}
+            //         renderScene={(route, navigator) => {
+            //           return <route.component navigator={navigator} {...route.props}/>
+            //         }
+            //     }
+            //     />
+            // )
         }
 
     }

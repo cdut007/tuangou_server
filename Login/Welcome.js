@@ -31,11 +31,12 @@ export default class Welcome extends Component
           var code = this.getQueryString('code',str);
            console.log('url code='+code);
            if (code) {
-                this.getUserInfoByCode(code)
+               this.getUserInfoByCode(code)
                  var agent_code = this.getQueryString('state',str);
                  if (agent_code) {
                      Global.agent_code = agent_code;
                  }
+
 
            }
 
@@ -68,14 +69,15 @@ export default class Welcome extends Component
 
                 AsyncStorage.setItem('k_login_info', JSON.stringify(Global.wxUserInfo)).then(function(){
                     console.log('save k_login_info succ.')
+                    this.props.navigator.resetTo({
+                        component: TabView,
+                        name: 'MainPage'
+                    })
                 }.bind(this)).catch(function(error){
                     console.log('save k_login_info faild.' + error.message)
                 }.bind(this));
 
-        this.props.navigator.resetTo({
-                    component: TabView,
-                    name: 'MainPage'
-                })
+
     }
 
     getUserInfo(){
@@ -85,7 +87,7 @@ export default class Welcome extends Component
              (e) => {
 
                  try {
-                      alert('qqewwww'+e)
+
                      var errorInfo = JSON.parse(e);
                      console.log(errorInfo.description)
                      if (errorInfo != null && errorInfo.description) {
@@ -110,7 +112,7 @@ export default class Welcome extends Component
          HttpRequest.get('/web_user', paramBody, this.onUserSuccess.bind(this),
              (e) => {
                  try {
-                         alert('ewwww'+e)
+
                      var errorInfo = JSON.parse(e);
                      console.log(errorInfo.description)
                      if (errorInfo != null && errorInfo.description) {

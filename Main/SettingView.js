@@ -30,16 +30,22 @@ export default class SettingView extends Component {
     _logout_function(){
 
         //logout here
-        Global.UserInfo = null;
-        AsyncStorage.removeItem('k_http_token').then((value) => {
 
+        Global.token = null
+        Global.wxUserInfo = null;
+        AsyncStorage.removeItem('k_http_token').then((value) => {
+                AsyncStorage.removeItem('k_login_info').then((value) => {
+
+                        this.props.navigator.resetTo({
+                            component: Welcome,
+                            name: 'Welcome'
+                        })
+                    }
+                ).done();
         }
         ).done();
 
-            AsyncStorage.removeItem('k_login_info').then((value) => {
 
-            }
-            ).done();
         //logout success go 2 call page
         // var routes = this.props.navigator.state.routeStack;
         // for (var i = routes.length - 1; i >= 0; i--) {
@@ -49,10 +55,7 @@ export default class SettingView extends Component {
         //
         //     }
         // }
-        this.props.navigator.resetTo({
-            component: Welcome,
-            name: 'Welcome'
-        })
+
     };
 
 

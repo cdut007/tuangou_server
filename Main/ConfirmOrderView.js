@@ -131,7 +131,7 @@ export default class ConfirmOrderView extends Component{
         if (!delay) {
             HttpRequest.post('/generic_order', param, this.onGroupBuySuccess.bind(this),
                 (e) => {
-                    alert('提交订单失败，请稍后再试。')
+
                     console.log('generic_order error:' + e)
                 })
         }else{

@@ -72,7 +72,7 @@ export default class ProductDetail extends Component {
         }
         HttpRequest.get('/shopping_cart', param, this.onGetFirstCartSuccess.bind(this),
             (e) => {
-                alert('加入购物车失败，请稍后再试。')
+
                 console.log('shopping_cart error:' + e)
             })
 
@@ -166,7 +166,7 @@ export default class ProductDetail extends Component {
         }
         HttpRequest.post('/shopping_cart', param, this.onAddCartSuccess.bind(this),
             (e) => {
-                alert('加入购物车失败，请稍后再试。')
+
                 console.log('shopping_cart error:' + e)
             })
 
@@ -180,10 +180,11 @@ export default class ProductDetail extends Component {
                 agent_code:Global.agent_code,
 
             }
+
             HttpRequest.get('/shopping_cart', param, this.onGetCartSuccess.bind(this),
                 (e) => {
-                    alert('加入购物车失败，请稍后再试。')
-                    console.log('shopping_cart error:' + e)
+
+                    console.log('shopping_cart error:' +e )
                 })
         }else {
 
@@ -244,7 +245,7 @@ export default class ProductDetail extends Component {
             cartShow: !this.state.cartShow
         })
 
-        Alert.alert('该商品已加入到购物车')
+        alert('该商品已加入到购物车')
 
 
     }
