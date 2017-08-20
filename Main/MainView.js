@@ -94,15 +94,15 @@ export default class MainView extends Component {
 
 
         if (me.state.hasLogin){
-            let param = {
-                agent_code:Global.agent_code,
-
-            }
-            HttpRequest.get('/shopping_cart', param, this.onGetFirstCartSuccess.bind(this),
-                (e) => {
-
-                    console.log('shopping_cart error:' + e)
-                })
+            // let param = {
+            //     agent_code:Global.agent_code,
+            //
+            // }
+            // HttpRequest.get('/shopping_cart', param, this.onGetFirstCartSuccess.bind(this),
+            //     (e) => {
+            //
+            //         console.log('shopping_cart error:' + e)
+            //     })
         }else {
             Global.group_buy = []
         }
@@ -121,7 +121,9 @@ export default class MainView extends Component {
         Global.group_buy = response.data.group_buy
 
 
+
     }
+
     render() {
 
          if(this.state.hasLogin == null)

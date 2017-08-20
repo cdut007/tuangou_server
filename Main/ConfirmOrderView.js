@@ -16,6 +16,7 @@ import {
 import NavBar from '../common/NavBar'
 import GroupBuyNowView from './GroupBuyNowView'
 import HttpRequest from '../common/HttpRequest/HttpRequest'
+import AddressView from './AddressView'
 var Global = require('../common/globals');
 Date.prototype.format = function(fmt)
 { //author: meizz
@@ -62,6 +63,10 @@ export default class ConfirmOrderView extends Component{
 
 
             },
+            address: '',
+            phone_num:'',
+            nick_name:''
+
         }
         console.log('ConfirmOrderView goods1DataAry1:'+JSON.stringify(Global.categoryDataAry))
         if (this.props.isMoreBuy)
@@ -73,6 +78,14 @@ export default class ConfirmOrderView extends Component{
             console.log('ConfirmOrderView goods1Data2:'+JSON.stringify(this.state.orders))
         }
         console.log('ConfirmOrderView goods1Data:'+JSON.stringify(this.state.orders))
+        if (Global.user_address){
+            this.state.phone_num = Global.user_address.phone_num
+            this.state.address = Global.agent.address
+            this.state.nick_name = Global.agent.nickname
+        }else{
+
+        }
+
         for (var i = 0; i <  this.state.orders.length; i++){
 
                 this.state.orders[i].group_buy_goods_car.map((item, i) => {
@@ -95,6 +108,7 @@ export default class ConfirmOrderView extends Component{
         console.log('ConfirmOrderView goods2:'+JSON.stringify(this.state.orders))
 
 
+
         // let orderStatus = this.props.isDoneStatus ? 1 : 0
         // let param = { status: orderStatus }
         // console.log('orderStatus:' +orderStatus)
@@ -113,13 +127,13 @@ export default class ConfirmOrderView extends Component{
             var categoryData = categoryDataAry[i]
             console.log('categoryData:'+JSON.stringify(categoryData))
             categoryDataAry[i].group_buy_goods_car.map((item, i) => {
-                if ( item.quantity ) {
+                if ( item.selected ) {
                     goodsIds.push({goods:item.goods.id,quantity:item.quantity})
                 }
             })
         }
 
-        console.log('goodsIds:'+JSON.stringify(goodsIds))
+
         if ( !goodsIds.length) {
             alert('请选择需要团购的商品。')
             return
@@ -148,6 +162,7 @@ export default class ConfirmOrderView extends Component{
     onGroupBuySuccess(response){
         Global.gbDetail=null;
         this.setState({gbDetail: { classify: { name: '', icon: '' }, group_buy_goods_car: [] }})
+        Global.categoryDataAry = [];
         this.props.navigator.push({
             component: GroupBuyNowView,
             props: {
@@ -166,7 +181,7 @@ export default class ConfirmOrderView extends Component{
 
     }
     onGetListSuccess(response) {
-        console.log('groupOrderList +' +JSON.stringify(response))
+
         this.setState({
             orders: response.data.order
         })
@@ -185,18 +200,29 @@ export default class ConfirmOrderView extends Component{
         console.log('mainStyle:'+this.state.mainStyle.screenWidth+':'+this.state.mainStyle.height)
     }
     renderGroupAdressView(){
-        return (<View style={[styles.groupAdressView,{ width:this.state.mainStyle.screenWidth,}]}>
+        return (
+            <TouchableOpacity onPress={this.onAdressPress.bind(this)}>
+            <View style={[styles.groupAdressView,{ width:this.state.mainStyle.screenWidth,marginBottom:10}]}>
                 <View style={{flexDirection:'row',justifyContent:'space-between',width:this.state.mainStyle.screenWidth,height:40}}>
-                    <Text style={{fontFamily:'PingFangSC-Light',fontSize:14,textAlign:'center',color:'black',margin:10}}> 用户微信名</Text>
-                    <Text style={{fontFamily:'PingFangSC-Light',fontSize:14,textAlign:'left',color:'black',margin:10}}>6588837925 </Text>
+                    <Text style={{fontFamily:'PingFangSC-Light',fontSize:14,textAlign:'center',color:'black',margin:10}}>{this.state.nick_name}</Text>
+                    <Text style={{fontFamily:'PingFangSC-Light',fontSize:14,textAlign:'left',color:'black',margin:10}}>{this.state.phone_num}</Text>
                 </View>
                 <View style={{flexDirection:'row',justifyContent:'flex-start',height:55}}>
-                    <Text style={{fontFamily:'PingFangSC-Light',fontSize:14,textAlign:'left',color:'black',margin:10,}}>团长家:</Text>
+                    <Text style={{fontFamily:'PingFangSC-Light',fontSize:14,textAlign:'left',color:'black',margin:10,}}>团长家:{this.state.address}</Text>
                 </View>
 
 
             </View>
+            </TouchableOpacity>
         )
+    }
+    onAdressPress(){
+        this.props.navigator.push({
+            component: AddressView,
+            props: {
+
+            }
+        })
     }
     render() {
 
@@ -234,7 +260,8 @@ export default class ConfirmOrderView extends Component{
                 >
 
                     {this.renderGroupAdressView()}
-
+                    <View style={{height:0.5,width:this.state.mainStyle.screenWidth,backgroundColor:'rgb(212,212,212)'}}></View>
+                    <View style={{height:10,width:this.state.mainStyle.screenWidth,backgroundColor:'#f7f7f7'}}></View>
                     {this.renderProductCategoryView()}
 
                 </ScrollView>

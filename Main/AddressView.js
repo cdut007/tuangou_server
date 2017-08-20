@@ -10,7 +10,7 @@ import {
     AsyncStorage,
     TextInput
 } from 'react-native';
-
+import ConfirmOrderView from './ConfirmOrderView'
 import NavBar from '../common/NavBar'
 import HttpRequest from '../common/HttpRequest/HttpRequest'
 var Global = require('../common/globals');
@@ -43,7 +43,7 @@ export default class AddressView extends Component {
         if (Global.user_address) {
             this.setState({
                 name: Global.agent.nickname,
-                address: Global.user_address.address,
+                address: Global.agent.address,
                 mobile: Global.user_address.phone_num
             })
             HttpRequest.get('/user_address', {}, this.onGetAddressSuccess.bind(this),
@@ -57,6 +57,7 @@ export default class AddressView extends Component {
                     console.log(' error:' + e)
                 })
         }
+        console.log('Global.agent:'+JSON.stringify(Global.agent))
 
     }
 
@@ -64,7 +65,7 @@ export default class AddressView extends Component {
         Global.user_address = response.data.user_address
         this.setState({
             name: Global.agent.nickname,
-            address: response.data.user_address.address,
+            address: Global.agent.address,
             mobile: response.data.user_address.phone_num
         })
     }
@@ -72,22 +73,16 @@ export default class AddressView extends Component {
 
     save() {
 
-        if (!this.state.mobile) {
-            alert('输入联系方式')
-            return
-        }
-        if (!this.state.address) {
-            alert('输入收货地址')
-            return
-        }
+
+
         let param = {
-            address: this.state.address,
+
             phone_num: this.state.mobile
         }
         HttpRequest.post('/user_address', param, this.onSaveAddressSuccess.bind(this),
                 (e) => {
-                    alert('保存地址失败，请稍后再试。')
-                    console.log(' error:' + e)
+
+                    console.log(' user_address error:' + e)
                 })
 
 
@@ -96,16 +91,25 @@ export default class AddressView extends Component {
     onSaveAddressSuccess(response)
     {
         Global.user_address = {
-            address: this.state.address,
+
             phone_num: this.state.mobile
         }
 
          //this.state.emitter.emit('address_refresh');
-         if (this.props.buycarView) {
-             this.props.buycarView(true)
-         }
+        //  if (this.props.buycarView) {
+        //      this.props.buycarView(true)
+        //  }
+        //
+        // this.props.navigator.pop()
 
-        this.props.navigator.pop()
+            this.props.navigator.push({
+                component: ConfirmOrderView,
+
+                props: {
+                    isMoreBuy: this.props.isMoreBuy,
+                }
+
+            })
     }
 
 
@@ -149,16 +153,19 @@ export default class AddressView extends Component {
 
                 <View style={{ alignSelf:'stretch',flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', backgroundColor: '#ffffff', height: 45, paddingLeft: 10, paddingRight: 10 }}>
                     <Text style={[styles.iconSize, { width: 70, marginRight: 15, color: '#1b1b1b', fontSize: 14, }]}>
-                        收货地址
+                        提货点
                         </Text>
-                    <TextInput style={{
-                        marginLeft: 0, fontSize: 14, flex: 20,
-                        textAlign: 'left', color: '#1c1c1c',
-                    }}
-                        editable={true}
-                        onChangeText={(text) => this.setState({ address: text })}
-                        value= {this.state.address}
-                    ></TextInput>
+                    <Text style={[styles.iconSize, { width: 200, marginRight: 10, color: '#1b1b1b', fontSize: 14,textAlign: 'right', }]}>
+                        团长家：{Global.agent.address}
+                    </Text>
+                    {/*<TextInput style={{*/}
+                        {/*marginLeft: 0, fontSize: 14, flex: 20,*/}
+                        {/*textAlign: 'left', color: '#1c1c1c',*/}
+                    {/*}}*/}
+                        {/*editable={true}*/}
+                        {/*onChangeText={(text) => this.setState({ address: text })}*/}
+                        {/*value= {this.state.address}*/}
+                    {/*></TextInput>*/}
 
                 </View>
             </View>

@@ -31,10 +31,14 @@ export default class TabView extends Component
     componentWillMount(){
         var me = this;
 
+
+
     }
 
 
+
       componentWillUnmount() {
+
             }
 
     render()
@@ -76,8 +80,8 @@ export default class TabView extends Component
        if (tab == 'tab1') {
            return (<HomeView {...this.props}/>)
        }else if(tab == 'tab2'){
-
-           return (<GroupBuyCar {...this.props}/>)
+           this.state.emitter.emit('cart_refresh');
+           return (<GroupBuyCar {...this.props} emitter = {this.state.emitter}/>)
        } {
                this.state.emitter.emit('group_refresh');
           return (<GroupOrderListView {...this.props} emitter = {this.state.emitter}/>)

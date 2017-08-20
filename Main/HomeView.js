@@ -60,8 +60,23 @@ export default class HomeView extends Component {
         this.state.agent = response.data.user_profile;
         Global.agent = response.data.user_profile;
         this.setState({agent:this.state.agent});
-    }
+        HttpRequest.get('/user_address', {}, this.onGetAddressSuccess.bind(this),
+            (e) => {
+                console.log(' error:' + e)
 
+            })
+
+    }
+    onGetAddressSuccess(response) {
+        if (response.message == 'The user has no address'){
+            Global.user_address = ''
+        }else {
+            Global.user_address = response.data.user_address
+        }
+
+
+
+    }
 
     fetchAgentInfo(){
         console.log('agent_code:'+Global.agent_code)

@@ -54,11 +54,12 @@ export default class Welcome extends Component
 
                 AsyncStorage.setItem('k_http_token', Global.token).then(function(){
                     console.log('save k_http_token succ.')
+                    this.getUserInfo();
                 }.bind(this)).catch(function(error){
                     console.log('save k_http_token faild.' + error.message)
     }.bind(this));
 
-        this.getUserInfo();
+
 
 
 

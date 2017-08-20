@@ -229,7 +229,7 @@ export default class ProductDetail extends Component {
 
         var cart = []
         this.state.group_buy = response.data.group_buy
-
+        Global.group_buy = response.data.group_buy
         var group_buyNum = 0
         console.log('group_buy.length:'+this.state.group_buy.length)
         for (var i =0; i < this.state.group_buy.length; i++){
@@ -245,7 +245,8 @@ export default class ProductDetail extends Component {
             cartShow: !this.state.cartShow
         })
 
-        alert('该商品已加入到购物车')
+        // this.setState({ ...this.state })
+        alert('加入到购物车成功')
 
 
     }

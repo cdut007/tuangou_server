@@ -39,7 +39,9 @@ Date.prototype.format = function(fmt)
     return fmt;
 };
 export default class GroupBuyCar extends Component {
-
+    static propTypes:{
+        emitter: PropTypes.object,
+    }
 
     constructor(props) {
         super(props)
@@ -86,79 +88,104 @@ export default class GroupBuyCar extends Component {
     }
     componentDidMount() {
 
-        console.log('componentDidMount1')
-        if (Global.group_buy){
-            this.getCarData()
-            console.log('componentDidMount1')
-        }else {
 
-
+        this.refreshCartInfo();
+        if (this.props.emitter) {
+            console.log('init cart_refresh emitter~~~')
+            this.props.emitter.on('cart_refresh', () => {
+                console.log('cart_refresh~~~')
+                this.refreshCartInfo();
+            });
         }
 
+
+    }
+    refreshCartInfo(){
+        this.fetchCartData();
+    }
+    componentWillMount(){
+
+
+    }
+    fetchCartData(){
+
+        let param = {
+            agent_code:Global.agent_code,
+
+        }
+        HttpRequest.get('/shopping_cart', param, this.onGetFirstCartSuccess.bind(this),
+            (e) => {
+
+                console.log('shopping_cart error:' + e)
+            })
     }
 
+    onGetFirstCartSuccess(response){
+        console.log(' get shopping_cart response101'+JSON.stringify(response))
 
+        var cart = []
+        this.state.group_buy = response.data.group_buy
+        Global.group_buy = response.data.group_buy
 
+        this.setState({ ...this.state })
+
+    }
     onConfirmOrderView(){
+        for (var i = 0; i< Global.categoryDataAry.length;i++)
+        {
+            var oldGoods = Global.categoryDataAry[i]
+            var newGroup_buy_goods_car = []
 
-    for (var i = 0; i< Global.categoryDataAry.length;i++)
-    {
-        var oldGoods = Global.categoryDataAry[i]
-        var newGroup_buy_goods_car = []
-
-        oldGoods.group_buy_goods_car.map((item, i) => {
-            if (item.selected){
-                newGroup_buy_goods_car.push(item)
-            }
+            oldGoods.group_buy_goods_car.map((item, i) => {
+                if (item.selected){
+                    newGroup_buy_goods_car.push(item)
+                }
 
 
-        })
-        Global.categoryDataAry[i].group_buy_goods_car = newGroup_buy_goods_car;
-    }
+            })
+            Global.categoryDataAry[i].group_buy_goods_car = newGroup_buy_goods_car;
+        }
         console.log('Global.categoryDataAry11:'+JSON.stringify(Global.categoryDataAry))
 
-        this.props.navigator.push({
-            component: ConfirmOrderView,
+         if (!Global.user_address){
+             this.props.navigator.push({
+                 component: AddressView,
+                 props:{
+                     isMoreBuy: true,
+                 }
+             })
+         }else {
 
-            props: {
-                isMoreBuy: true,
-            }
 
-        })
-         // if (!Global.user_address){
-         //     this.props.navigator.push({
-         //         component: AddressView,
-         //         props:{
-         //             // buycarView: this.buyNow.bind(this),
-         //         }
-         //     })
-         // }else {
-         //     this.props.navigator.push({
-         //         component: ConfirmOrderView,
-         //         props:{
-         //
-         //         }
-         //     })
-         //
-         // }
+             this.props.navigator.push({
+                 component: ConfirmOrderView,
+
+                 props: {
+                     isMoreBuy: true,
+                 }
+
+             })
+
+         }
     }
     onSaveCartSuccess(){
 
     }
     onGroupBuyNow(){
         // this.buyNow(false)
-    if (!Global.user_address) {
-        this.props.navigator.push({
-            component: AddressView,
-            props:{
-                buycarView: this.buyNow.bind(this),
-            }
-        })
-    }
-    else {
-        this.buyNow(false)
-
-        }
+        console.log('user_address:'+JSON.stringify(Global.user_address))
+    // if (!Global.user_address.phone_num) {
+    //     this.props.navigator.push({
+    //         component: AddressView,
+    //         props:{
+    //             buycarView: this.buyNow.bind(this),
+    //         }
+    //     })
+    // }
+    // else {
+    //     this.buyNow(false)
+    //
+    //     }
     }
 
     clear(){
@@ -192,7 +219,28 @@ export default class GroupBuyCar extends Component {
     }
 
     clickBack() {
-     this.props.navigator.pop()
+        let param = {
+            agent_code:Global.agent_code,
+
+        }
+
+        HttpRequest.get('/shopping_cart', param, this.onBackGetCartSuccess.bind(this),
+            (e) => {
+
+                console.log('shopping_cart error:' +e )
+            })
+
+    }
+    onBackGetCartSuccess(response){
+        console.log(' get shopping_cart response101'+JSON.stringify(response))
+
+
+        this.state.group_buy = response.data.group_buy
+        Global.group_buy = response.data.group_buy
+
+        this.setState({ ...this.state })
+        this.props.navigator.pop()
+
     }
 
    renderTopBar(){
@@ -470,23 +518,68 @@ export default class GroupBuyCar extends Component {
         }
 
 
-        let param = {
-            cart_id:item.cart_id,
-            quantity:item.quantity,
+        if (item.quantity == 0){
+            let param = {
+                cart_id:item.cart_id,
 
 
 
+
+            }
+            HttpRequest.delete('/shopping_cart', param, this.onDeleteCartSuccess.bind(this),
+                (e) => {
+
+                    console.log('deleteshopping_cart error:' + e)
+                })
+        }else {
+            let param = {
+                cart_id:item.cart_id,
+                quantity:item.quantity,
+
+
+
+            }
+
+            HttpRequest.put('/shopping_cart', param, this.onPutCartSuccess.bind(this),
+                (e) => {
+                    alert('刷新购物车失败，请稍后再试。')
+                    console.log('shopping_cart error:' + e)
+                })
         }
 
-        HttpRequest.put('/shopping_cart', param, this.onPutCartSuccess.bind(this),
-            (e) => {
-                alert('刷新购物车失败，请稍后再试。')
-                console.log('shopping_cart error:' + e)
-            })
+
+    }
+    onDeleteCartSuccess(response){
+        console.log('item.quantitydelete:'+JSON.stringify(response))
+        if (response.message == 'Success'){
+            let param = {
+                agent_code:Global.agent_code,
+
+            }
+
+            HttpRequest.get('/shopping_cart', param, this.onGetCartSuccess.bind(this),
+                (e) => {
+
+                    console.log('shopping_cart error:' +e )
+                })
+
+        }
+    }
+    onGetCartSuccess(response){
+        console.log('onGetCartresponse'+JSON.stringify(response))
+
+
+        this.state.group_buy = response.data.group_buy
+       Global.group_buy = response.data.group_buy
+
+
+
+        this.setState({ ...this.state })
+
 
     }
     onPutCartSuccess(response){
-        console.log('item.quantity:'+JSON.stringify(response))
+        console.log('item.quantityPut:'+JSON.stringify(response))
         if (response.message == 'Success'){
             this.setState({ ...this.state })
         }
