@@ -25,6 +25,10 @@ export default class TabView extends Component
             selectedTab: 'tab1',
             emitter:emitter,
         }
+        if (this.props.state != null){
+            this.state.selectedTab = this.props.state
+            console.log('this.state.selectedTab'+this.state.selectedTab)
+        }
     }
 
 

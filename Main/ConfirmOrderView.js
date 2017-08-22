@@ -16,6 +16,7 @@ import {
 import NavBar from '../common/NavBar'
 import GroupBuyNowView from './GroupBuyNowView'
 import HttpRequest from '../common/HttpRequest/HttpRequest'
+import TabView from './TabView'
 import AddressView from './AddressView'
 var Global = require('../common/globals');
 Date.prototype.format = function(fmt)
@@ -169,7 +170,7 @@ export default class ConfirmOrderView extends Component{
             setTimeout(function() {
                 HttpRequest.post('/generic_order', param, this.onGroupBuySuccess.bind(this),
                     (e) => {
-                        alert('提交订单失败，请稍后再试。')
+
                         console.log(' generic_order error:' + e)
                     })
             }.bind(this), 500);
@@ -179,6 +180,7 @@ export default class ConfirmOrderView extends Component{
         Global.gbDetail=null;
         this.setState({gbDetail: { classify: { name: '', icon: '' }, group_buy_goods_car: [] }})
         Global.categoryDataAry = [];
+        Global.group_buy = [];
         this.props.navigator.push({
             component: GroupBuyNowView,
             props: {

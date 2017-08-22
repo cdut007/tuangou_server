@@ -72,7 +72,7 @@ export default class MainView extends Component {
 
         AsyncStorage.getItem('k_login_info').then(function(result){
               if (result !== null){
-                  Global.wxUserInfo = JSON.parse(result)
+                  Global.agent = JSON.parse(result)
                   console.log('get k_wx_user_info:' + result)
               } else {
                    console.log('get k_login_info null:')
@@ -139,6 +139,7 @@ export default class MainView extends Component {
         if (this.state.hasLogin)
         {
 
+
             return (
                 <Navigator
                 initialRoute={{component: TabView, name: "MainPage"}}
@@ -151,26 +152,33 @@ export default class MainView extends Component {
             )
         }
         else {
-            return (
-                <Navigator
-                initialRoute={{component: WelcomeView, name: "WelcomePage", index: this.props.index}}
-                configureScene={() => Navigator.SceneConfigs.FloatFromRight}
-                renderScene={(route, navigator) => {
+            if (test){
+                return (
+                    <Navigator
+                        initialRoute={{component: TabView, name: "MainPage"}}
+                        configureScene={() => Navigator.SceneConfigs.FloatFromRight}
+                        renderScene={(route, navigator) => {
                       return <route.component navigator={navigator} {...route.props}/>
                     }
                 }
-              />
-            )
-            // return (
-            //     <Navigator
-            //         initialRoute={{component: TabView, name: "MainPage"}}
-            //         configureScene={() => Navigator.SceneConfigs.FloatFromRight}
-            //         renderScene={(route, navigator) => {
-            //           return <route.component navigator={navigator} {...route.props}/>
-            //         }
-            //     }
-            //     />
-            // )
+                    />
+                )
+            }else {
+                return (
+                    <Navigator
+                        initialRoute={{component: WelcomeView, name: "WelcomePage", index: this.props.index}}
+                        configureScene={() => Navigator.SceneConfigs.FloatFromRight}
+                        renderScene={(route, navigator) => {
+                      return <route.component navigator={navigator} {...route.props}/>
+                    }
+                }
+                    />
+                )
+
+
+            }
+
+
         }
 
     }

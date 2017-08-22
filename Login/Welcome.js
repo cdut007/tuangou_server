@@ -1,3 +1,4 @@
+
 import React,{Component} from 'react';
 import HttpRequest from '../common/HttpRequest/HttpRequest'
 import {
@@ -8,9 +9,12 @@ import {
     AsyncStorage,
     Image
 } from 'react-native';
+
 import TabView from '../Main/TabView';
 //import Dimensions from '../utils/Dimensions';
 import Linking from '../common/Linking';
+
+
 var width = 600;//Dimensions.get('window').width;
 var index;
 var Global = require('../common/globals');
@@ -31,10 +35,10 @@ export default class Welcome extends Component
           var code = this.getQueryString('code',str);
            console.log('url code='+code);
            if (code) {
-               var agent_code = this.getQueryString('state',str);
-               if (agent_code) {
-                   Global.agent_code = agent_code;
-               }
+               // var agent_code = this.getQueryString('state',str);
+               // if (agent_code) {
+               //     Global.agent_code = agent_code;
+               // }
                this.getUserInfoByCode(code)
 
 
@@ -231,8 +235,11 @@ export default class Welcome extends Component
     {
 
         if (!Global.agent_code) {
-            alert('请通过团长分享链接访问！')
-            return
+
+                alert('请通过团长分享链接访问！')
+                return
+
+
         }else {
             // if (!Global.token){
             //  alert(Global.token)

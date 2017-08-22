@@ -43,8 +43,19 @@ export default class ProductDetail extends Component {
             cartNum:0,
              group_buy:[],
             cartShow: true,
+            isHaveGood:true,
+            isLoad: false,
 
             }
+        let param = {
+            agent_code:Global.agent_code,
+
+        }
+        HttpRequest.get('/shopping_cart', param, this.onGetFirstCartSuccess.bind(this),
+            (e) => {
+
+                console.log('shopping_cart error:' + e)
+            })
     }
 
 
@@ -64,17 +75,12 @@ export default class ProductDetail extends Component {
 
 
 
+    componentWillMount(){
+
+    }
 
     componentDidMount() {
-        let param = {
-            agent_code:Global.agent_code,
 
-        }
-        HttpRequest.get('/shopping_cart', param, this.onGetFirstCartSuccess.bind(this),
-            (e) => {
-
-                console.log('shopping_cart error:' + e)
-            })
 
 
     }
@@ -82,12 +88,19 @@ export default class ProductDetail extends Component {
     onGroupBuyDetailSuccess(response) {
          hasGotGbDetail = true
          this.setState({
-             gbDetail: response.data
+             gbDetail: response.data,
+             isLoad: true
          })
+
      }
 
     onProudctDetailSuccess(response) {
       this.setState({ goods: response.data })
+        if (this.state.goods.stock >= 0){
+         this.state.isHaveGood = true
+        }else {
+            this.state.isHaveGood = false
+        }
 
       var paramBody = {group_buy: response.data.group_buy,
       agent_code:Global.agent_code}
@@ -159,16 +172,19 @@ export default class ProductDetail extends Component {
     }
 
     addGroupBuy(){
-        let param = {
-            agent_code:Global.agent_code,
-            goods: this.props.prouduct.index,
-            quantity: 1,
-        }
-        HttpRequest.post('/shopping_cart', param, this.onAddCartSuccess.bind(this),
-            (e) => {
+        if (this.state.isHaveGood){
+            let param = {
+                agent_code:Global.agent_code,
+                goods: this.props.prouduct.index,
+                quantity: 1,
+            }
+            HttpRequest.post('/shopping_cart', param, this.onAddCartSuccess.bind(this),
+                (e) => {
 
-                console.log('shopping_cart error:' + e)
-            })
+                    console.log('shopping_cart error:' + e)
+                })
+        }
+
 
 
     }
@@ -369,7 +385,7 @@ bannerOnMomentumScrollEnd(event, state) {
             <View style={{position: 'absolute', left: 0, right: 0, bottom: 0}}>
 
 
-                    {this.renderProductDetailBuyView()}
+                    {this.renderProductDetailBuyView(this.state.isLoad)}
 
 
             </View>
@@ -416,82 +432,98 @@ bannerOnMomentumScrollEnd(event, state) {
 
     }
     onBuyNow(){
-        var categoryDataAry = []
-        categoryDataAry.push({classify:{name:this.state.gbDetail.classify.name},ship_time:this.state.gbDetail.ship_time,group_buy_goods_car:[
-            {
-                goods: {
-                    id: this.state.goods.id,
+        if (this.state.isHaveGood){
+            var categoryDataAry = []
+            categoryDataAry.push({classify:{name:this.state.gbDetail.classify.name},ship_time:this.state.gbDetail.ship_time,group_buy_goods_car:[
+                {
                     goods: {
-                        name: this.state.goods.goods.name,
-                        images: [
-                            {
-                                image: this.state.goods.goods.images[0].image
-                            }
-                        ]
+                        id: this.state.goods.id,
+                        goods: {
+                            name: this.state.goods.goods.name,
+                            images: [
+                                {
+                                    image: this.state.goods.goods.images[0].image
+                                }
+                            ]
+                        },
+                        price: this.state.goods.price,
+                        stock: this.state.goods.stock,
+                        brief_dec: this.state.goods.brief_dec,
+                        group_buy: this.state.goods.group_buy
                     },
-                    price: this.state.goods.price,
-                    stock: this.state.goods.stock,
-                    brief_dec: this.state.goods.brief_dec,
-                    group_buy: this.state.goods.group_buy
-                },
-                quantity: 1,
-                cart_id: ''
-            }]})
-        Global.categoryData = categoryDataAry
+                    quantity: 1,
+                    cart_id: '',
+                    selected:true
+                }]})
+            Global.categoryData = categoryDataAry
 
-        this.props.navigator.push({
-            component: ConfirmOrderView,
-            props: {
+            this.props.navigator.push({
+                component: ConfirmOrderView,
+                props: {
 
-                showBack:true,
-                isMoreBuy:false
-            }
-        })
+                    showBack:true,
+                    isMoreBuy:false
+                }
+            })
+        }
+
     }
-    renderProductDetailBuyView(){
+    renderProductDetailBuyView(isLoad){
         var width = this.state.toolsView.screenWidth;
         console.log('received renderProductStartGroupBuyView layout width\n', width);
         let h = 49
 
         let display = this.state.cartShow ? this.state.cartNum : this.state.cartNum;
         console.log('this.state.cartNum '+display);
-
-
-        return(<View style={{ height: h,
+        var buyNowBtnColor =''
+        var addGroupBuyColor =''
+        if (this.state.isHaveGood){
+             buyNowBtnColor ='rgb(244,244,244)'
+             addGroupBuyColor ='rgb(234,107,16)'
+        }else {
+            buyNowBtnColor ='#D4D4D4'
+            addGroupBuyColor ='#8B8B8B'
+        }
+        if (isLoad){
+            return(<View style={{ height: h,
         justifyContent:'flex-start',flexDirection: "row"}}>
-            <TouchableOpacity style={{justifyContent:'center',alignItems: 'center',}} onPress={this.goToGroupBuyCar.bind(this)} >
-                <View style={{width:this.state.toolsView.screenWidth/5,height:49,flex:1,alignItems: 'center',backgroundColor:'rgb(244,244,244)'}}>
-                    <Image style={{resizeMode:'contain', width: 40,height: 35,alignItems: 'center',justifyContent:'center',backgroundColor:'rgb(244,244,244,0.8)',}}
-                           source={require('../images/shoppingcart_icon@2x.png')}
-                    >
-                    </Image>
+                <TouchableOpacity style={{justifyContent:'center',alignItems: 'center',}} onPress={this.goToGroupBuyCar.bind(this)} >
+                    <View style={{width:this.state.toolsView.screenWidth/5,height:49,flex:1,alignItems: 'center',backgroundColor:'rgb(244,244,244)'}}>
+                        <Image style={{resizeMode:'contain', width: 40,height: 35,alignItems: 'center',justifyContent:'center',backgroundColor:'rgb(244,244,244,0.8)',}}
+                               source={require('../images/shoppingcart_icon@2x.png')}
+                        >
+                        </Image>
 
-                    <Text>{display}</Text>
+                        <Text>{display}</Text>
 
-                </View>
-            </TouchableOpacity>
-            <View style={{height:49,width:0.5,backgroundColor:'rgb(221,221,221)'}}></View>
-            <TouchableOpacity underlayColor="#ffffff" style={{width:this.state.toolsView.screenWidth/5*2} }  onPress={this.onBuyNow.bind(this)}>
+                    </View>
+                </TouchableOpacity>
+                <View style={{height:49,width:0.5,backgroundColor:'rgb(221,221,221)'}}></View>
+                <TouchableOpacity underlayColor="#ffffff" style={{width:this.state.toolsView.screenWidth/5*2} }  onPress={this.onBuyNow.bind(this)}>
 
-                <View style={{flex:2,flexDirection:'row',justifyContent:'center',alignItems:'center',backgroundColor:'rgb(244,244,244)',height:49,}}>
+                    <View style={{flex:2,flexDirection:'row',justifyContent:'center',alignItems:'center',backgroundColor:buyNowBtnColor,height:49,}}>
 
-                    <Text  style={{fontSize: 16,
+                        <Text  style={{fontSize: 16,
                      textAlign: 'Center',fontFamily:'PingFangSC-Regular',
                      color: 'rgb(117,117,117)',}}>立即购买</Text>
 
-                </View>
-            </TouchableOpacity>
-            <TouchableOpacity underlayColor="rgb(234,107,16,0.8)" style={{justifyContent:'flex-end',width:this.state.toolsView.screenWidth/5*2}} onPress={this.addGroupBuy.bind(this)}  >
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity underlayColor="rgb(234,107,16,0.8)" style={{justifyContent:'flex-end',width:this.state.toolsView.screenWidth/5*2}} onPress={this.addGroupBuy.bind(this)}  >
 
-                <View style={{flex:2,flexDirection:'row',justifyContent:'center',alignItems:'center',backgroundColor:'rgb(234,107,16)',height:49}}>
+                    <View style={{flex:2,flexDirection:'row',justifyContent:'center',alignItems:'center',backgroundColor:addGroupBuyColor,height:49}}>
 
-                    <Text  style={{fontSize: 16,
+                        <Text  style={{fontSize: 16,
                      textAlign: 'Center',fontFamily:'PingFangSC-Regular',
                      color: '#ffffff',}}>加入购物车</Text>
 
-                </View>
-            </TouchableOpacity>
-        </View>)
+                    </View>
+                </TouchableOpacity>
+            </View>)
+        }else {
+            return(<View></View>)
+        }
+
     }
     renderDetailView(prouductItems,goods){
         var divStyle = {
