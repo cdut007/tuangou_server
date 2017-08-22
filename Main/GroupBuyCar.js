@@ -70,18 +70,7 @@ export default class GroupBuyCar extends Component {
         console.log('this.state.group_buy6:'+JSON.stringify(this.state.group_buy))
 
 
-        for (var i = 0; i<  this.state.group_buy.length; i++){
 
-
-
-            this.state.group_buy[i].cart_goods.map((item, i) => {
-
-                item.selected = true;
-
-            })
-
-
-    }
     }
     getCarData(){
             this.state.group_buy = Global.group_buy
@@ -106,7 +95,9 @@ export default class GroupBuyCar extends Component {
     componentWillMount(){
 
 
+
     }
+
     fetchCartData(){
 
         let param = {
@@ -126,26 +117,23 @@ export default class GroupBuyCar extends Component {
         var cart = []
         this.state.group_buy = response.data.group_buy
         Global.group_buy = response.data.group_buy
+        for (var i = 0; i<  this.state.group_buy.length; i++){
 
+
+
+            this.state.group_buy[i].cart_goods.map((item, i) => {
+
+                item.selected = true;
+
+            })
+
+
+        }
         this.setState({ ...this.state })
 
     }
     onConfirmOrderView(){
-        for (var i = 0; i< Global.categoryDataAry.length;i++)
-        {
-            var oldGoods = Global.categoryDataAry[i]
-            var newGroup_buy_goods_car = []
 
-            oldGoods.group_buy_goods_car.map((item, i) => {
-                if (item.selected){
-                    newGroup_buy_goods_car.push(item)
-                }
-
-
-            })
-            Global.categoryDataAry[i].group_buy_goods_car = newGroup_buy_goods_car;
-        }
-        console.log('Global.categoryDataAry11:'+JSON.stringify(Global.categoryDataAry))
 
          if (!Global.user_address){
              this.props.navigator.push({
@@ -418,6 +406,7 @@ export default class GroupBuyCar extends Component {
 
 
     renderProductCategoryView() {
+
          var categoryDataAry =[];
 
          var len = this.state.group_buy.length

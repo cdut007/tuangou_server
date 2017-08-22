@@ -33,7 +33,7 @@ export default class SettingView extends Component {
 
         Global.token = null
         Global.wxUserInfo = null;
-        Global.agent_code = null;
+        Global.agent = null
         AsyncStorage.removeItem('k_http_token').then((value) => {
                 AsyncStorage.removeItem('k_login_info').then((value) => {
 

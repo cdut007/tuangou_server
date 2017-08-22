@@ -9,7 +9,7 @@ import {
     AsyncStorage
 } from 'react-native';
 
-
+var test = false;
 // import Navigation from '../common/Navigation';
 // import TabNavigator from 'react-native-tab-navigator';
  import TabView from './TabView'
@@ -40,7 +40,12 @@ export default class MainView extends Component {
             var str = url.substr(pos+1);
             var agent_code = this.getQueryString('agent_code',str);
              console.log('url agent_code='+agent_code);
-             agent_code = 'ocsmexGwV4BzMOQMFN_IzHwgkj3I';//for test.
+             if (test){
+                 agent_code = 'ocsmexGwV4BzMOQMFN_IzHwgkj3I';//for test.
+             }else {
+
+             }
+
              if (agent_code) {
                  Global.agent_code = agent_code;
              }

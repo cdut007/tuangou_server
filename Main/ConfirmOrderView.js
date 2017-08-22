@@ -71,6 +71,22 @@ export default class ConfirmOrderView extends Component{
         console.log('ConfirmOrderView goods1DataAry1:'+JSON.stringify(Global.categoryDataAry))
         if (this.props.isMoreBuy)
         {
+            for (var i = 0; i< Global.categoryDataAry.length;i++)
+            {
+                var oldGoods = Global.categoryDataAry[i]
+                var newGroup_buy_goods_car = []
+
+                oldGoods.group_buy_goods_car.map((item, i) => {
+                    if (item.selected){
+                        newGroup_buy_goods_car.push(item)
+                    }
+
+
+                })
+                Global.categoryDataAry[i].group_buy_goods_car = newGroup_buy_goods_car;
+            }
+            console.log('Global.categoryDataAry11:'+JSON.stringify(Global.categoryDataAry))
+
             this.state.orders = Global.categoryDataAry
             console.log('ConfirmOrderView goods1DataAry:'+JSON.stringify(this.state.orders))
         }else {
@@ -86,14 +102,14 @@ export default class ConfirmOrderView extends Component{
 
         }
 
-        for (var i = 0; i <  this.state.orders.length; i++){
-
-                this.state.orders[i].group_buy_goods_car.map((item, i) => {
-
-                item.selected = true;
-
-            })
-        }
+        // for (var i = 0; i <  this.state.orders.length; i++){
+        //
+        //         this.state.orders[i].group_buy_goods_car.map((item, i) => {
+        //
+        //         item.selected = true;
+        //
+        //     })
+        // }
 
 
     }

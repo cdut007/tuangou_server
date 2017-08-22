@@ -31,11 +31,12 @@ export default class Welcome extends Component
           var code = this.getQueryString('code',str);
            console.log('url code='+code);
            if (code) {
+               var agent_code = this.getQueryString('state',str);
+               if (agent_code) {
+                   Global.agent_code = agent_code;
+               }
                this.getUserInfoByCode(code)
-                 var agent_code = this.getQueryString('state',str);
-                 if (agent_code) {
-                     Global.agent_code = agent_code;
-                 }
+
 
 
            }
@@ -54,7 +55,8 @@ export default class Welcome extends Component
 
                 AsyncStorage.setItem('k_http_token', Global.token).then(function(){
                     console.log('save k_http_token succ.')
-                    this.getUserInfo();
+                    this.fetchAgentInfo();
+                    this.fetchProductList();
                 }.bind(this)).catch(function(error){
                     console.log('save k_http_token faild.' + error.message)
     }.bind(this));
@@ -64,24 +66,102 @@ export default class Welcome extends Component
 
 
     }
+    fetchProductList(){
+        var paramBody ={agent_code:Global.agent_code }
+        HttpRequest.get('/agent_home_page_list', paramBody, this.onProudctListSuccess.bind(this),
+            (e) => {
 
+                try {
+                    var errorInfo = JSON.parse(e);
+                    console.log(errorInfo.description)
+                    if (errorInfo != null && errorInfo.description) {
+                        console.log(errorInfo.description)
+                    } else {
+                        console.log(e)
+                    }
+                }
+                catch(err)
+                {
+                    console.log(err)
+                }
+
+                console.log(' agent_home_page_list error:' + e)
+            })
+    }
+    onProudctListSuccess(response){
+        console.log(' onProudctListSuccess:' + JSON.stringify(response))
+        Global.goodsList = response.data;
+
+    }
     onUserInfoSucc(response){
         Global.wxUserInfo = response.data.user_profile;
 
                 AsyncStorage.setItem('k_login_info', JSON.stringify(Global.wxUserInfo)).then(function(){
                     console.log('save k_login_info succ.')
-                    this.props.navigator.resetTo({
-                        component: TabView,
-                        name: 'MainPage'
-                    })
+
                 }.bind(this)).catch(function(error){
                     console.log('save k_login_info faild.' + error.message)
                 }.bind(this));
 
 
     }
+    fetchAgentInfo(){
+        console.log('agent_code:'+Global.agent_code)
 
+        var paramBody ={agent_code:Global.agent_code }
+        HttpRequest.get('/agent_info', paramBody, this.onUserInfoSuccess.bind(this),
+            (e) => {
+
+                try {
+                    var errorInfo = JSON.parse(e);
+                    console.log(errorInfo.description)
+                    if (errorInfo != null && errorInfo.description) {
+                        console.log(errorInfo.description)
+                    } else {
+                        console.log(e)
+                    }
+                }
+                catch(err)
+                {
+                    console.log(err)
+                }
+
+                console.log(' error:' + e)
+            })
+    }
+    onUserInfoSuccess(response){
+        console.log(' onUserInfoSuccess:' + JSON.stringify(response))
+
+        Global.agent = response.data.user_profile;
+
+
+        HttpRequest.get('/user_address', {}, this.onGetAddressSuccess.bind(this),
+            (e) => {
+                console.log(' error:' + e)
+
+            })
+
+    }
+    onGetAddressSuccess(response) {
+        if (response.message == 'The user has no address'){
+            Global.user_address = ''
+            this.props.navigator.resetTo({
+                component: TabView,
+                name: 'MainPage'
+            })
+        }else {
+            Global.user_address = response.data.user_address
+            this.props.navigator.resetTo({
+                component: TabView,
+                name: 'MainPage'
+            })
+        }
+
+
+
+    }
     getUserInfo(){
+
          var paramBody ={ }
 
          HttpRequest.get('/user', paramBody, this.onUserInfoSucc.bind(this),
@@ -153,6 +233,10 @@ export default class Welcome extends Component
         if (!Global.agent_code) {
             alert('请通过团长分享链接访问！')
             return
+        }else {
+            // if (!Global.token){
+            //  alert(Global.token)
+            // }
         }
         // WeChat.sendAuthRequest('snsapi_userinfo','1111111').then(res=>{
         //     console.log('log result='+res);

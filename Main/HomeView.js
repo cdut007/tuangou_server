@@ -39,14 +39,15 @@ export default class HomeView extends Component {
     }
 
     componentWillMount(){
-    //     this.props.navigator.push({
-    //        component: AddressView,
-    //         props: {
-       //
-    //            }
-    //    })
-    this.fetchProductList();
-    this.fetchAgentInfo();
+        if (Global.agent != null){
+           this.state.goodsList = Global.goodsList;
+        }else {
+            this.fetchAgentInfo();
+            this.fetchProductList();
+
+        }
+
+
     }
 
     onProudctListSuccess(response){
@@ -178,9 +179,11 @@ export default class HomeView extends Component {
         // })
     }
     renderTopView() {
-        var nickname = 'unkonwn'
-        if (this.state.agent.nickname != null) {
-            nickname = this.state.agent.nickname
+        var nickname = '加载中'
+        if (Global.agent != null) {
+            nickname = Global.agent.nickname
+        }else {
+
         }
 
 
@@ -215,8 +218,8 @@ export default class HomeView extends Component {
     }
 
     _displayIcon() {
-    if (this.state.agent.headimgurl != null) {
-            return {uri: this.state.agent.headimgurl};
+    if (Global.agent != null) {
+            return {uri: Global.agent.headimgurl};
         } else {
                 return require('../images/default_head@2x.png');
             }
