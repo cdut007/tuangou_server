@@ -7,6 +7,7 @@ import {
     Image,
     Navigator,
     TabBarIOS,
+
 } from 'react-native';
 
 
@@ -25,17 +26,17 @@ export default class TabView extends Component
             selectedTab: 'tab1',
             emitter:emitter,
         }
-        if (this.props.state != null){
-            this.state.selectedTab = this.props.state
-            console.log('this.state.selectedTab'+this.state.selectedTab)
-        }
+        console.log('this.state.selectedTab1'+this.state.selectedTab)
     }
 
 
     componentWillMount(){
         var me = this;
 
-
+        // if (this.props.state != null){
+        //     this.state.selectedTab = this.props.state
+        //     console.log('this.state.selectedTab2'+this.state.selectedTab)
+        // }
 
     }
 
@@ -47,34 +48,37 @@ export default class TabView extends Component
 
     render()
     {
+        console.log('this.state.selectedTab11'+this.state.selectedTab)
         return (
             <TabBarIOS
             tintColor="#ea6b10"
+
             >
-                <TabBarIOS.Item
-                    selected={this.state.selectedTab === 'tab1'}
-                    title="爱邻购"
-                    icon={require('../images/home_icon@2x.png')}
-                    selectedIcon={require('../images/home_icon_click@2x.png')}
-                    onPress={() => this.setState({ selectedTab: 'tab1' })}>
-                    {this.rendContent('tab1')}
-                </TabBarIOS.Item>
-                <TabBarIOS.Item
-                    selected={this.state.selectedTab === 'tab2'}
-                    title="拼团车"
-                    icon={require('../images/shoppingcart_icon@2x.png')}
-                    selectedIcon={require('../images/shoppingcart_icon_click@2x.png')}
-                    onPress={() => this.setState({ selectedTab: 'tab2' })}>
+                 <TabBarIOS.Item
+                     selected={this.state.selectedTab == 'tab1'}
+                     title="爱邻购"
+                     icon={require('../images/home_icon@2x.png')}
+                     selectedIcon={require('../images/home_icon_click@2x.png')}
+                     onPress={() => this.setState({ selectedTab: 'tab1' })}>
+                     {this.rendContent('tab1')}
+                 </TabBarIOS.Item>
+                 <TabBarIOS.Item
+                     selected={this.state.selectedTab == 'tab2'}
+                     title="拼团车"
+                     icon={require('../images/shoppingcart_icon@2x.png')}
+                     selectedIcon={require('../images/shoppingcart_icon_click@2x.png')}
+                     onPress={() => this.setState({ selectedTab: 'tab2' })}>
                     {this.rendContent('tab2')}
-                </TabBarIOS.Item>
-                <TabBarIOS.Item
-                    selected={this.state.selectedTab === 'tab3'}
+                 </TabBarIOS.Item>
+                 <TabBarIOS.Item
+                     selected={this.state.selectedTab == 'tab3'}
                     title="我的"
                     icon={require('../images/me_icon@2x.png')}
                     selectedIcon={require('../images/me_icon_click@2x.png')}
                     onPress={() => this.setState({ selectedTab: 'tab3' })}>
                     {this.rendContent('tab3')}
                 </TabBarIOS.Item>
+
             </TabBarIOS>
 
         )
@@ -86,7 +90,7 @@ export default class TabView extends Component
        }else if(tab == 'tab2'){
            this.state.emitter.emit('cart_refresh');
            return (<GroupBuyCar {...this.props} emitter = {this.state.emitter}/>)
-       } {
+       } else if(tab == 'tab3'){
                this.state.emitter.emit('group_refresh');
           return (<GroupOrderListView {...this.props} emitter = {this.state.emitter}/>)
        }

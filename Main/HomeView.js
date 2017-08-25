@@ -8,6 +8,7 @@ import {
     Platform,
     TouchableNativeFeedback,
     ScrollView,
+    AsyncStorage
 } from 'react-native';
 //import Banner from 'react-native-banner';
  import NavBar from '../common/NavBar';
@@ -39,15 +40,21 @@ export default class HomeView extends Component {
     }
 
     componentWillMount(){
+        console.log('componentWillMount1')
         if (Global.agent != null){
-           this.state.goodsList = Global.goodsList;
+            this.fetchProductList();
+            console.log('componentWillMount2')
         }else {
+            console.log('componentWillMount3')
             this.fetchAgentInfo();
             this.fetchProductList();
 
         }
 
 
+    }
+    componentDidMount() {
+        this.getUserInfo()
     }
 
     onProudctListSuccess(response){
@@ -69,6 +76,7 @@ export default class HomeView extends Component {
 
     }
     onGetAddressSuccess(response) {
+        console.log('onGetAddressSuccess113:'+JSON.stringify(response))
         if (response.message == 'The user has no address'){
             Global.user_address = ''
         }else {
@@ -177,6 +185,44 @@ export default class HomeView extends Component {
         //     component: NotifyNowView,
         //
         // })
+    }
+    getUserInfo(){
+
+        var paramBody ={ }
+
+        HttpRequest.get('/user', paramBody, this.onUserInfoSucc.bind(this),
+            (e) => {
+
+                try {
+
+                    var errorInfo = JSON.parse(e);
+                    console.log(errorInfo.description)
+                    if (errorInfo != null && errorInfo.description) {
+                        console.log(errorInfo.description)
+                    } else {
+                        console.log(e)
+                    }
+                }
+                catch(err)
+                {
+
+                    console.log(err)
+                }
+
+                console.log(' error:' + e)
+            })
+    }
+    onUserInfoSucc(response){
+        Global.wxUserInfo = response.data.user_profile;
+        console.log('Global.wxUserInfo:'+JSON.stringify(Global.wxUserInfo))
+        AsyncStorage.setItem('k_login_info', JSON.stringify(Global.wxUserInfo)).then(function(){
+            console.log('save k_login_info succ.')
+
+        }.bind(this)).catch(function(error){
+            console.log('save k_login_info faild.' + error.message)
+        }.bind(this));
+
+
     }
     renderTopView() {
         var nickname = '加载中'

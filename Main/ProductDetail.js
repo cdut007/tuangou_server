@@ -219,9 +219,11 @@ export default class ProductDetail extends Component {
         console.log('group_buy.length:'+this.state.group_buy.length)
         for (var i =0; i < this.state.group_buy.length; i++){
             cart =  this.state.group_buy[i].cart_goods
-            group_buyNum += cart.length
+            for (var j = 0; j < cart.length;j++){
+                group_buyNum += cart[j].quantity
 
-            console.log('group_buyNum:'+group_buyNum)
+                console.log('group_buyNum:'+group_buyNum)
+            }
 
         }
 
@@ -248,20 +250,21 @@ export default class ProductDetail extends Component {
         Global.group_buy = response.data.group_buy
         var group_buyNum = 0
         console.log('group_buy.length:'+this.state.group_buy.length)
-        for (var i =0; i < this.state.group_buy.length; i++){
+        for (var i = 0; i < this.state.group_buy.length; i++){
             cart =  this.state.group_buy[i].cart_goods
-            group_buyNum += cart.length
+            for (var j = 0; j < cart.length;j++){
+                group_buyNum += cart[j].quantity
 
-            console.log('group_buyNum:'+group_buyNum)
+                console.log('group_buyNum:'+group_buyNum)
+            }
+
 
         }
-        this.setState =({
-            group_buy : response.data.group_buy,
-            cartNum : group_buyNum,
-            cartShow: !this.state.cartShow
-        })
+        this.state.cartNum = group_buyNum
+        this.state.cartShow = !this.state.cartShow
 
-        // this.setState({ ...this.state })
+
+        this.setState({ ...this.state })
         alert('加入到购物车成功')
 
 

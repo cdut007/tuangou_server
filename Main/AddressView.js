@@ -25,7 +25,7 @@ export default class AddressView extends Component {
             Global.user_address = new Object();
         }
         this.state = {
-            name: Global.agent.nickname,
+            name: Global.wxUserInfo.nickname,
             mobile: null,
             address: null,
             emitter:emitter,
@@ -42,20 +42,20 @@ export default class AddressView extends Component {
     componentDidMount() {
         if (Global.user_address) {
             this.setState({
-                name: Global.agent.nickname,
+                name: Global.wxUserInfo.nickname,
                 address: Global.agent.address,
                 mobile: Global.user_address.phone_num
             })
-            HttpRequest.get('/user_address', {}, this.onGetAddressSuccess.bind(this),
-                (e) => {
-                    console.log(' error:' + e)
-                })
+            // HttpRequest.get('/user_address', {}, this.onGetAddressSuccess.bind(this),
+            //     (e) => {
+            //         console.log(' error:' + e)
+            //     })
         }
         else {
-            HttpRequest.get('/user_address', {}, this.onGetAddressSuccess.bind(this),
-                (e) => {
-                    console.log(' error:' + e)
-                })
+            // HttpRequest.get('/user_address', {}, this.onGetAddressSuccess.bind(this),
+            //     (e) => {
+            //         console.log(' error:' + e)
+            //     })
         }
         console.log('Global.agent:'+JSON.stringify(Global.agent))
 
@@ -64,7 +64,7 @@ export default class AddressView extends Component {
     onGetAddressSuccess(response) {
         Global.user_address = response.data.user_address
         this.setState({
-            name: Global.agent.nickname,
+            name: Global.wxUserInfo.nickname,
             address: Global.agent.address,
             mobile: response.data.user_address.phone_num
         })
@@ -73,12 +73,21 @@ export default class AddressView extends Component {
 
     save() {
 
+        let param = {}
+        if (Global.wxUserInfo.address ==''){
+            param = {
 
+                phone_num: this.state.mobile,
+                address:Global.wxUserInfo.city
+            }
+        }else {
+            param = {
 
-        let param = {
-
-            phone_num: this.state.mobile
+                phone_num: this.state.mobile,
+                address:Global.wxUserInfo.address
+            }
         }
+
         HttpRequest.post('/user_address', param, this.onSaveAddressSuccess.bind(this),
                 (e) => {
 
@@ -90,10 +99,15 @@ export default class AddressView extends Component {
 
     onSaveAddressSuccess(response)
     {
-        Global.user_address = {
+        console.log('onSaveAddressSuccess'+JSON.stringify(response))
+        if (response.message == 'Success'){
+            HttpRequest.get('/user_address', {}, this.onGetNewAddressSuccess.bind(this),
+                (e) => {
+                    console.log(' error:' + e)
 
-            phone_num: this.state.mobile
+                })
         }
+
 
          //this.state.emitter.emit('address_refresh');
         //  if (this.props.buycarView) {
@@ -102,6 +116,14 @@ export default class AddressView extends Component {
         //
         // this.props.navigator.pop()
 
+
+    }
+    onGetNewAddressSuccess(response) {
+        console.log('onGetAddressSuccess11'+JSON.stringify(response))
+        if (response.message == 'The user has no address'){
+            Global.user_address = ''
+        }else {
+            Global.user_address = response.data.user_address
             this.props.navigator.push({
                 component: ConfirmOrderView,
 
@@ -110,8 +132,11 @@ export default class AddressView extends Component {
                 }
 
             })
-    }
+        }
 
+
+
+    }
 
     render() {
         return (

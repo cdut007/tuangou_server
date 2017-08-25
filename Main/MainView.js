@@ -72,7 +72,7 @@ export default class MainView extends Component {
 
         AsyncStorage.getItem('k_login_info').then(function(result){
               if (result !== null){
-                  Global.agent = JSON.parse(result)
+                  Global.wxUserInfo = JSON.parse(result)
                   console.log('get k_wx_user_info:' + result)
               } else {
                    console.log('get k_login_info null:')
@@ -145,6 +145,9 @@ export default class MainView extends Component {
                 initialRoute={{component: TabView, name: "MainPage"}}
                 configureScene={() => Navigator.SceneConfigs.FloatFromRight}
                 renderScene={(route, navigator) => {
+                    {/*route.props = {*/}
+                        {/*state:'tab3'*/}
+                    {/*}*/}
                       return <route.component navigator={navigator} {...route.props}/>
                     }
                 }
@@ -158,6 +161,9 @@ export default class MainView extends Component {
                         initialRoute={{component: TabView, name: "MainPage"}}
                         configureScene={() => Navigator.SceneConfigs.FloatFromRight}
                         renderScene={(route, navigator) => {
+                            {/*route.props = {*/}
+                        {/*state:'tab3'*/}
+                    {/*}*/}
                       return <route.component navigator={navigator} {...route.props}/>
                     }
                 }

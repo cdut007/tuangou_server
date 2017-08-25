@@ -7,7 +7,9 @@ import {
     TouchableOpacity,
     Text,
     AsyncStorage,
-    Image
+    Image,
+
+
 } from 'react-native';
 
 import TabView from '../Main/TabView';
@@ -18,13 +20,16 @@ import Linking from '../common/Linking';
 var width = 600;//Dimensions.get('window').width;
 var index;
 var Global = require('../common/globals');
-
 export default class Welcome extends Component
 {
     constructor(props)
     {
         super(props)
         index = this.props.index;
+        this.state={
+
+            isHaveLoading:false
+        }
     }
 
     componentWillMount(){
@@ -35,11 +40,15 @@ export default class Welcome extends Component
           var code = this.getQueryString('code',str);
            console.log('url code='+code);
            if (code) {
-               // var agent_code = this.getQueryString('state',str);
-               // if (agent_code) {
-               //     Global.agent_code = agent_code;
-               // }
+               this.state.isHaveLoading = true
                this.getUserInfoByCode(code)
+
+               var agent_code = this.getQueryString('state',str);
+               if (agent_code) {
+                   Global.agent_code = agent_code;
+
+               }
+
 
 
 
@@ -54,7 +63,7 @@ export default class Welcome extends Component
     }
 
     onUserSuccess(response){
-        console.log(' onUserSuccess:' + JSON.stringify(response))
+
         Global.token = response.data.token;
 
                 AsyncStorage.setItem('k_http_token', Global.token).then(function(){
@@ -141,20 +150,29 @@ export default class Welcome extends Component
 
         HttpRequest.get('/user_address', {}, this.onGetAddressSuccess.bind(this),
             (e) => {
-                console.log(' error:' + e)
+                if (e){
+                    Global.user_address = ''
+                    this.props.navigator.resetTo({
+                        component: TabView,
+                        name: 'MainPage'
+                    })
+                }
 
             })
 
     }
     onGetAddressSuccess(response) {
-        if (response.message == 'The user has no address'){
-            Global.user_address = ''
+
+        if (response.message == 'Success'){
+            Global.user_address = response.data.user_address
             this.props.navigator.resetTo({
                 component: TabView,
                 name: 'MainPage'
             })
+
         }else {
-            Global.user_address = response.data.user_address
+
+            Global.user_address = ''
             this.props.navigator.resetTo({
                 component: TabView,
                 name: 'MainPage'
@@ -244,6 +262,8 @@ export default class Welcome extends Component
             // if (!Global.token){
             //  alert(Global.token)
             // }
+
+
         }
         // WeChat.sendAuthRequest('snsapi_userinfo','1111111').then(res=>{
         //     console.log('log result='+res);
@@ -251,7 +271,7 @@ export default class Welcome extends Component
 
          console.log('log pathnames='+window.location.href);
 
-        var url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx9747b8e0e756d85f&redirect_uri=http%3A%2F%2Fwww.ailinkgo.com&response_type=code&scope=snsapi_userinfo&state='+Global.agent_code+'#wechat_redirect';
+        var url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx3dfb837875e773af&redirect_uri=http%3A%2F%2Fwww.ailinkgo.com&response_type=code&scope=snsapi_userinfo&state='+Global.agent_code+'#wechat_redirect';
         Linking.canOpenURL(url).then(supported => {
              return Linking.openURL(url);
            });
@@ -264,37 +284,105 @@ export default class Welcome extends Component
 
     render()
     {
-
-        return (
-            <View style = {styles.rootcontainer}>
-           <Image style={{resizeMode:'contain', alignItems:'center',
+      //   if (this.state.isHaveLoading){
+      //       return (
+      //               <View style = {styles.rootcontainer}>
+      //                   <Image style={{resizeMode:'contain', alignItems:'center',
+      //       marginTop: 120,
+      //       justifyContent:'center'}}
+      //                          source={require('../images/logo_icon@2x.png')}/>
+      //                   <Text style={{alignItems:'center',marginTop: 5,
+      //       color: '#dc6917',
+      //       fontSize:16,
+      //       justifyContent:'center',
+      //       letterSpacing:5,
+      //       flex:1}} >
+      //                       用 心 为 您 精 挑 细 选
+      //                   </Text>
+      //                   <ProgressBarAndroid color='black' styleattr="LargeInverse" indeterminate={true}>
+      //
+      //                   </ProgressBarAndroid>
+      //                   <TouchableOpacity onPress={this.onLoginPress.bind(this)}
+      //                                     style={styles.loginButton}>
+      //                       <View style = {styles.logincontainer}>
+      //                           <Image style={{resizeMode:'contain', alignItems:'center',
+      // justifyContent:'center',width:80,height:80,
+      // flex:1}} source={require('../images/login_wechat@3x.png')}/>
+      //                           <Text style={[styles.loginText,{marginTop:5}]} >
+      //                               微信登录
+      //                           </Text>
+      //                       </View>
+      //                   </TouchableOpacity>
+      //
+      //
+      //               </View>
+      //           )
+      //
+      //   }else {
+      //       return (
+      //           <View style = {styles.rootcontainer}>
+      //               <Image style={{resizeMode:'contain', alignItems:'center',
+      //       marginTop: 120,
+      //       justifyContent:'center'}}
+      //                      source={require('../images/logo_icon@2x.png')}/>
+      //               <Text style={{alignItems:'center',marginTop: 5,
+      //       color: '#dc6917',
+      //       fontSize:16,
+      //       justifyContent:'center',
+      //       letterSpacing:5,
+      //       flex:1}} >
+      //                   用 心 为 您 精 挑 细 选
+      //               </Text>
+      //
+      //               <TouchableOpacity onPress={this.onLoginPress.bind(this)}
+      //                                 style={styles.loginButton}>
+      //                   <View style = {styles.logincontainer}>
+      //                       <Image style={{resizeMode:'contain', alignItems:'center',
+      // justifyContent:'center',width:80,height:80,
+      // flex:1}} source={require('../images/login_wechat@3x.png')}/>
+      //                       <Text style={[styles.loginText,{marginTop:5}]} >
+      //                           微信登录
+      //                       </Text>
+      //                   </View>
+      //               </TouchableOpacity>
+      //
+      //
+      //           </View>
+      //       )
+      //   }
+        return(
+        <View style = {styles.rootcontainer}>
+            <Image style={{resizeMode:'contain', alignItems:'center',
             marginTop: 120,
             justifyContent:'center'}}
-            source={require('../images/logo_icon@2x.png')}/>
+                   source={require('../images/logo_icon@2x.png')}/>
             <Text style={{alignItems:'center',marginTop: 5,
             color: '#dc6917',
             fontSize:16,
             justifyContent:'center',
             letterSpacing:5,
             flex:1}} >
-            用 心 为 您 精 挑 细 选
+                用 心 为 您 精 挑 细 选
             </Text>
 
+
+
             <TouchableOpacity onPress={this.onLoginPress.bind(this)}
-                style={styles.loginButton}>
-            <View style = {styles.logincontainer}>
-                <Image style={{resizeMode:'contain', alignItems:'center',
+                              style={styles.loginButton}>
+                <View style = {styles.logincontainer}>
+                    <Image style={{resizeMode:'contain', alignItems:'center',
       justifyContent:'center',width:80,height:80,
       flex:1}} source={require('../images/login_wechat@3x.png')}/>
-                <Text style={[styles.loginText,{marginTop:5}]} >
-                    微信登录
-                </Text>
+                    <Text style={[styles.loginText,{marginTop:5}]} >
+                        微信登录
+                    </Text>
                 </View>
             </TouchableOpacity>
 
 
-            </View>
-        )
+        </View>
+    )
+
     }
 }
 

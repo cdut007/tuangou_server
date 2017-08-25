@@ -16,7 +16,7 @@ import {
 import NavBar from '../common/NavBar'
 import GroupBuyNowView from './GroupBuyNowView'
 import HttpRequest from '../common/HttpRequest/HttpRequest'
-import TabView from './TabView'
+
 import AddressView from './AddressView'
 var Global = require('../common/globals');
 Date.prototype.format = function(fmt)
@@ -98,9 +98,10 @@ export default class ConfirmOrderView extends Component{
         if (Global.user_address){
             this.state.phone_num = Global.user_address.phone_num
             this.state.address = Global.agent.address
-            this.state.nick_name = Global.agent.nickname
+            this.state.nick_name = Global.wxUserInfo.nickname
         }else{
-
+            this.state.nick_name = Global.wxUserInfo.nickname
+            this.state.address = Global.agent.address
         }
 
         // for (var i = 0; i <  this.state.orders.length; i++){
@@ -136,7 +137,7 @@ export default class ConfirmOrderView extends Component{
         //     })
     }
 
-    buyNow(delay ){
+    buyNow(){
         var categoryDataAry = this.state.orders
         var goodsIds = []
 
@@ -151,42 +152,63 @@ export default class ConfirmOrderView extends Component{
         }
 
 
-        if ( !goodsIds.length) {
+        if ( !goodsIds) {
             alert('请选择需要团购的商品。')
             return
         }
+        let param = { }
+        if (this.props.isMoreBuy){
+             param = { goods: goodsIds, agent_code: Global.agent_code ,clear_cart: true}
+        }else {
+             param = { goods: goodsIds, agent_code: Global.agent_code ,clear_cart: false}
+        }
 
-        let param = { goods: goodsIds, agent_code: Global.agent_code }
 
         console.log('generic_order:'+JSON.stringify(param))
-        if (!delay) {
-            HttpRequest.post('/generic_order', param, this.onGroupBuySuccess.bind(this),
-                (e) => {
+        HttpRequest.post('/generic_order', param, this.onGroupBuySuccess.bind(this),
+            (e) => {
 
-                    console.log('generic_order error:' + e)
-                })
-        }else{
-
-            setTimeout(function() {
-                HttpRequest.post('/generic_order', param, this.onGroupBuySuccess.bind(this),
-                    (e) => {
-
-                        console.log(' generic_order error:' + e)
-                    })
-            }.bind(this), 500);
-        }
+                console.log('generic_order error:' + e)
+            })
+        // if (!delay) {
+        //     HttpRequest.post('/generic_order', param, this.onGroupBuySuccess.bind(this),
+        //         (e) => {
+        //
+        //             console.log('generic_order error:' + e)
+        //         })
+        // }else{
+        //
+        //     setTimeout(function() {
+        //         HttpRequest.post('/generic_order', param, this.onGroupBuySuccess.bind(this),
+        //             (e) => {
+        //
+        //                 console.log(' generic_order error:' + e)
+        //             })
+        //     }.bind(this), 500);
+        // }
     }
     onGroupBuySuccess(response){
         Global.gbDetail=null;
         this.setState({gbDetail: { classify: { name: '', icon: '' }, group_buy_goods_car: [] }})
         Global.categoryDataAry = [];
+        Global.categoryData = [];
         Global.group_buy = [];
+        // console.log('onGroupBuySuccess:'+JSON.stringify(response))
         this.props.navigator.push({
             component: GroupBuyNowView,
             props: {
 
             }
         })
+        // this.props.navigator.push({
+        //     props: {
+        //         status:0,
+        //         items:prouductItems,
+        //     },
+        //
+        //     component: GroupOrderDetailView,
+        // })
+
     }
     onSaveOrderSuccess(response)
     {
@@ -238,7 +260,7 @@ export default class ConfirmOrderView extends Component{
         this.props.navigator.push({
             component: AddressView,
             props: {
-
+                isMoreBuy: this.props.isMoreBuy
             }
         })
     }

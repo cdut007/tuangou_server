@@ -559,9 +559,21 @@ export default class GroupBuyCar extends Component {
 
 
         this.state.group_buy = response.data.group_buy
-       Global.group_buy = response.data.group_buy
 
 
+        for (var i = 0; i<  this.state.group_buy.length; i++){
+
+
+
+            this.state.group_buy[i].cart_goods.map((item, i) => {
+
+                item.selected = true;
+
+            })
+
+
+        }
+        Global.group_buy = this.state.group_buy
 
         this.setState({ ...this.state })
 
