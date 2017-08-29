@@ -493,7 +493,7 @@ bannerOnMomentumScrollEnd(event, state) {
                 <TouchableOpacity style={{justifyContent:'center',alignItems: 'center',}} onPress={this.goToGroupBuyCar.bind(this)} >
                     <View style={{width:this.state.toolsView.screenWidth/5,height:49,flex:1,backgroundColor:'rgb(244,244,244)',alignItems: 'center'}}>
 
-                        <Image style={{width:20,height:20,alignItems: 'center',alignSelf:'flex-end' }} source={require('../images/shoppingcart_icon@2x.png')}><Text style={{color:'#ffffff'}}>{display}</Text> </Image>
+                        <Image style={{width:20,height:20,margin:5,alignItems: 'center',alignSelf:'flex-end' }} source={require('../images/number@3x.png')}><Text style={{color:'#ffffff'}}>{display}</Text> </Image>
                         <Image style={{resizeMode:'contain', width: 40,height: 35,alignItems: 'center',backgroundColor:'rgb(244,244,244,0.8)',}}
                                source={require('../images/shoppingcart_icon@2x.png')}
                         >
