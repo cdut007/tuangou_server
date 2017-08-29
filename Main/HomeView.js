@@ -8,7 +8,8 @@ import {
     Platform,
     TouchableNativeFeedback,
     ScrollView,
-    AsyncStorage
+    AsyncStorage,
+
 } from 'react-native';
 //import Banner from 'react-native-banner';
  import NavBar from '../common/NavBar';
@@ -18,6 +19,7 @@ import {
  import CircleImage from '../common/CircleImage';
  import HttpRequest from '../common/HttpRequest/HttpRequest'
  var Global = require('../common/globals');
+
 import AddressView from './AddressView'
 export default class HomeView extends Component {
     constructor(props) {
@@ -149,6 +151,7 @@ export default class HomeView extends Component {
         return (
             <View style={styles.container}  onLayout={this.onViewLayout.bind(this)}>
                 {/* <NavBar title="爱邻购" /> */}
+
                 <View
                 style={this.state.scrollContainerStyle}>
                 <ScrollView

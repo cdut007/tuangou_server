@@ -64,7 +64,7 @@ module.exports = {
       loader: 'json',
     }, {
       test: /\.jsx?$/,
-      loaders: ['react-hot','babel?stage=1'],
+      loaders: ['babel?stage=1'],
       include: [config.paths.src],
       exclude: [/node_modules/]
     }, 

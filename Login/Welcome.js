@@ -1,5 +1,5 @@
 
-import React,{Component} from 'react';
+import React,{Component } from 'react';
 import HttpRequest from '../common/HttpRequest/HttpRequest'
 import {
     StyleSheet,
@@ -8,7 +8,6 @@ import {
     Text,
     AsyncStorage,
     Image,
-
 
 } from 'react-native';
 
@@ -115,6 +114,12 @@ export default class Welcome extends Component
                 }.bind(this)).catch(function(error){
                     console.log('save k_login_info faild.' + error.message)
                 }.bind(this));
+        AsyncStorage.setItem('k_login_agent_code', Global.agent_code).then(function(){
+            console.log('save k_login_agent_code succ.')
+
+        }.bind(this)).catch(function(error){
+            console.log('save k_login_agent_code faild.' + error.message)
+        }.bind(this));
 
 
     }
@@ -201,7 +206,7 @@ export default class Welcome extends Component
                  }
                  catch(err)
                  {
-                     alert('qqewwww111'+err)
+
                      console.log(err)
                  }
 
@@ -225,7 +230,7 @@ export default class Welcome extends Component
                      }
                  }
                  catch(err)
-                 { alert('ewwww111'+err)
+                 {
                      console.log(err)
                  }
 
@@ -352,6 +357,7 @@ export default class Welcome extends Component
       //   }
         return(
         <View style = {styles.rootcontainer}>
+
             <Image style={{resizeMode:'contain', alignItems:'center',
             marginTop: 120,
             justifyContent:'center'}}

@@ -134,6 +134,7 @@ export default class GroupOrderDetailView extends Component {
            this.state.emitter.emit('group_refresh');
          this.setState({productGoods:this.state.productGoods})
          deletedItem=null;
+         alert('取消成功')
     }
 
     rendCancelOrder(item){

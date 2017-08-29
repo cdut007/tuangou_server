@@ -35,7 +35,7 @@ export default class AddressView extends Component {
 
 
     back() {
-        Global.user_address = null;
+        // Global.user_address = null;
         this.props.navigator.pop()
     }
 
@@ -74,25 +74,36 @@ export default class AddressView extends Component {
     save() {
 
         let param = {}
-        if (Global.wxUserInfo.address ==''){
+        if (Global.agent.address ==''){
             param = {
 
                 phone_num: this.state.mobile,
-                address:Global.wxUserInfo.city
+                address:Global.agent.city
             }
-        }else {
-            param = {
-
-                phone_num: this.state.mobile,
-                address:Global.wxUserInfo.address
-            }
-        }
-
-        HttpRequest.post('/user_address', param, this.onSaveAddressSuccess.bind(this),
+            console.log('param1:'+JSON.stringify(param))
+            HttpRequest.post('/user_address', param, this.onSaveAddressSuccess.bind(this),
                 (e) => {
 
                     console.log(' user_address error:' + e)
                 })
+        }else if (this.state.mobile == ''){
+            console.log('param2:'+JSON.stringify(param))
+           alert('联系电话不能为空')
+        }else {
+            param = {
+
+                phone_num: this.state.mobile,
+                address:this.state.address
+            }
+            console.log('param3:'+JSON.stringify(param))
+            HttpRequest.post('/user_address', param, this.onSaveAddressSuccess.bind(this),
+                (e) => {
+
+                    console.log(' user_address error:' + e)
+                })
+        }
+
+
 
 
     };
@@ -124,7 +135,7 @@ export default class AddressView extends Component {
             Global.user_address = ''
         }else {
             Global.user_address = response.data.user_address
-            this.props.navigator.push({
+            this.props.navigator.resetTo({
                 component: ConfirmOrderView,
 
                 props: {
@@ -143,13 +154,13 @@ export default class AddressView extends Component {
             <View style={styles.container}>
                 <NavBar
                     title="收货地址"
-                    rightTitle='确认'
+                    rightTitle='保存'
                     rightPress={this.save.bind(this)}
                     leftIcon={require('../images/back@2x.png')}
                     leftPress={this.back.bind(this)} />
                 <View style={{ alignSelf:'stretch',flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', backgroundColor: '#ffffff', height: 45, paddingLeft: 10, paddingRight: 10 }}>
                     <Text style={[styles.iconSize, { marginRight: 15, color: '#1b1b1b', fontSize: 14, }]}>
-                        团长名
+                        团长名:
                         </Text>
                     <Text style={{
                         marginLeft: 0, fontSize: 14, flex: 20,
@@ -160,25 +171,26 @@ export default class AddressView extends Component {
                     >{this.state.name}</Text>
 
                 </View>
-
+                <View style={{height:0.5, backgroundColor:'rgb(212,212,212)',marginLeft:20,marginRight:20}}></View>
                 <View style={{ alignSelf:'stretch',flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', backgroundColor: '#ffffff', height: 45, paddingLeft: 10, paddingRight: 10 }}>
                     <Text style={[styles.iconSize, { width: 70, marginRight: 15, color: '#1b1b1b', fontSize: 14, }]}>
-                        联系电话
+                        联系电话:
                         </Text>
                     <TextInput style={{
                         marginLeft: 0, fontSize: 14, flex: 20,
                         textAlign: 'left', color: '#1c1c1c',
                     }}
+                               keyboardType={'numeric'}
                         editable={true}
                         onChangeText={(text) => this.setState({ mobile: text })}
                         value= {this.state.mobile}
                     ></TextInput>
 
                 </View>
-
+                <View style={{height:0.5, backgroundColor:'rgb(212,212,212)',marginLeft:20,marginRight:20}}></View>
                 <View style={{ alignSelf:'stretch',flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', backgroundColor: '#ffffff', height: 45, paddingLeft: 10, paddingRight: 10 }}>
                     <Text style={[styles.iconSize, { width: 70, marginRight: 15, color: '#1b1b1b', fontSize: 14, }]}>
-                        提货点
+                        提货点:
                         </Text>
                     <Text style={[styles.iconSize, { width: 200, marginRight: 10, color: '#1b1b1b', fontSize: 14,textAlign: 'right', }]}>
                         团长家：{Global.agent.address}

@@ -9,7 +9,7 @@ import {
     AsyncStorage
 } from 'react-native';
 
-var test = false;
+var test = true;
 // import Navigation from '../common/Navigation';
 // import TabNavigator from 'react-native-tab-navigator';
  import TabView from './TabView'
@@ -41,7 +41,7 @@ export default class MainView extends Component {
             var agent_code = this.getQueryString('agent_code',str);
              console.log('url agent_code='+agent_code);
              if (test){
-                 agent_code = 'ocsmexGwV4BzMOQMFN_IzHwgkj3I';//for test.
+                 agent_code = 'ocsmexJFsXFpH1T6SZ-C6cK_aD8g';//for test.
              }else {
 
              }
@@ -96,6 +96,23 @@ export default class MainView extends Component {
                 console.log('get k_http_token:error:' +  error.message)
                 //this._appendMessage('AsyncStorage error: ' + error.message);
             }.bind(this));
+        AsyncStorage.getItem('k_login_agent_code').then(function(result){
+            if (result !== null){
+                if (result !== Global.agent_code){
+                    me.setState({hasLogin: false})
+                }else {
+                    me.setState({hasLogin: true})
+                }
+
+
+            } else {
+                console.log('get k_login_agent_code null:')
+                me.setState({hasLogin: false})
+            }
+        }.bind(this)).catch(function(error){
+            console.log('get k_login_agent_code:error:' +  error.message)
+            //this._appendMessage('AsyncStorage error: ' + error.message);
+        }.bind(this));
 
 
         if (me.state.hasLogin){

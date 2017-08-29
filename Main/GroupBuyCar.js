@@ -8,6 +8,7 @@ import {
     TouchableNativeFeedback,
     ScrollView,
     TouchableOpacity,
+    Alert
 } from 'react-native';
 
 import CheckBox from '../common/checkbox'
@@ -483,20 +484,26 @@ export default class GroupBuyCar extends Component {
 
 
     onNumberAdd(item) {
-        item.quantity+=1;
-        let param = {
-            cart_id:item.cart_id,
-            quantity:item.quantity,
+        if (item.quantity+1 > item.goods.stock){
+
+            Alert.alert('已添加到最大库存量！')
+        }else {
+            item.quantity+=1;
+            let param = {
+                cart_id:item.cart_id,
+                quantity:item.quantity,
 
 
 
+            }
+
+            HttpRequest.put('/shopping_cart', param, this.onPutCartSuccess.bind(this),
+                (e) => {
+                    alert('刷新购物车失败，请稍后再试。')
+                    console.log('shopping_cart error:' + e)
+                })
         }
 
-        HttpRequest.put('/shopping_cart', param, this.onPutCartSuccess.bind(this),
-            (e) => {
-                alert('刷新购物车失败，请稍后再试。')
-                console.log('shopping_cart error:' + e)
-            })
 
     }
 
