@@ -9,7 +9,7 @@ import {
     AsyncStorage
 } from 'react-native';
 
-var test = true;
+var test = false;
 // import Navigation from '../common/Navigation';
 // import TabNavigator from 'react-native-tab-navigator';
  import TabView from './TabView'

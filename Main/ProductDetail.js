@@ -474,7 +474,7 @@ bannerOnMomentumScrollEnd(event, state) {
     renderProductDetailBuyView(isLoad){
         var width = this.state.toolsView.screenWidth;
         console.log('received renderProductStartGroupBuyView layout width\n', width);
-        let h = 49
+        let h = 55
 
         let display = this.state.cartShow ? this.state.cartNum : this.state.cartNum;
         console.log('this.state.cartNum '+display);
@@ -491,10 +491,10 @@ bannerOnMomentumScrollEnd(event, state) {
             return(<View style={{ height: h,
         justifyContent:'flex-start',flexDirection: "row"}}>
                 <TouchableOpacity style={{justifyContent:'center',alignItems: 'center',}} onPress={this.goToGroupBuyCar.bind(this)} >
-                    <View style={{width:this.state.toolsView.screenWidth/5,height:49,flex:1,backgroundColor:'rgb(244,244,244)',alignItems: 'center'}}>
+                    <View style={{flexDirection: 'column',width:this.state.toolsView.screenWidth/5,height:52,backgroundColor:'rgb(244,244,244)'}}>
 
-                        <Image style={{width:20,height:20,margin:5,alignItems: 'center',alignSelf:'flex-end' }} source={require('../images/number@3x.png')}><Text style={{color:'#ffffff'}}>{display}</Text> </Image>
-                        <Image style={{resizeMode:'contain', width: 40,height: 35,alignItems: 'center',backgroundColor:'rgb(244,244,244,0.8)',}}
+                        <Image style={{width:20,height:20,alignItems: 'center',alignSelf:'center',marginLeft:28,}} source={require('../images/number@3x.png')}><Text style={{color:'#ffffff'}}>{display}</Text> </Image>
+                        <Image style={{resizeMode:'contain', width: 40,height: 35,alignItems: 'center',alignSelf:'center',backgroundColor:'rgb(244,244,244,0.8)',}}
                                source={require('../images/shoppingcart_icon@2x.png')}
                         >
                         </Image>
