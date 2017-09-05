@@ -68,7 +68,7 @@ export default class Welcome extends Component
                 AsyncStorage.setItem('k_http_token', Global.token).then(function(){
                     console.log('save k_http_token succ.')
                     this.fetchAgentInfo();
-                    this.fetchProductList();
+
                 }.bind(this)).catch(function(error){
                     console.log('save k_http_token faild.' + error.message)
     }.bind(this));
@@ -103,6 +103,10 @@ export default class Welcome extends Component
     onProudctListSuccess(response){
         console.log(' onProudctListSuccess:' + JSON.stringify(response))
         Global.goodsList = response.data;
+        this.props.navigator.resetTo({
+            component: TabView,
+            name: 'MainPage'
+        })
 
     }
     onUserInfoSucc(response){
@@ -170,18 +174,14 @@ export default class Welcome extends Component
 
         if (response.message == 'Success'){
             Global.user_address = response.data.user_address
-            this.props.navigator.resetTo({
-                component: TabView,
-                name: 'MainPage'
-            })
+            this.fetchProductList();
+
+
 
         }else {
 
             Global.user_address = ''
-            this.props.navigator.resetTo({
-                component: TabView,
-                name: 'MainPage'
-            })
+
         }
 
 

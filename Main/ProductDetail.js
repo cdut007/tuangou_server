@@ -41,8 +41,9 @@ export default class ProductDetail extends Component {
             gbDetail: { classify: { name: '', icon: '' }, group_buy_goods: [] },
             url:'https://m.baidu.com',
             cartNum:0,
-             group_buy:[],
             cartShow: true,
+             group_buy:[],
+
             isHaveGood:true,
             isLoad: false,
 
@@ -64,8 +65,8 @@ export default class ProductDetail extends Component {
            component: ProductDetail,
             props: {
                 prouduct:{
-                    'index': prouductItem.id,
-                    'image': {uri:prouductItem.goods.images[0].image},
+                    'index': prouductItem.goods_id,
+                    'image': {uri:prouductItem.image},
                 },
                }
        })
@@ -96,7 +97,7 @@ export default class ProductDetail extends Component {
 
     onProudctDetailSuccess(response) {
       this.setState({ goods: response.data })
-        if (this.state.goods.stock >= 0){
+        if (this.state.goods.stock >  0){
          this.state.isHaveGood = true
         }else {
             this.state.isHaveGood = false
@@ -173,10 +174,11 @@ export default class ProductDetail extends Component {
 
     addGroupBuy(){
         if (this.state.isHaveGood){
+
             let param = {
                 agent_code:Global.agent_code,
-                goods: this.props.prouduct.index,
-                quantity: 1,
+
+                goods_list: [{goods_id: this.props.prouduct.index, goods_quantity: 1}]
             }
             HttpRequest.post('/shopping_cart', param, this.onAddCartSuccess.bind(this),
                 (e) => {
@@ -208,6 +210,12 @@ export default class ProductDetail extends Component {
 
 
     }
+    _handleNumberInput(input){
+
+    }
+    _handleStringInput(input){
+
+    }
     onGetFirstCartSuccess(response){
         console.log(' get shopping_cart response'+JSON.stringify(response))
 
@@ -218,9 +226,10 @@ export default class ProductDetail extends Component {
         var group_buyNum = 0
         console.log('group_buy.length:'+this.state.group_buy.length)
         for (var i =0; i < this.state.group_buy.length; i++){
-            cart =  this.state.group_buy[i].cart_goods
+            cart =  this.state.group_buy[i].goods_list
             for (var j = 0; j < cart.length;j++){
-                group_buyNum += cart[j].quantity
+               let  quantity  = parseInt(cart[j].quantity)
+                group_buyNum += quantity
 
                 console.log('group_buyNum:'+group_buyNum)
             }
@@ -251,9 +260,10 @@ export default class ProductDetail extends Component {
         var group_buyNum = 0
         console.log('group_buy.length:'+this.state.group_buy.length)
         for (var i = 0; i < this.state.group_buy.length; i++){
-            cart =  this.state.group_buy[i].cart_goods
+            cart =  this.state.group_buy[i].goods_list
             for (var j = 0; j < cart.length;j++){
-                group_buyNum += cart[j].quantity
+                let  quantity  = parseInt(cart[j].quantity)
+                group_buyNum += quantity
 
                 console.log('group_buyNum:'+group_buyNum)
             }
@@ -435,29 +445,22 @@ bannerOnMomentumScrollEnd(event, state) {
 
     }
     onBuyNow(){
+        console.log('onBuyNow11'+JSON.stringify(this.state.goods))
         if (this.state.isHaveGood){
             var categoryDataAry = []
             categoryDataAry.push({classify:{name:this.state.gbDetail.classify.name},ship_time:this.state.gbDetail.ship_time,group_buy_goods_car:[
                 {
-                    goods: {
-                        id: this.state.goods.id,
-                        goods: {
-                            name: this.state.goods.goods.name,
-                            images: [
-                                {
-                                    image: this.state.goods.goods.images[0].image
-                                }
-                            ]
-                        },
-                        price: this.state.goods.price,
-                        stock: this.state.goods.stock,
-                        brief_dec: this.state.goods.brief_dec,
-                        group_buy: this.state.goods.group_buy
-                    },
+                    goods_id:this.state.goods.id,
+                    goods_name:this.state.goods.goods.name,
+                    image:this.state.goods.goods.images[0].image,
+                    brief_desc:this.state.goods.brief_desc,
+                    price:this.state.goods.price,
                     quantity: 1,
                     cart_id: '',
-                    selected:true
+                    selected:true,
+                    stock:this.state.goods.stock
                 }]})
+
             Global.categoryData = categoryDataAry
 
             this.props.navigator.push({

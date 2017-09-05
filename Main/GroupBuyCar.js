@@ -8,7 +8,8 @@ import {
     TouchableNativeFeedback,
     ScrollView,
     TouchableOpacity,
-    Alert
+    Alert,
+    TextInput
 } from 'react-native';
 
 import CheckBox from '../common/checkbox'
@@ -122,7 +123,7 @@ export default class GroupBuyCar extends Component {
 
 
 
-            this.state.group_buy[i].cart_goods.map((item, i) => {
+            this.state.group_buy[i].goods_list.map((item, i) => {
 
                 item.selected = true;
 
@@ -284,19 +285,19 @@ export default class GroupBuyCar extends Component {
         let selectedPrice = 0
         var categoryDataAry = this.state.group_buy;
         for (var i = 0; i < categoryDataAry.length; i++) {
-            categoryDataAry[i].cart_goods.map((item, n) => {
+            categoryDataAry[i].goods_list.map((item, n) => {
                 if (item.selected) {
                     if (!item.quantity) {
                         item.quantity = 0 ;
                     }
-                    selectedPrice+= item.goods.price*item.quantity;
+                    selectedPrice+= item.price*item.quantity;
                 }
             })
         }
         selectedPrice = selectedPrice.toFixed(2)
 
         return(<View style={{alignItems:'center',width: width, height: h,
-        justifyContent:'center',margin:0,flexDirection: "row",}}>
+       margin:0,flexDirection: "row",}}>
         <View style={{marginLeft:20,marginRight:0, alignItems:'center',
         justifyContent:'center',}}>
                  {this.renderAllCheckBox(categoryDataAry)}
@@ -307,8 +308,9 @@ export default class GroupBuyCar extends Component {
             <Text style={{alignItems:'center',justifyContent:'center',fontSize: 14, color: "#1c1c1c",}}>全选</Text>
             </View>
             <View style={{
-            flex:6}}>
-            <Text style={{margin:10,alignItems:'center',justifyContent:'flex-start',fontSize: 14, color: "#757575",}}>合计：{selectedPrice}元</Text>
+            flex:6,flexDirection: "row",}}>
+            <Text style={{margin:10,alignItems:'center',justifyContent:'flex-start',fontSize: 14, color: "#757575",}}>合计：</Text>
+                <Text style={{marginTop:10,alignItems:'center',justifyContent:'flex-end',fontSize: 14, color: 'rgb(234,107,16)',}}>S${selectedPrice}</Text>
             </View>
             <View style={[{flex:4,alignItems:'flex-end',justifyContent:'flex-end',}]}>
             <CommitButton title={'提交订单'} onPress={this.onConfirmOrderView.bind(this)}>
@@ -415,9 +417,9 @@ export default class GroupBuyCar extends Component {
           for (var i = 0; i < len; i++) {
 
               var cart_goods = this.state.group_buy[i]
-             var goods = cart_goods.cart_goods
+             var goods = cart_goods.goods_list
 
-              categoryDataAry.push({classify:{name:cart_goods.classify.name},ship_time:cart_goods.ship_time,group_buy_goods_car:goods})
+              categoryDataAry.push({classify:{name:cart_goods.name},ship_time:cart_goods.ship_time,group_buy_goods_car:goods})
 
 
 
@@ -471,7 +473,7 @@ export default class GroupBuyCar extends Component {
                                     预计{curTime}发货
                                 </Text>
                             </View>
-                        {this.renderCategorysView(categoryDataAry[j].group_buy_goods_car)}
+                        {this.renderCategorysView(categoryDataAry[j].group_buy_goods_car,j)}
                         <View style = {{flex:1,justifyContent:'flex-end',alignItems: 'flex-end',marginRight:5}}>
 
                         </View>
@@ -484,11 +486,13 @@ export default class GroupBuyCar extends Component {
 
 
     onNumberAdd(item) {
-        if (item.quantity+1 > item.goods.stock){
 
-            Alert.alert('已添加到最大库存量！')
+        if (parseInt(item.quantity)+1 > parseInt(item.stock)){
+
+            // alert('item.quantity:'+item.quantity+'item.stock:'+item.stock)
+            alert('已添加到最大库存量！')
         }else {
-            item.quantity+=1;
+            item.quantity=parseInt(item.quantity)+1;
             let param = {
                 cart_id:item.cart_id,
                 quantity:item.quantity,
@@ -499,17 +503,27 @@ export default class GroupBuyCar extends Component {
 
             HttpRequest.put('/shopping_cart', param, this.onPutCartSuccess.bind(this),
                 (e) => {
-                    alert('刷新购物车失败，请稍后再试。')
+
                     console.log('shopping_cart error:' + e)
                 })
+
         }
+        // if (item.quantity+1 > item.stock){
+        //
+        //     alert('已添加到最大库存量！')
+        // }else {
+        //     item.quantity=parseInt(item.quantity)+1;;
+        //
+        // }
 
 
     }
 
     onNumberMinus(item) {
-        item.quantity=item.quantity-1;
-        if (item.quantity <0) {
+
+        console.log('item1'+JSON.stringify(item))
+        item.quantity=parseInt(item.quantity) -1;
+        if (parseInt(item.quantity) <0) {
             item.quantity = 0
         }
 
@@ -530,12 +544,12 @@ export default class GroupBuyCar extends Component {
         }else {
             let param = {
                 cart_id:item.cart_id,
-                quantity:item.quantity,
+                quantity:String(item.quantity),
 
 
 
             }
-
+            console.log('item2'+JSON.stringify(param))
             HttpRequest.put('/shopping_cart', param, this.onPutCartSuccess.bind(this),
                 (e) => {
                     alert('刷新购物车失败，请稍后再试。')
@@ -572,7 +586,7 @@ export default class GroupBuyCar extends Component {
 
 
 
-            this.state.group_buy[i].cart_goods.map((item, i) => {
+            this.state.group_buy[i].goods_list.map((item, i) => {
 
                 item.selected = true;
 
@@ -599,14 +613,60 @@ export default class GroupBuyCar extends Component {
           component: ProductDetail,
            props: {
                prouduct:{
-                   'index': prouductItem.goods.id,
-                   'image': {uri:prouductItem.goods.goods.images[0].image},
+                   'index': prouductItem.goods_id,
+                   'image': {uri:prouductItem.image},
                },
               }
       })
    }
+    changeItemQuantity(item,text,categoryNum){
+       var product = item
+        console.log('changeItemQuantity:'+JSON.stringify(product))
+        this.state.group_buy[categoryNum].goods_list.map((item, i) => {
 
-    renderItemInfo(item,w,h,i){
+            if (product.cart_id == item.cart_id){
+                console.log('item40'+JSON.stringify(item))
+                if (parseInt(text) > parseInt(item.stock)){
+                    alert('已添加超过最大库存，请重新输入')
+
+                }else {
+                    item.quantity = parseInt(text);
+                }
+
+
+
+            }
+
+
+        })
+
+        this.setState({ ...this.state })
+
+    }
+    SubmitItemQuantity(item,text,categoryNum){
+        alert('item'+JSON.stringify(item))
+        if (text > item.goods.stock){
+
+            Alert.alert('已超过最大库存量！')
+
+        }else {
+
+            let param = {
+                cart_id:item.cart_id,
+                quantity:text,
+
+
+
+            }
+
+            HttpRequest.put('/shopping_cart', param, this.onPutCartSuccess.bind(this),
+                (e) => {
+                    alert('刷新购物车失败，请稍后再试。')
+                    console.log('shopping_cart error:' + e)
+                })
+        }
+    }
+    renderItemInfo(item,w,h,categoryNum){
 
 
         return(<View style={{resizeMode:'contain', alignItems:'center',width: w, height: h,
@@ -621,27 +681,38 @@ export default class GroupBuyCar extends Component {
             <TouchableOpacity style={{
                 flex:2}}  onPress={this.onProdcutInfo.bind(this, item)}>
                 <Image style={{resizeMode:'contain', alignItems:'center',width: 80, height: 80,
-                justifyContent:'center',}} source={{ uri: item.goods.goods.images[0].image  }}/>
+                justifyContent:'center',}} source={{ uri: item.image  }}/>
             </TouchableOpacity>
             <View style={{
                 height:h,
                 alignItems:'flex-start',
                 flex:6}}>
-                <Text style={{marginLeft:30,marginTop:10,numberOfLines:2,ellipsizeMode:'tail',fontSize: 14, color: "#1c1c1c",}}>{item.goods.goods.name}</Text>
-                <Text style={{marginLeft:30,alignItems:'center',justifyContent:'center',fontSize: 12, color: "#757575",}}>{item.goods.brief_dec}</Text>
+                <Text style={{marginLeft:30,marginTop:10,numberOfLines:2,ellipsizeMode:'tail',fontSize: 14, color: "#1c1c1c",}}>{item.goods_name}</Text>
+                <Text style={{marginLeft:30,alignItems:'center',justifyContent:'center',fontSize: 12, color: "#757575",}}>{item.brief_desc}</Text>
                 <View style={{alignItems:'center',flexDirection:'row',marginLeft:30,paddingBottom:10,position:'absolute',left:0,right:0,bottom:0}}>
-                    <Text style={{alignItems:'center',justifyContent:'center',fontSize: 16, color: "#fb7210",}}>S$ {item.goods.price}</Text>
+                    <Text style={{alignItems:'center',justifyContent:'center',fontSize: 16, color: "#fb7210",}}>S$ {item.price}</Text>
                     <View style={{alignItems:'flex-end',textAlign:'right',flex:6,justifyContent:'flex-end',fontSize: 12, color: "#757575",}}>
 
-                        <View style={{ height: 30, borderWidth: 0.5, borderColor: 'b3b3b3', borderRadius: 2, flexDirection: 'row', alignItems: 'center' }}>
+                        <View style={{ height: 30, borderWidth: 0.5, borderColor: 'rgb(234,107,16)', borderRadius: 2, flexDirection: 'row', alignItems: 'center' }}>
                             <TouchableOpacity onPress={this.onNumberMinus.bind(this, item)}
                                               style={{ width: 30, height: 30, alignItems: 'center', justifyContent: 'center' }}>
-                                <Text style={{ color: '#b3b3b3', }}>-</Text>
+                                <Image style={{width:14,height:14}} source={require('../images/deleteNumberIcon@2x.png')}></Image>
                             </TouchableOpacity>
-                            <Text style={{ color: '#757575', alignItems: 'center', justifyContent: 'center',flex: 1, textAlign: 'center' }}>{item.quantity}</Text>
+                            <TextInput style={{width:30,height:15,
+                        marginLeft: 0, fontSize: 14, flex: 20,
+                        textAlign: 'center', color: 'rgb(234,107,16)',
+                    }}
+                                       clearTextOnFocus ={true}
+                                       keyboardType={'numeric'}
+                                       editable={true}
+                                       onChangeText={(text) => this.changeItemQuantity(item,text,categoryNum).bind(this)}
+                                       onEndEditing={(event) => this.SubmitItemQuantity(item,event.nativeEvent.text,categoryNum).bind(this)}
+                                       value= {item.quantity}
+                            ></TextInput>
+                            {/*<Text style={{ color: '#757575', alignItems: 'center', justifyContent: 'center',flex: 1, textAlign: 'center' }}>{item.quantity}</Text>*/}
                             <TouchableOpacity onPress={this.onNumberAdd.bind(this, item)}
                                               style={{ width: 30, height: 30, alignItems: 'center', justifyContent: 'center' }}>
-                                <Text style={{ color: '#b3b3b3' }}>+</Text>
+                                <Image style={{width:14,height:14}} source={require('../images/addNumberIcon@2x.png')}></Image>
                             </TouchableOpacity>
                         </View>
 
@@ -653,7 +724,7 @@ export default class GroupBuyCar extends Component {
 
     }
 
-    renderCategorysView(prouductItems) {
+    renderCategorysView(prouductItems,categoryNum) {
         var width = this.state.toolsView.screenWidth;
         const w = width , h = 110
 
@@ -666,7 +737,7 @@ export default class GroupBuyCar extends Component {
                         types.map((item, i) => {
                             let render = (
                                 <View style={[{ width: w, height: h-10, marginTop: 5, marginRight: 5,  }, styles.toolsItem]}>
-                                    {this.renderItemInfo(item, w, h)}
+                                    {this.renderItemInfo(item, w, h,categoryNum)}
                                 </View>
 
                             )

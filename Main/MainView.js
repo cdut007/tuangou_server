@@ -39,16 +39,18 @@ export default class MainView extends Component {
         if (pos!= -1) {
             var str = url.substr(pos+1);
             var agent_code = this.getQueryString('agent_code',str);
-             console.log('url agent_code='+agent_code);
+             console.log('url agent_code1='+agent_code);
+
              if (test){
-                 agent_code = 'ocsmexJFsXFpH1T6SZ-C6cK_aD8g';//for test.
+                 agent_code = 'ocsmexGwV4BzMOQMFN_IzHwgkj3I';//for test.
              }else {
 
              }
+            if (agent_code) {
+                Global.agent_code = agent_code;
+            }
+            console.log('url agent_code2='+ Global.agent_code);
 
-             if (agent_code) {
-                 Global.agent_code = agent_code;
-             }
         }
     }
 

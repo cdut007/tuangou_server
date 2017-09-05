@@ -69,15 +69,18 @@ export default class GroupOrderDetailView extends Component {
 
     onItemClick(prouductItem){
         console.log('order_product_info:'+JSON.stringify(prouductItem))
-        this.props.navigator.push({
-           component: ProductDetail,
-            props: {
-                prouduct:{
-                    'index': prouductItem.goods.id,
-                    'image': {uri:prouductItem.goods.goods.images[0].image},
-                },
-               }
-       })
+        if(this.props.status == 0){
+            this.props.navigator.push({
+                component: ProductDetail,
+                props: {
+                    prouduct:{
+                        'index': prouductItem.goods.id,
+                        'image': {uri:prouductItem.goods.goods.images[0].image},
+                    },
+                }
+            })
+        }
+
     }
 
     renderGroupOrderListView(){

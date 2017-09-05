@@ -44,11 +44,17 @@ export default class GroupBuyNowView extends Component {
             <View style={styles.container}>
 
                 <NavBar
-                    title="拼团成功"
+                    title="下单成功"
                     leftIcon={require('../images/back@2x.png')}
                     leftPress={this.back.bind(this)} />
-                <TouchableOpacity  onPress={this.onPressToMainPage.bind(this)}>
-                    <Text style={{fontSize:14,color:'#a9a9a9',padding:40,marginTop:20}}>拼团成功</Text>
+
+                <Image style={{width:375,height:150}} source={require('../images/banner1@2x.png')}></Image>
+                <TouchableOpacity  onPress={this.onPressToMainPage.bind(this)} style={{alignItems:'center'}} >
+                    <Image style={{width:150,height:40,marginTop:30}} source={require('../images/btn1@2x.png')}>
+                        <Text style={{fontSize:18,color:'#ffffff',justifyContent:'center',textAlign:'center',marginTop:10}}>返回首页</Text>
+                    </Image>
+                </TouchableOpacity>
+
                     <Text style={{alignItems:'center',justifyContent:'center',textAlign:'center',fontSize:14,color:'#1c1c1c',padding:10,marginTop:40}}>点击右上方分享链接</Text>
                     <View style={{flex:1,marginTop:60,justifyContent:'center',flexDirection:'row'}}>
 
@@ -87,7 +93,7 @@ export default class GroupBuyNowView extends Component {
                          </Text>
                          </TouchableOpacity> */}
                     </View>
-                </TouchableOpacity>
+
 
             </View>
         )
@@ -116,6 +122,7 @@ logoutText: {
         flex: 1,
         justifyContent: 'flex-start',
         alignItems: 'center',
+        flexDirection: 'column',
         backgroundColor: '#F5FCFF',
     },
     defaultText: {

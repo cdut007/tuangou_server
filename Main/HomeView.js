@@ -42,6 +42,11 @@ export default class HomeView extends Component {
     }
 
     componentWillMount(){
+
+
+
+    }
+    componentDidMount() {
         console.log('componentWillMount1')
         if (Global.agent != null){
             this.fetchProductList();
@@ -52,10 +57,6 @@ export default class HomeView extends Component {
             this.fetchProductList();
 
         }
-
-
-    }
-    componentDidMount() {
         this.getUserInfo()
     }
 
@@ -295,6 +296,7 @@ export default class HomeView extends Component {
                component: ProductCatagoryListViewTab,
                 props: {
                     prouduct:prouduct,
+                    index:0
                    }
            })
         }
