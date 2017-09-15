@@ -11,10 +11,17 @@ import {
 } from 'react-native';
 import TabView from './TabView'
 import NavBar from '../common/NavBar'
+var Global = require('../common/globals');
+import GroupOrderDetailView from './GroupOrderDetailView';
+import HttpRequest from '../common/HttpRequest/HttpRequest'
 
 export default class GroupBuyNowView extends Component {
     constructor(props) {
         super(props)
+        this.state={
+            orders:[],
+            group_buy_id:null,
+        }
 
     }
 
@@ -23,7 +30,11 @@ export default class GroupBuyNowView extends Component {
         this.props.navigator.pop()
 
 }
+    componentDidMount() {
+        this.state.group_buy_id = this.props.group_buy_id
+        this.refreshOderInfo(0);
 
+    }
         onCopyPress(){
 
         }
@@ -31,14 +42,51 @@ export default class GroupBuyNowView extends Component {
         onSharePress(){
 
         }
-
         onPressToMainPage(){
-            this.props.navigator.resetTo({
-                component: TabView,
-                name: 'MainPage',
+        this.props.navigator.resetTo({
+            component: TabView,
+            name: 'MainPage',
+
+        })
+    }
+         onPressToOrderDetail(){
+
+
+             var  prouductItems ={}
+             for (var i = 0; i < this.state.orders.length; i++){
+                 var items = this.state.orders[i];
+                 if (this.state.group_buy_id == items.id){
+                     prouductItems = items
+
+                 }
+             }
+             console.log('prouductItems221'+JSON.stringify(prouductItems))
+             this.props.navigator.push({
+                 component: GroupOrderDetailView,
+                 props: {
+                     status:0,
+                     items:prouductItems,
+                     isBuyDone:true,
+                 },
+
+
+             })
+    }
+    refreshOderInfo(orderStatus){
+        let param = { status: orderStatus,agent_code: Global.agent_code}
+
+        HttpRequest.get('/generic_order', param, this.onGetListSuccess.bind(this),
+            (e) => {
+                console.log(' error:' + e)
 
             })
-        }
+    }
+    onGetListSuccess(response) {
+        this.setState({
+            orders: response.data.group_buy
+        })
+    }
+
     render() {
         return (
             <View style={styles.container}>
@@ -49,12 +97,21 @@ export default class GroupBuyNowView extends Component {
                     leftPress={this.back.bind(this)} />
 
                 <Image style={{width:375,height:150}} source={require('../images/banner1@2x.png')}></Image>
-                <TouchableOpacity  onPress={this.onPressToMainPage.bind(this)} style={{alignItems:'center'}} >
-                    <Image style={{width:150,height:40,marginTop:30}} source={require('../images/btn1@2x.png')}>
-                        <Text style={{fontSize:18,color:'#ffffff',justifyContent:'center',textAlign:'center',marginTop:10}}>返回首页</Text>
+                <TouchableOpacity  onPress={this.onPressToMainPage.bind(this)} style={{alignItems:'center',alignSelf:'flex-start',marginLeft:30}} >
+                    <Image style={{width:150,height:40,marginTop:30,alignItems:'center',justifyContent:'flex-start',flexDirection:'row'}} source={require('../images/btn1@2x.png')}>
+                        <Image style={{width:10,height:18,marginLeft:15,marginRight:15}} source={require('../images/toHomeIcon@2x.png')} ></Image>
+                        <Text style={{fontSize:18,color:'#ffffff',alignSelf:'center',textAlign:'center'}}>返回首页</Text>
+
+
                     </Image>
                 </TouchableOpacity>
+                <TouchableOpacity  onPress={this.onPressToOrderDetail.bind(this)} style={{alignItems:'center',alignSelf:'flex-end',marginRight:30}} >
+                    <Image style={{width:150,height:40,marginTop:30,alignItems:'center',justifyContent:'flex-end',flexDirection:'row'}} source={require('../images/btn1@2x.png')}>
 
+                        <Text style={{fontSize:18,color:'#ffffff',alignSelf:'center',textAlign:'center'}}>查看订单</Text>
+                        <Image style={{width:10,height:18,marginRight:15,marginLeft:15}} source={require('../images/toOrderIcon@2x.png')} ></Image>
+                    </Image>
+                </TouchableOpacity>
                     <Text style={{alignItems:'center',justifyContent:'center',textAlign:'center',fontSize:14,color:'#1c1c1c',padding:10,marginTop:40}}>点击右上方分享链接</Text>
                     <View style={{flex:1,marginTop:60,justifyContent:'center',flexDirection:'row'}}>
 

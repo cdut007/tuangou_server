@@ -260,6 +260,7 @@ export default class Welcome extends Component
         if (!Global.agent_code) {
 
                 alert('请通过团长分享链接访问！')
+
                 return
 
 

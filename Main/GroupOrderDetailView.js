@@ -9,7 +9,7 @@ import {
     TouchableNativeFeedback,
     ScrollView,
 } from 'react-native';
-
+import TabView from './TabView'
 import HttpRequest from '../common/HttpRequest/HttpRequest'
 import NavBar from '../common/NavBar'
 import ProductDetail from './ProductDetail'
@@ -43,7 +43,16 @@ export default class GroupOrderDetailView extends Component {
 
 
     clickBack() {
-     this.props.navigator.pop()
+        if (this.props.isBuyDone){
+            this.props.navigator.resetTo({
+                component: TabView,
+                name: 'MainPage',
+
+            })
+        }else {
+            this.props.navigator.pop()
+        }
+
     }
 
     onViewLayout(layoutEvent) {

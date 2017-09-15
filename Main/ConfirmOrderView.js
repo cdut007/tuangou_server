@@ -137,7 +137,7 @@ export default class ConfirmOrderView extends Component{
             this.state.orders = Global.categoryData
         }
 
-        console.log('ConfirmOrderView goods2:'+JSON.stringify(this.state.orders))
+
 
 
 
@@ -170,15 +170,16 @@ export default class ConfirmOrderView extends Component{
             alert('请选择需要团购的商品。')
             return
         }
-        let param = { }
+        let param = {}
         if (this.props.isMoreBuy){
              param = { goods: goodsIds, agent_code: Global.agent_code ,clear_cart: true}
         }else {
              param = { goods: goodsIds, agent_code: Global.agent_code ,clear_cart: false}
         }
-
-
-        console.log('generic_order:'+JSON.stringify(param))
+        console.log('ConfirmOrderView goods2:'+JSON.stringify(param))
+        //
+        //
+        // console.log('generic_order:'+JSON.stringify(param))
         HttpRequest.post('/generic_order', param, this.onGroupBuySuccess.bind(this),
             (e) => {
 
@@ -207,21 +208,14 @@ export default class ConfirmOrderView extends Component{
         Global.categoryDataAry = [];
         Global.categoryData = [];
         Global.group_buy = [];
-        // console.log('onGroupBuySuccess:'+JSON.stringify(response))
+        console.log('onGroupBuySuccess:'+JSON.stringify(response))
         this.props.navigator.push({
             component: GroupBuyNowView,
             props: {
-
+                group_buy_id:response.data.id
             }
         })
-        // this.props.navigator.push({
-        //     props: {
-        //         status:0,
-        //         items:prouductItems,
-        //     },
-        //
-        //     component: GroupOrderDetailView,
-        // })
+
 
     }
     onSaveOrderSuccess(response)

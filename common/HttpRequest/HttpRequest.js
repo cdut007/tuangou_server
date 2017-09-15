@@ -1,6 +1,6 @@
 import { AsyncStorage } from 'react-native';
 var test = false;
-//const apiAddr = 'http://www.ailinkgo.com:3000/api/v1'http://47.88.139.113:3000/api/v1
+//const apiAddr = 'http://www.ailinkgo.com:3000/api/v1'http://47.88.139.113:3001/api/v1
 const apiAddr = test? 'http://www.ailinkgo.com:3000/api/v1':'http://www.ailinkgo.com:3000/api/v1';
 var testHttpToken = 'eyJhbGciOiJIUzI1NiIsImV4cCI6MTU2MzI2NjQ0NywiaWF0IjoxNTAyNzg2NDQ3fQ.eyJpZCI6Nn0.m0KCl0VANnnITqQWRyL7xeYqnj-cBrpqvYAL1dk8p9w'
 var httpToken = null
