@@ -37,16 +37,19 @@ export default class Welcome extends Component
       if (pos!= -1) {
           var str = url.substr(pos+1);
           var code = this.getQueryString('code',str);
+
            console.log('url code='+code);
            if (code) {
-               this.state.isHaveLoading = true
-               this.getUserInfoByCode(code)
+
+               Global.code = code;
+
 
                var agent_code = this.getQueryString('state',str);
                if (agent_code) {
                    Global.agent_code = agent_code;
 
                }
+               this.getUserInfoByCode(code)
 
 
 
@@ -60,7 +63,19 @@ export default class Welcome extends Component
       }
 
     }
+    componentDidMount() {
+        if (this.state.isHaveLoading){
 
+        }else {
+            this.getUserInfoByCode(Global.code)
+            // Global.user_address = ''
+            // this.props.navigator.resetTo({
+            //     component: TabView,
+            //     name: 'MainPage'
+            // })
+        }
+
+    }
     onUserSuccess(response){
 
         Global.token = response.data.token;
@@ -85,7 +100,7 @@ export default class Welcome extends Component
 
                 try {
                     var errorInfo = JSON.parse(e);
-                    console.log(errorInfo.description)
+
                     if (errorInfo != null && errorInfo.description) {
                         console.log(errorInfo.description)
                     } else {
@@ -94,7 +109,7 @@ export default class Welcome extends Component
                 }
                 catch(err)
                 {
-                    console.log(err)
+                    alert('agent_home_page_list1:'+err)
                 }
 
                 console.log(' agent_home_page_list error:' + e)
@@ -136,7 +151,7 @@ export default class Welcome extends Component
 
                 try {
                     var errorInfo = JSON.parse(e);
-                    console.log(errorInfo.description)
+
                     if (errorInfo != null && errorInfo.description) {
                         console.log(errorInfo.description)
                     } else {
@@ -145,7 +160,7 @@ export default class Welcome extends Component
                 }
                 catch(err)
                 {
-                    console.log(err)
+                    alert('agent_info1:'+err)
                 }
 
                 console.log(' error:' + e)
@@ -156,16 +171,18 @@ export default class Welcome extends Component
 
         Global.agent = response.data.user_profile;
 
-
+        if (response.message == 'Success'){
+            this.state.isHaveLoading = true
+        }
         HttpRequest.get('/user_address', {}, this.onGetAddressSuccess.bind(this),
             (e) => {
-                if (e){
-                    Global.user_address = ''
-                    this.props.navigator.resetTo({
-                        component: TabView,
-                        name: 'MainPage'
-                    })
-                }
+
+                Global.user_address = ''
+                this.props.navigator.resetTo({
+                    component: TabView,
+                    name: 'MainPage'
+                })
+
 
             })
 
@@ -215,14 +232,14 @@ export default class Welcome extends Component
     }
 
     getUserInfoByCode(code){
-         var paramBody ={code:code}
+         var paramBody ={ code:code }
 
          HttpRequest.get('/web_user', paramBody, this.onUserSuccess.bind(this),
              (e) => {
                  try {
 
                      var errorInfo = JSON.parse(e);
-                     console.log(errorInfo.description)
+
                      if (errorInfo != null && errorInfo.description) {
                          console.log(errorInfo.description)
                      } else {
@@ -231,7 +248,7 @@ export default class Welcome extends Component
                  }
                  catch(err)
                  {
-                     console.log(err)
+                     alert('web_user1:'+err)
                  }
 
                  console.log(' error:' + e)
@@ -356,6 +373,19 @@ export default class Welcome extends Component
       //           </View>
       //       )
       //   }
+        if (this.state.isHaveLoading){
+            this.props.navigator.resetTo({
+                component: TabView,
+                name: 'MainPage'
+            })
+        }else {
+            this.getUserInfoByCode(Global.code)
+            // Global.user_address = ''
+            // this.props.navigator.resetTo({
+            //     component: TabView,
+            //     name: 'MainPage'
+            // })
+        }
         return(
         <View style = {styles.rootcontainer}>
 

@@ -61,12 +61,13 @@ export default class ProductDetail extends Component {
 
 
     onItemClick(prouductItem){
+        console.log(JSON.stringify(prouductItem))
         this.props.navigator.replace({
            component: ProductDetail,
             props: {
                 prouduct:{
-                    'index': prouductItem.goods_id,
-                    'image': {uri:prouductItem.image},
+                    'index': prouductItem.id,
+                    'image': {uri:prouductItem.goods.images[0].image},
                 },
                }
        })

@@ -160,7 +160,7 @@ export default class AddressView extends Component {
                     leftPress={this.back.bind(this)} />
                 <View style={{ alignSelf:'stretch',flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', backgroundColor: '#ffffff', height: 45, paddingLeft: 10, paddingRight: 10 }}>
                     <Text style={[styles.iconSize, { marginRight: 15, color: '#1b1b1b', fontSize: 14, }]}>
-                        团长名:
+                        收件人:
                         </Text>
                     <Text style={{
                         marginLeft: 0, fontSize: 14, flex: 20,
